@@ -1,1 +1,20 @@
 @import 'tailwindcss';
+
+:root {
+    --border-color: oklch(60.6% 0.25 292.717);
+}
+
+@font-face {
+    font-family: 'Terminus';
+    src: url("$lib/assets/font/Terminus.ttf");
+}
+
+body {
+    @apply font-[Terminus];
+}
+
+@layer components {
+    .btn {
+        @apply text-white text-2xl border-4 min-w-25 p-2 border-(--border-color) hover:bg-(--border-color) hover:text-black transition-all cursor-pointer;
+    }
+}

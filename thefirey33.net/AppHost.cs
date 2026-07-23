@@ -66,11 +66,10 @@ var gradleMinecraftServer = builder
     .WithEnvironment("SPRINGBOOT_PORT", gradleServerApiPort.ToString)
     .WithReference(backend.GetEndpoint("http"))
     .WithLifetime(ContainerLifetime.Persistent)
-    .WithExternalHttpEndpoints()
     .WithVolume("fireyminecraftserver-volume","/server")
     .WithDockerfileBuilder("../thefirey33-fireserver", context =>
     {
-        var javaSdkStage = context.Builder.From("openjdk:25-rc-jdk");
+        var javaSdkStage = context.Builder.From("openjdk:25-rc-jdk-trixie");
         
         // Copy the server to the specified directory.
         javaSdkStage.WorkDir("/server");
