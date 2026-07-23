@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>thefirey33_backend</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.4.6-preview.1.26319.6" />
+        <PackageReference Include="Aspire.Npgsql" Version="13.4.6" />
+        <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.4.6" />
+        <PackageReference Include="Aspire.StackExchange.Redis" Version="13.4.6" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.16.16" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\thefirey33.ServiceDefaults\thefirey33.ServiceDefaults.csproj" />
+    </ItemGroup>
+
+</Project>
