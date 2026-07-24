@@ -23,12 +23,12 @@ public class ApiServer {
     /**
      * The total amount of pixels in width will the map be.
      */
-    private static final int Width = 1920;
+    private static final int Width = 800;
 
     /**
      * The total amount of pixels in height will the map be.
      */
-    private static final int Height = 1080;
+    private static final int Height = 600;
 
     /**
      * The logger for the API server.
@@ -40,7 +40,6 @@ public class ApiServer {
     private static BufferedImage bufferedImage;
 
     private static void CreateMap(World world) {
-        logger.info("Creating map for world {}, this might take a while...", world.getName());
 
         bufferedImage = new BufferedImage(Width, Height, BufferedImage.TYPE_INT_RGB);
         int[] pixels = ((DataBufferInt) bufferedImage.getRaster().getDataBuffer()).getData();
@@ -51,18 +50,25 @@ public class ApiServer {
         ExecutorService executorService = Executors.newCachedThreadPool();
 
         // NOTE: Java ran out of threads, so remember to use this!
-        executorService.submit(() -> IntStream.range(0, Width * Height)
-                .parallel()
-                .forEach(pos -> {
-                    var x = pos % Width;
-                    var z = pos / Height;
+        executorService.submit(() -> {
+            logger.info("Creating map for world {}, this might take a while...", world.getName());
+            IntStream.range(0, Width * Height)
+                    .parallel()
+                    .forEach(pos -> {
+                        var x = pos % Width;
+                        var z = pos / Height;
 
-                    // This will individually get the highest block at the location and create the map accordingly.
-                    Block block = world.getHighestBlockAt(location.getBlockX() + x, location.getBlockZ() + z);
-                    pixels[pos] = block.getBlockData().getMapColor().asARGB();
-                }));
+                        // This will individually get the highest block at the location and create the map accordingly.
+                        Block block = world.getHighestBlockAt(location.getBlockX() + x, location.getBlockZ() + z);
+                        pixels[pos] = block.getBlockData().getMapColor().asARGB();
 
-        logger.info("Finished creating map!");
+                        if (pos % Width == 0) {
+                            logger.info("Filling in pixels... {}x{}", x, z);
+                        }
+                    });
+            logger.info("Finished creating map!");
+        });
+
         executorService.shutdown();
     }
 

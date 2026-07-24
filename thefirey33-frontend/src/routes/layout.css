@@ -15,6 +15,10 @@ body {
 
 @layer components {
     .btn {
-        @apply text-white text-2xl border-4 min-w-25 p-2 border-(--border-color) hover:bg-(--border-color) hover:text-black transition-all cursor-pointer;
+        @apply bg-black text-white text-2xl border-4 min-w-25 p-2 border-(--border-color) hover:bg-(--border-color) hover:text-black transition-all cursor-pointer;
+    }
+
+    .section-title {
+        @apply text-black bg-white font-bold text-center 2xl:text-4xl text-2xl
     }
 }

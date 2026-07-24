@@ -16,6 +16,7 @@ var adminPassword = builder.AddParameter("admin-password");
 var redis
     = builder.AddRedis("fireycache")
         .WithDataVolume(isReadOnly: false)
+        .WithPersistence()
         .WithRedisCommander();
 
 // The PostgresSQL database.
@@ -55,6 +56,7 @@ var backend =
 
 scalar.WithApiReference(backend);
 
+// The port for the API server of the Minecraft Server.
 const int gradleServerApiPort = 7000;
 
 // This is the Minecraft server that runs in a docker container.
@@ -73,11 +75,22 @@ var gradleMinecraftServer = builder
         
         // Copy the server to the specified directory.
         javaSdkStage.WorkDir("/server");
+        
+        // Stop caching for the copying process.
+        javaSdkStage.Arg("CACHEBUST", "1");
+        javaSdkStage.Run("echo \"$CACHEBUST\"");
         javaSdkStage.Copy(".", ".");
+        
+        // Continue caching after it's done.
+        javaSdkStage.Arg("CACHEBUST", "0");
+        javaSdkStage.Run("echo \"$CACHEBUST\"");
+        
         
         // Run the server with the entrypoint command.
         javaSdkStage.Run("chmod +x ./gradlew");
         javaSdkStage.Expose(25565);
+        // Build and run the server.
+        javaSdkStage.Run("./gradlew build");
         javaSdkStage.Entrypoint(["./gradlew", "runServer"]);
         
         return Task.CompletedTask;
