@@ -2,12 +2,13 @@ package net.thefirey33.thefirey33Fireserver.handlers;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.thefirey33.thefirey33Fireserver.Thefirey33Fireserver;
 import org.bukkit.Server;
+import org.bukkit.entity.Player;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
+import java.util.Collection;
 
 public class ServerStatusHandler extends BaseHandler {
 
@@ -24,22 +25,18 @@ public class ServerStatusHandler extends BaseHandler {
     public void run() {
         Server server = fireServer.getServer();
         Runtime runtime = Runtime.getRuntime();
-        OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
 
         long bytesToMb = 1024 * 1024;
         long totalMemoryUsage = (runtime.totalMemory() - runtime.freeMemory()) / bytesToMb;
         long totalMemory = runtime.totalMemory() / bytesToMb;
 
-        // Send the current OS information.
-        server.sendMessage(Component.text("[%s %s]".formatted(operatingSystemMXBean.getName(), operatingSystemMXBean.getVersion()))
-                .style(Style.style(TextDecoration.BOLD))
-        );
-
-        // Send the current memory status of the server.
-        server.sendMessage(Component.text("Server Memory Usage: %d/%dMB".formatted(totalMemoryUsage, totalMemory)));
-
-        // Send the current usage of the system for the server.
-        double usageAverage = (operatingSystemMXBean.getSystemLoadAverage() / operatingSystemMXBean.getAvailableProcessors()) * 100.0f;
-        server.sendMessage(Component.text("Server System Load: %.2f".formatted(usageAverage) + "%"));
+        Collection<? extends Player> onlinePlayers = server.getOnlinePlayers();
+        onlinePlayers.forEach(player -> {
+            player.sendPlayerListHeaderAndFooter(
+                    Component.text("THEFIREY33 FIRESERVER")
+                            .style(Style.style(TextColor.color(255, 0, 0))
+                                    .decorate(TextDecoration.BOLD)),
+                    Component.text("Server Memory Usage: %d/%dMB".formatted(totalMemoryUsage, totalMemory)));
+        });
     }
 }

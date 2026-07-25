@@ -1,3 +1,4 @@
+using Projects;
 using Scalar.Aspire;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -17,7 +18,7 @@ var redis
     = builder.AddRedis("fireycache")
         .WithDataVolume(isReadOnly: false)
         .WithPersistence()
-        .WithRedisCommander();
+        .WithRedisInsight();
 
 // The PostgresSQL database.
 // Will be used for the forums and NikoDex backups.
@@ -43,7 +44,7 @@ var scalar = builder.AddScalarApiReference();
 // This is the Minecraft Server.
 // Managed by the FireServer Minecraft Plugin.
 var backend =
-    builder.AddProject<Projects.thefirey33_backend>("fireybackend")
+    builder.AddProject<thefirey33_backend>("fireybackend")
         .WaitFor(redis)
         .WaitFor(postgresSql)
         .WithReference(redis)
@@ -66,33 +67,34 @@ var gradleMinecraftServer = builder
     .WithHttpEndpoint(25565, 25565, isProxied: false)
     .WithHttpEndpoint(gradleServerApiPort, gradleServerApiPort, "serverapi", isProxied: false)
     .WithEnvironment("SPRINGBOOT_PORT", gradleServerApiPort.ToString)
+    .WithExternalHttpEndpoints()
     .WithReference(backend.GetEndpoint("http"))
     .WithLifetime(ContainerLifetime.Persistent)
-    .WithVolume("fireyminecraftserver-volume","/server")
+    .WithContainerRuntimeArgs("-m", "1g", "--memory-swap",
+        "8g") // Due to it having to run on a very low grade server, this is the maximum amount of memory i can give it.
+    .WithVolume("fireyminecraftserver-volume", "/server")
     .WithDockerfileBuilder("../thefirey33-fireserver", context =>
     {
         var javaSdkStage = context.Builder.From("openjdk:25-rc-jdk-trixie");
-        
-        // Copy the server to the specified directory.
-        javaSdkStage.WorkDir("/server");
-        
-        // Stop caching for the copying process.
+
         javaSdkStage.Arg("CACHEBUST", "1");
         javaSdkStage.Run("echo \"$CACHEBUST\"");
+
+        // Copy the server to the specified directory.
+        javaSdkStage.WorkDir("/server");
+
+        // Stop caching for the copying process.
         javaSdkStage.Copy(".", ".");
-        
+        javaSdkStage.Copy("start.sh", ".");
+
         // Continue caching after it's done.
-        javaSdkStage.Arg("CACHEBUST", "0");
-        javaSdkStage.Run("echo \"$CACHEBUST\"");
-        
-        
         // Run the server with the entrypoint command.
-        javaSdkStage.Run("chmod +x ./gradlew");
+        javaSdkStage.Run("chmod +x ./start.sh");
         javaSdkStage.Expose(25565);
         // Build and run the server.
-        javaSdkStage.Run("./gradlew build");
-        javaSdkStage.Entrypoint(["./gradlew", "runServer"]);
-        
+
+        javaSdkStage.Entrypoint(["./start.sh"]);
+
         return Task.CompletedTask;
     });
 

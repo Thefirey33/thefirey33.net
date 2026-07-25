@@ -36,7 +36,7 @@ public final class Thefirey33Fireserver extends JavaPlugin {
         // Register the server cleanup handler, that cleans up left over items on the floor.
         scheduler.runTaskTimer(this, new LagCleanupHandler(this), 0, MinutesTicks);
         // Register the server status handler, which reports the status of the server.
-        scheduler.runTaskTimer(this, new ServerStatusHandler(this), MinutesTicks, MinutesTicks);
+        scheduler.runTaskTimer(this, new ServerStatusHandler(this), 0, 20);
 
         scheduler.runTaskAsynchronously(this, () -> {
             // Run the

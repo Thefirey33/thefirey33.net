@@ -15,12 +15,6 @@ public class DataController(
     ILogger<DataController> logger) : ControllerBase
 {
     /// <summary>
-    ///     This exif tag shows a disclaimer that basically says that this image belongs to this website's origin.
-    /// </summary>
-    private const string DisclaimerExif =
-        "Image Origin is Thefirey33's Website and belongs to the author that made it!";
-
-    /// <summary>
     ///     The color of the watermark image.
     /// </summary>
     private readonly SKPaint _skWatermarkOverlayPaint = new()
@@ -40,9 +34,14 @@ public class DataController(
     /// <param name="uuid">The uuid of the file.</param>
     /// <param name="protected">If the image is protected or not?</param>
     [HttpGet("{uuid}")]
-    [OutputCache(Duration = TimeSpan.HoursPerDay * 3600)]
+    [OutputCache(Duration = 24 * 3600)]
     public async Task<IActionResult> Get(string uuid, [FromQuery(Name = "pr")] bool @protected = false)
     {
+        // If the user is unauthorized, do not allow it to show the unprotected image.
+        var userIdentity = HttpContext.User.Identity;
+        if (userIdentity is { IsAuthenticated: false } && !@protected)
+            return Unauthorized();
+
         var file = Directory.GetFiles(dataService.StoragePath)
             .FirstOrDefault(f => Path.GetFileNameWithoutExtension(f).Contains(uuid));
 
@@ -55,7 +54,8 @@ public class DataController(
         var byteData = await dataService.ReadBytes(file);
         var isImageFile = contentType.StartsWith("image");
 
-        if (!@protected || !isImageFile) return File(byteData, contentType);
+        if (!isImageFile || !@protected)
+            return File(byteData, contentType);
 
         logger.LogInformation("Processing image with watermark...");
 

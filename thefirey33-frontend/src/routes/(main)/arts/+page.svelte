@@ -2,33 +2,38 @@
     import BackgroundElement from "$lib/components/BackgroundElement.svelte";
     import BackgroundImage from "$lib/assets/img/wallpapers/artsWallpaper.png"
     import CloseableMenu from "$lib/components/other/CloseableMenu.svelte";
+    import {resolve} from "$app/paths";
 
     let {data} = $props();
 </script>
 
 <BackgroundElement urlBackground={BackgroundImage}/>
 
-<div class="bg-black p-4 w-full flex flex-col gap-4 border-4 border-(--border-color)">
-    <h1 class="text-white text-center text-3xl">Arts!</h1>
-    <p class="text-white">Each of these arts are made by very cool ppl!!</p>
+<div class="bg-black text-white md:text-xl p-4 w-full flex text-center  flex-col gap-4 border-4 border-(--border-color)">
+    <h1 class="text-3xl">Arts!</h1>
+    <p>Each of these arts are made by very cool ppl and they deserve attention!! :3</p>
+    <p>I appreciate all of it, i love y'all &lt;3 /p!!</p>
+    <em>To submit an art piece, send it to me via DMs!</em>
     {#each data.data as artData, index (index)}
         <CloseableMenu title={`Category: ${artData[0]}`}>
-            <div class="grid grid-cols-2 grid-flow-dense gap-4">
+            <div class="md:grid md:grid-cols-2 flex flex-col grid-flow-dense gap-4">
                 {#each artData[1] as artDataPortion, index (index)}
-                    <article
-                            class="border-2 gap-3 border-(--border-color) items-center md:p-4 p-2 flex xl:flex-row flex-col">
+                    <a class="group h-full border-2 hover:bg-(--border-color) transition-all hover:text-black gap-3 border-(--border-color) items-center md:p-4 p-2 flex xl:flex-row flex-col"
+                       href={resolve("/api/data/[uuid]?pr=true", {
+                            uuid: artDataPortion.uuid
+                        })}>
                         <img draggable="false" oncontextmenu={(e) => e.preventDefault()} width="200"
-                             class="xl:w-[60%] ring-2 ring-white p-1"
+                             class="xl:w-[60%] h-full ring-2 transition-all group-hover:ring-black ring-white p-1"
                              src={`/api/data/${artDataPortion.uuid}?pr=true`}
                              alt="Art!"/>
                         <div class="flex flex-col text-center m-auto">
-                            <h1 class="text-white md:text-3xl">
+                            <h1 class="md:text-3xl">
                                 {artDataPortion.title}
-                                <em class="text-white">({artDataPortion.author})</em>
+                                <em>({artDataPortion.author})</em>
                             </h1>
-                            <p class="text-white">{artDataPortion.description}</p>
+                            <p>{artDataPortion.description}</p>
                         </div>
-                    </article>
+                    </a>
                 {/each}
             </div>
         </CloseableMenu>

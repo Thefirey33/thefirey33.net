@@ -11,6 +11,8 @@
     import NikoDexRecoveryIcon from "$lib/assets/img/icons/nikodexbackup.png";
     import MetaTagsElement from "$lib/components/other/MetaTagsElement.svelte";
     import DropdownElement from "$lib/components/navigationbar/DropdownElement.svelte";
+    import ProgressBarElement from "$lib/components/other/ProgressBarElement.svelte";
+
 
     let {children} = $props();
 
@@ -19,6 +21,7 @@
 
 </script>
 
+<ProgressBarElement/>
 <MetaTagsElement
         description="the thefirey33 network!"
         image=""

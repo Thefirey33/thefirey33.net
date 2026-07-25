@@ -2,7 +2,7 @@
     import BackgroundElement from "$lib/components/BackgroundElement.svelte";
     import BackgroundImage from "$lib/assets/img/wallpapers/aboutScreenWallpaper.png"
 
-    import BigIconImage from "$lib/assets/img/other/frontpage-icon.png"
+    import BigIconImage from "$lib/assets/img/other/frontpageIcon.png"
     import {resolve} from "$app/paths";
 
     import {Temporal} from "@js-temporal/polyfill";
@@ -119,8 +119,7 @@
 
     <div class="grid grid-cols-2  gap-2 flex-wrap">
         {#each SocialsData as socialData, index (index)}
-            <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-            <a href={socialData.href}
+            <a href={socialData.href} rel="external"
                class="text-white hover:bg-white hover:text-black transition border-b p-2 items-center gap-2 flex-wrap flex">
                 <img src={`https://www.google.com/s2/favicons?domain=${socialData.href}&sz=${32}`}
                      alt="Favicon of {socialData.name}"/>

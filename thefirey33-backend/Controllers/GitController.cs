@@ -1,39 +1,84 @@
-using System.Text.Json;
+using System.Net;
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using StackExchange.Redis;
-using thefirey33_backend.Services;
 using thefirey33_backend.Types;
 
 namespace thefirey33_backend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class GitController(IConnectionMultiplexer connectionMultiplexer) : ControllerBase
+public class GitController(IConnectionMultiplexer connectionMultiplexer, IHttpClientFactory httpClientFactory)
+    : ControllerBase
 {
     /// <summary>
-    ///     Attempt to get the specified GitHub data from the GitHub API, which is cached in Redis.
+    ///     The duration of how long the data is cached for.
+    /// </summary>
+    private const int CacheDuration = 120 * 60;
+
+    /// <summary>
+    ///     The HTTP client that will make requests.
+    /// </summary>
+    private readonly HttpClient _client = httpClientFactory.CreateClient("GitHubAPI");
+
+    /// <summary>
+    ///     The user agent that will be parsed.
+    /// </summary>
+    private static ProductInfoHeaderValue ProductInfoHeaderValue => ProductInfoHeaderValue.Parse("FireServer");
+
+    /// <summary>
+    ///     Attempted to get the tentrillion commit history.
     /// </summary>
     [HttpGet]
-    public IActionResult Get()
+    [OutputCache(Duration = CacheDuration)]
+    public async Task<IActionResult> Get()
     {
-        var database = connectionMultiplexer.GetDatabase();
+        var requestMessage = new HttpRequestMessage
+        {
+            RequestUri =
+                new Uri($"{_client.BaseAddress}repos/tentrillion-game-engine/tentrillion-game-engine/commits"),
+            Headers =
+            {
+                UserAgent = { ProductInfoHeaderValue }
+            }
+        };
 
-        // Attempt to receive the specified data from the Redis Cache.
-        string? receivedData = database.StringGet(GitService.GitDataRedisKey);
+        var result =
+            await _client.SendAsync(requestMessage);
+        if (result.StatusCode != HttpStatusCode.OK)
+            return StatusCode(Convert.ToInt32(result.StatusCode), result.Content);
 
-        // If the received data from the Redis is NULL, 
-        // // Then return 404.
-        if (receivedData == null)
-            return NotFound();
+        return Ok(await result.Content.ReadFromJsonAsync<List<TenTrillionGitType>>());
+    }
 
-        var data = JsonSerializer.Deserialize<GitWrapper>(receivedData);
+    /// <summary>
+    ///     Attempt to get all of my repositories.
+    /// </summary>
+    [HttpGet("repositories")]
+    [OutputCache(Duration = CacheDuration)]
+    public async Task<IActionResult> GetRepositories()
+    {
+        var requestMessage = new HttpRequestMessage
+        {
+            RequestUri = new Uri($"{_client.BaseAddress}users/thefirey33/repos"),
+            Headers =
+            {
+                UserAgent = { ProductInfoHeaderValue }
+            }
+        };
 
-        // If the JSON wasn't able to be parsed or is empty,
-        // Then return 404.
-        if (data == null)
-            return NotFound();
+        var result = await _client.SendAsync(requestMessage);
+        if (result.StatusCode != HttpStatusCode.OK)
+            return StatusCode(Convert.ToInt32(result.StatusCode), result.Content);
 
-        // Finally return the specified data.
-        return Ok(data.GitData);
+        var content = await result.Content.ReadFromJsonAsync<List<RepositoryGitType>>();
+        if (content == null) return NotFound();
+
+        var orderedResult = content
+            .OrderBy(type => type.CreatedAt)
+            .Reverse();
+
+        return Ok(orderedResult);
     }
 }

@@ -1,0 +1,141 @@
+[
+	{
+		"identifier": "c",
+		"name": "C",
+		"learn_more": "https://www.c-language.org/"
+	},
+	{
+		"identifier": "cs",
+		"name": "C#",
+		"learn_more": "https://learn.microsoft.com/dotnet/csharp/"
+	},
+	{
+		"identifier": "cpp",
+		"name": "C++",
+		"learn_more": "https://isocpp.org/"
+	},
+	{
+		"identifier": "python",
+		"name": "Python",
+		"learn_more": "https://www.python.org/"
+	},
+	{
+		"identifier": "ts",
+		"name": "TypeScript",
+		"learn_more": "https://www.typescriptlang.org/"
+	},
+	{
+		"identifier": "java",
+		"name": "Java",
+		"learn_more": "https://www.java.com/tr/"
+	},
+	{
+		"identifier": "php",
+		"name": "PHP",
+		"learn_more": "https://www.php.net/"
+	},
+	{
+		"identifier": "js",
+		"name": "JavaScript",
+		"learn_more": "https://en.wikipedia.org/wiki/JavaScript"
+	},
+	{
+		"identifier": "gd",
+		"name": "GDScript",
+		"learn_more": "https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html"
+	},
+	{
+		"identifier": "lua",
+		"name": "Lua",
+		"learn_more": "https://www.lua.org/"
+	},
+	{
+		"identifier": "react",
+		"name": "React JS",
+		"learn_more": "https://react.dev/"
+	},
+	{
+		"identifier": "svelte",
+		"name": "Svelte",
+		"learn_more": "https://svelte.dev/"
+	},
+	{
+		"identifier": "unity",
+		"name": "Unity",
+		"learn_more": "https://unity.com/"
+	},
+	{
+		"identifier": "godot",
+		"name": "Godot",
+		"learn_more": "https://godotengine.org/"
+	},
+	{
+		"identifier": "gamemaker",
+		"name": "GameMaker",
+		"learn_more": "https://gamemaker.io/en"
+	},
+	{
+		"identifier": "aspire",
+		"name": "Aspire",
+		"learn_more": "https://aspire.dev/"
+	},
+	{
+		"identifier": "vite",
+		"name": "Vite",
+		"learn_more": "https://vite.dev/"
+	},
+	{
+		"identifier": "webpack",
+		"name": "Webpack",
+		"learn_more": "https://webpack.js.org/"
+	},
+	{
+		"identifier": "redis",
+		"name": "Redis",
+		"learn_more": "https://redis.io/"
+	},
+	{
+		"identifier": "fastapi",
+		"name": "FastAPI",
+		"learn_more": "https://fastapi.tiangolo.com/"
+	},
+	{
+		"identifier": "aspnet",
+		"name": "ASP.NET",
+		"learn_more": "https://dotnet.microsoft.com/en-us/apps/aspnet"
+	},
+	{
+		"identifier": "docker",
+		"name": "Docker",
+		"learn_more": "https://www.docker.com/"
+	},
+	{
+		"identifier": "cmake",
+		"name": "CMake",
+		"learn_more": "https://cmake.org/"
+	},
+	{
+		"identifier": "msbuild",
+		"name": "MSBuild",
+		"learn_more": "https://github.com/dotnet/msbuild"
+	},
+	{
+		"identifier": "postgres",
+		"name": "PostgreSQL",
+		"learn_more": "https://www.postgresql.org/"
+	},
+	{
+		"identifier": "mysql",
+		"name": "MySQL",
+		"learn_more": "https://www.mysql.com/"
+	},
+	{
+		"identifier": "sqlite",
+		"name": "SQLite",
+		"learn_more": "https://sqlite.org/"
+	},
+	{
+		"identifier": "makefile",
+		"name": "Makefile"
+	}
+]

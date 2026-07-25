@@ -67,6 +67,43 @@ namespace thefirey33_backend.Migrations
 
                     b.ToTable("Arts");
                 });
+
+            modelBuilder.Entity("thefirey33_backend.Types.Database.LikesDbType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ArtDbTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Origin")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArtDbTypeId");
+
+                    b.ToTable("LikesDbType");
+
+                    b.HasAnnotation("Relational:JsonPropertyName", "likes");
+                });
+
+            modelBuilder.Entity("thefirey33_backend.Types.Database.LikesDbType", b =>
+                {
+                    b.HasOne("thefirey33_backend.Types.Database.ArtDbType", null)
+                        .WithMany("Likes")
+                        .HasForeignKey("ArtDbTypeId");
+                });
+
+            modelBuilder.Entity("thefirey33_backend.Types.Database.ArtDbType", b =>
+                {
+                    b.Navigation("Likes");
+                });
 #pragma warning restore 612, 618
         }
     }

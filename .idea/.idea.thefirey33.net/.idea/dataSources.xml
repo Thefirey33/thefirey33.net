@@ -11,11 +11,11 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="fireydatabase" uuid="7effc4ac-9054-4f61-8382-6d5a9518a380">
+    <data-source source="LOCAL" name="fireydatabase" uuid="01d5c750-d91c-4a40-a043-8fe4b834755c">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:34805/?password=kWS0jm..T9%2Bn%29x8E-nT8q*&amp;user=postgres</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:40913/?password=kWS0jm..T9%2Bn%29x8E-nT8q*&amp;user=postgres</jdbc-url>
       <jdbc-additional-properties>
         <property name="aspireResourceId" value="fireydatabase-ad05a781" />
       </jdbc-additional-properties>

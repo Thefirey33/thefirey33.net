@@ -22,7 +22,6 @@ builder.Services
         options.Cookie.HttpOnly = false;
     });
 
-builder.Services.AddHostedService<GitService>();
 builder.Services.AddSingleton<DataService>();
 
 // Add database context.
@@ -46,6 +45,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ??
                                                                                throw new NullReferenceException(
                                                                                    "JWT Key must be provided!")))
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                // Attempt to get the associated JWT bearer token.
+                if (context.Request.Cookies.TryGetValue("Token", out var token))
+                    context.Token = token;
+
+                return Task.CompletedTask;
+            }
         };
     });
 
