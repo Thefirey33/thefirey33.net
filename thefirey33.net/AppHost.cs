@@ -77,19 +77,15 @@ var gradleMinecraftServer = builder
     {
         var javaSdkStage = context.Builder.From("openjdk:25-rc-jdk-trixie");
 
-        javaSdkStage.Arg("CACHEBUST", "1");
-        javaSdkStage.Run("echo \"$CACHEBUST\"");
-
         // Copy the server to the specified directory.
         javaSdkStage.WorkDir("/server");
 
         // Stop caching for the copying process.
         javaSdkStage.Copy(".", ".");
-        javaSdkStage.Copy("start.sh", ".");
 
         // Continue caching after it's done.
         // Run the server with the entrypoint command.
-        javaSdkStage.Run("chmod +x ./start.sh");
+        javaSdkStage.Run("chmod +x ./gradlew");
         javaSdkStage.Expose(25565);
         // Build and run the server.
 
