@@ -11,13 +11,23 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="fireydatabase" uuid="01d5c750-d91c-4a40-a043-8fe4b834755c">
+    <data-source source="LOCAL" name="fireydatabase" uuid="e2eac458-6959-481b-81f4-2e1ff0e90c02">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:40913/?password=kWS0jm..T9%2Bn%29x8E-nT8q*&amp;user=postgres</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:32773/?password=kWS0jm..T9%2Bn%29x8E-nT8q*&amp;user=postgres</jdbc-url>
       <jdbc-additional-properties>
         <property name="aspireResourceId" value="fireydatabase-ad05a781" />
+      </jdbc-additional-properties>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="fireycache" uuid="fde649e9-2077-4b9a-b06e-dea653d5c649">
+      <driver-ref>redis</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>jdbc.RedisDriver</jdbc-driver>
+      <jdbc-url>jdbc:redis://750BZxrDk1gK49RJrJg1y9@localhost:33087?ssl=true&amp;verifyServerCertificate=false</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="aspireResourceId" value="fireycache-gqdwvxzu" />
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>

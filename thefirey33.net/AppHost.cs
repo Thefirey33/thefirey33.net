@@ -57,26 +57,19 @@ var backend =
 
 scalar.WithApiReference(backend);
 
-// The port for the API server of the Minecraft Server.
-const int gradleServerApiPort = 7000;
 
 // This is the Minecraft server that runs in a docker container.
 // It exposes the default Minecraft Server port, and automatically starts.
 var gradleMinecraftServer = builder
     .AddDockerfile("fireyminecraftserver", "../thefirey33-fireserver")
     .WithHttpEndpoint(25565, 25565, isProxied: false)
-    .WithHttpEndpoint(gradleServerApiPort, gradleServerApiPort, "serverapi", isProxied: false)
-    .WithEnvironment("SPRINGBOOT_PORT", gradleServerApiPort.ToString)
     .WithExternalHttpEndpoints()
-    .WithReference(backend.GetEndpoint("http"))
     .WithLifetime(ContainerLifetime.Persistent)
-    .WithContainerRuntimeArgs("-m", "1g", "--memory-swap",
-        "8g") // Due to it having to run on a very low grade server, this is the maximum amount of memory i can give it.
+    .WithContainerRuntimeArgs("-m", "1g", "--memory-swap", "8g")
     .WithVolume("fireyminecraftserver-volume", "/server")
     .WithDockerfileBuilder("../thefirey33-fireserver", context =>
     {
-        var javaSdkStage = context.Builder.From("openjdk:25-rc-jdk-trixie");
-
+        var javaSdkStage = context.Builder.From("eclipse-temurin:17-jdk-alpine");
         // Copy the server to the specified directory.
         javaSdkStage.WorkDir("/server");
 
@@ -89,8 +82,7 @@ var gradleMinecraftServer = builder
         javaSdkStage.Expose(25565);
         // Build and run the server.
 
-        javaSdkStage.Entrypoint(["./start.sh"]);
-
+        javaSdkStage.Entrypoint(["./gradlew", "runServer"]);
         return Task.CompletedTask;
     });
 
