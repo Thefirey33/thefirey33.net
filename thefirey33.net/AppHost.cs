@@ -65,7 +65,6 @@ var gradleMinecraftServer = builder
     .WithHttpEndpoint(25565, 25565, isProxied: false)
     .WithExternalHttpEndpoints()
     .WithLifetime(ContainerLifetime.Persistent)
-    .WithContainerRuntimeArgs("-m", "1g", "--memory-swap", "8g")
     .WithVolume("fireyminecraftserver-volume", "/server")
     .WithDockerfileBuilder("../thefirey33-fireserver", context =>
     {

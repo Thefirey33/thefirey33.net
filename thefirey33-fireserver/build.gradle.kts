@@ -17,6 +17,12 @@ java {
 }
 
 tasks {
+
+    named<JavaExec>("runServer") {
+        minHeapSize = "4G"
+        maxHeapSize = "8GB"
+    }
+    
     runServer {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
