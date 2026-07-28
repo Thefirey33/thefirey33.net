@@ -9,9 +9,15 @@ var builder = DistributedApplication.CreateBuilder(args);
 var compose =
     builder.AddDockerComposeEnvironment("compose");
 
-
+// The admin username of the admin interface.
 var adminUsername = builder.AddParameter("admin-username");
+
+// The admin password of the admin interface.
 var adminPassword = builder.AddParameter("admin-password");
+
+// The operator parameter.
+// Basically defines the operator of the Minecraft server.
+var trustedOperatorUuid = builder.AddParameter("trusted-operator-uuid");
 
 // The caching/redis service for the backend.
 var redis
@@ -57,51 +63,50 @@ var backend =
 
 scalar.WithApiReference(backend);
 
+const int minecraftServerApiEndpoint = 7000;
 
 // This is the Minecraft server that runs in a docker container.
 // It exposes the default Minecraft Server port, and automatically starts.
 var gradleMinecraftServer = builder
     .AddDockerfile("fireyminecraftserver", "../thefirey33-fireserver")
-    .WithHttpEndpoint(25565, 25565, isProxied: false)
-    .WithExternalHttpEndpoints()
+    .WithEndpoint(25565, 25565, isProxied: false)
+    .WithHttpEndpoint(minecraftServerApiEndpoint, minecraftServerApiEndpoint, isProxied: false, name: "api")
+    .WithEnvironment("SERVER_ENDPOINT", minecraftServerApiEndpoint.ToString)
+    .WithEnvironment("TRUSTED_OPERATOR_UUID", trustedOperatorUuid)
     .WithLifetime(ContainerLifetime.Persistent)
-    .WithVolume("fireyminecraftserver-volume", "/server")
+    .WithVolume("/data")
+    .WithExternalHttpEndpoints()
     .WithDockerfileBuilder("../thefirey33-fireserver", context =>
     {
-        var javaSdkStage = context.Builder.From("eclipse-temurin:17-jdk-alpine");
-        // Copy the server to the specified directory.
-        javaSdkStage.WorkDir("/server");
+        var fireServerPluginStage = context.Builder.From("eclipse-temurin:17-jdk-alpine", "builderfireserver");
+        fireServerPluginStage.WorkDir("/compile");
+        fireServerPluginStage.Copy(".", ".");
+        fireServerPluginStage.Run("chmod +x ./gradlew");
+        fireServerPluginStage.Run("./gradlew build");
 
-        // Stop caching for the copying process.
-        javaSdkStage.Copy(".", ".");
+        var runnerStage = context.Builder.From("marctv/minecraft-papermc-server:1.20.1", "runner");
+        runnerStage.Env("MEMORYSIZE", "6G");
+        runnerStage.CopyFrom("builderfireserver", "/compile/build/libs/*.jar", "./plugins/");
+        runnerStage.Expose(25565);
 
-        // Continue caching after it's done.
-        // Run the server with the entrypoint command.
-        javaSdkStage.Run("chmod +x ./gradlew");
-        javaSdkStage.Expose(25565);
-        // Build and run the server.
-
-        javaSdkStage.Entrypoint(["./gradlew", "runServer"]);
         return Task.CompletedTask;
     });
 
-// Add the front end API to the stack.
+// Add the front-end API to the stack.
+// This connects with the main backend (port 5540) and the minecraft backend. (port 7000)
 var frontend = builder
     .AddViteApp("fireyfrontend", "../thefirey33-frontend")
-    .PublishAsNodeServer("build/index.js", "build")
+    .PublishAsDockerFile()
+    .WithNpm()
     .WithHttpEndpoint(5000, 5000, isProxied: false)
     .PublishAsStaticWebsite()
     .WithExternalHttpEndpoints()
-    .WaitFor(backend);
+    .WithReference(backend.GetEndpoint("api"))
+    .WithReference(gradleMinecraftServer.GetEndpoint("api"))
+    .WaitFor(backend)
+    .WaitFor(gradleMinecraftServer);
 
-// This is the backend for the website.
-// Showing the status of the Minecraft Server and keeping backups of the NikoDex.
-backend
-    .WithReference(frontend.GetEndpoint("http"))
-    .WithReference(gradleMinecraftServer.GetEndpoint("http"));
-
-// Reference the frontend with the backend.
-frontend
-    .WithReference(backend.GetEndpoint("api"));
+// Reference the front-end for the CORS policy.
+backend.WithReference(frontend.GetEndpoint("http"));
 
 builder.Build().Run();

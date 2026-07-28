@@ -10,6 +10,9 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
+    implementation("io.javalin:javalin:7.2.2")
+    implementation("org.slf4j:slf4j-simple:2.0.18")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.1")
 }
 
 java {
@@ -22,7 +25,7 @@ tasks {
         minHeapSize = "4G"
         maxHeapSize = "8GB"
     }
-    
+
     runServer {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.

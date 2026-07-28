@@ -8,3 +8,8 @@ load: POSTWORLD
 
 authors: [ Thefirey33 ]
 website: https://thefirey33.net
+
+libraries:
+  - "io.javalin:javalin:7.2.2"
+  - "org.slf4j:slf4j-simple:2.0.18"
+  - "com.fasterxml.jackson.core:jackson-databind:2.22.1"

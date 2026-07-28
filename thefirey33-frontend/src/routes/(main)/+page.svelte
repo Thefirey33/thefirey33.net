@@ -6,7 +6,7 @@
     import {resolve} from "$app/paths";
 
     import {Temporal} from "@js-temporal/polyfill";
-    import SocialsData from "$lib/assets/data/socials.json"
+    import SocialsData from "$lib/assets/data/json/socials.json"
     import {onMount} from "svelte";
 
     let temporalTime: Temporal.ZonedDateTime = $state(Temporal.Now.zonedDateTimeISO("Europe/Istanbul"));

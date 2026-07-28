@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +55,7 @@ public class ArtController(ArtsContext artsContext, DataService dataService) : C
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> PostArt([FromForm] ArtDbRequest artDbRequest,
         IFormFile file)
     {

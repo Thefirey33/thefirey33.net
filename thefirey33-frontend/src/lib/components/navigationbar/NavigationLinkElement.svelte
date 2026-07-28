@@ -7,7 +7,7 @@
     let isEqual = $derived(page.url.pathname === href);
 </script>
 
-<a class="btn flex flex-row gap-2 group {isEqual && "bg-(--border-color) text-black"} items-center content-center text-center"
+<a class="btn flex flex-row gap-2 group {isEqual && "bg-(--border-color) text-black"} items-center content-center text-center "
    href={resolve(href)}>
     {#if (imgSrc.length > 0)}
         <img alt={alt} class="group-hover:invert transition {isEqual && "invert"}" src={imgSrc}/>

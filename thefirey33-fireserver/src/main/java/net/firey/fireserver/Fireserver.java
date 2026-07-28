@@ -1,6 +1,8 @@
 package net.firey.fireserver;
 
-import net.firey.fireserver.events.PlayerListener;
+import net.firey.fireserver.apiserver.ApiServer;
+import net.firey.fireserver.events.ChatMessageStatusEvent;
+import net.firey.fireserver.events.OperatorCertificationEvent;
 import net.firey.fireserver.events.ServerPingEvent;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
@@ -15,11 +17,13 @@ public final class Fireserver extends JavaPlugin {
         BukkitScheduler scheduler = server.getScheduler();
         PluginManager pluginManager = server.getPluginManager();
 
-        pluginManager.registerEvents(new PlayerListener(), this);
+        // Register the event listeners.
         pluginManager.registerEvents(new ServerPingEvent(), this);
-        
-        scheduler.runTaskTimer(this, () -> {
-            server.getOnlinePlayers().forEach(ServerDisplayStatsHandler::DisplayStats);
-        }, 0, 20);
+        pluginManager.registerEvents(new OperatorCertificationEvent(), this);
+        pluginManager.registerEvents(new ChatMessageStatusEvent(), this);
+
+        // Run the task timer that displays the current status of the server.
+        scheduler.runTaskTimer(this, () -> server.getOnlinePlayers().forEach(ServerDisplayStatsHandler::DisplayStats), 0, 20);
+        scheduler.runTaskAsynchronously(this, new ApiServer(this));
     }
 }

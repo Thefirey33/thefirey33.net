@@ -3,6 +3,7 @@
     import TenTrillionWallpaper from "$lib/assets/img/wallpapers/tentrillionWallpaper.png"
     import ReadCommitIcon from "$lib/assets/img/icons/read.png"
     import TenTrillionIcon from "$lib/assets/img/icons/tentrillion.png"
+    import BackendWarning from "$lib/components/other/BackendWarning.svelte";
 
     let {data} = $props();
 
@@ -54,26 +55,31 @@
     </div>
 
     <span class="max-h-120 w-full overflow-auto border-2 border-(--border-color) scrollbar-gutter-stable">
-    {#each data.gitData as gitCommit, index (index)}
-        <div class="bg-black w-full border-2 flex flex-col gap-4 p-4 border-(--border-color)">
-            <p class="text-white flex flex-row items-center gap-4">
-                <a href={gitCommit.html_url} class="text-white">
-                    {gitCommit.sha.substring(0, 10)}
-                </a>
-                <a href={gitCommit.author.html_url}
-                   class="flex flex-row items-center gap-4 hover:bg-white hover:text-black p-2 transition">
-                    <img width="50" height="50" src={gitCommit.author.avatar_url}
-                         alt="Profile Picture of {gitCommit.author.login}">
-                    {gitCommit.author.login}
-                </a>
-            </p>
-            <p class="text-white">{gitCommit.commit.message}</p>
-            <a href={gitCommit.html_url}
-               class="text-white text-xl group items-center btn flex-wrap flex justify-center gap-4">
-                <img src={ReadCommitIcon} class="group-hover:invert transition" alt="Hand Pointing to Right Icon"/>
-                <p class="group-hover:invert transition">Read Commit {gitCommit.sha.substring(0, 10)}</p>
-            </a>
-        </div>
-    {/each}
+
+        {#if (!data.gitData.success)}
+            <BackendWarning errorMessage={data.gitData.errorMessage}/>
+        {:else}
+            {#each data.gitData.message as gitCommit, index (index)}
+                <div class="bg-black w-full border-2 flex flex-col gap-4 p-4 border-(--border-color)">
+                    <p class="text-white flex flex-row items-center gap-4">
+                        <a href={gitCommit.html_url} class="text-white">
+                        {gitCommit.sha.substring(0, 10)}
+                        </a>
+                        <a href={gitCommit.author.html_url}
+                           class="flex flex-row items-center gap-4 hover:bg-white hover:text-black p-2 transition">
+                            <img width="50" height="50" src={gitCommit.author.avatar_url}
+                                 alt="Profile Picture of {gitCommit.author.login}">
+                            {gitCommit.author.login}
+                        </a>
+                    </p>
+                <p class="text-white">{gitCommit.commit.message}</p>
+                    <a href={gitCommit.html_url}
+                       class="text-white text-xl group items-center btn flex-wrap flex justify-center gap-4">
+                    <img src={ReadCommitIcon} class="group-hover:invert transition" alt="Hand Pointing to Right Icon"/>
+                    <p class="group-hover:invert transition">Read Commit {gitCommit.sha.substring(0, 10)}</p>
+                    </a>
+                </div>
+            {/each}
+        {/if}
     </span>
 </section>

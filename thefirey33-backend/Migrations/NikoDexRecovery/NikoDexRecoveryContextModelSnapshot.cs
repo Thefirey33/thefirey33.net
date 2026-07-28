@@ -21,6 +21,81 @@ namespace thefirey33_backend.Migrations.NikoDexRecovery
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("thefirey33_backend.Types.Database.Dex.AbilityTypeRecoveryDb", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasJsonPropertyName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasJsonPropertyName("name");
+
+                    b.Property<int?>("NikoTypeRecoveryDbId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NikoTypeRecoveryDbId");
+
+                    b.ToTable("AbilityTypeRecoveryDb");
+
+                    b.HasAnnotation("Relational:JsonPropertyName", "abilities");
+                });
+
+            modelBuilder.Entity("thefirey33_backend.Types.Database.Dex.NikoTypeRecoveryDb", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasJsonPropertyName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AuthorName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasJsonPropertyName("author_name");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasJsonPropertyName("description");
+
+                    b.Property<string>("FullDescription")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)")
+                        .HasJsonPropertyName("full_desc");
+
+                    b.Property<bool>("IsBlacklisted")
+                        .HasColumnType("boolean")
+                        .HasJsonPropertyName("is_blacklisted");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasJsonPropertyName("name");
+
+                    b.Property<int?>("NikoDexRecoveryDbTypeId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NikoDexRecoveryDbTypeId");
+
+                    b.ToTable("NikoTypeRecoveryDb");
+
+                    b.HasAnnotation("Relational:JsonPropertyName", "nikos");
+                });
+
             modelBuilder.Entity("thefirey33_backend.Types.Database.NikoDexRecoveryDbType", b =>
                 {
                     b.Property<int>("Id")
@@ -30,15 +105,33 @@ namespace thefirey33_backend.Migrations.NikoDexRecovery
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasJsonPropertyName("filepath");
-
                     b.HasKey("Id");
 
                     b.ToTable("NikoDexRecovery");
+                });
+
+            modelBuilder.Entity("thefirey33_backend.Types.Database.Dex.AbilityTypeRecoveryDb", b =>
+                {
+                    b.HasOne("thefirey33_backend.Types.Database.Dex.NikoTypeRecoveryDb", null)
+                        .WithMany("Abilities")
+                        .HasForeignKey("NikoTypeRecoveryDbId");
+                });
+
+            modelBuilder.Entity("thefirey33_backend.Types.Database.Dex.NikoTypeRecoveryDb", b =>
+                {
+                    b.HasOne("thefirey33_backend.Types.Database.NikoDexRecoveryDbType", null)
+                        .WithMany("Nikos")
+                        .HasForeignKey("NikoDexRecoveryDbTypeId");
+                });
+
+            modelBuilder.Entity("thefirey33_backend.Types.Database.Dex.NikoTypeRecoveryDb", b =>
+                {
+                    b.Navigation("Abilities");
+                });
+
+            modelBuilder.Entity("thefirey33_backend.Types.Database.NikoDexRecoveryDbType", b =>
+                {
+                    b.Navigation("Nikos");
                 });
 #pragma warning restore 612, 618
         }

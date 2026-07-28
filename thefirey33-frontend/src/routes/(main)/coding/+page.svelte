@@ -2,7 +2,8 @@
     import BackgroundElement from "$lib/components/BackgroundElement.svelte";
     import BackgroundImage from "$lib/assets/img/wallpapers/codingWallpaper.png"
     import ReadIcon from "$lib/assets/img/icons/read.png"
-    import ProgrammingDetails from "$lib/assets/data/programmingDetails.json"
+    import ProgrammingDetails from "$lib/assets/data/json/programmingDetails.json"
+    import BackendWarning from "$lib/components/other/BackendWarning.svelte";
 
     let {data} = $props();
 
@@ -66,7 +67,10 @@
 </div>
 
 <div class="flex flex-col gap-4 mt-10">
-    {#each data.repositories as dataPortion, index (index)}
+    {#if !data.repositories.success}
+        <BackendWarning errorMessage={data.repositories.errorMessage}/>
+    {:else}
+    {#each data.repositories.message as dataPortion, index (index)}
         <section class="bg-black border-4 border-(--border-color) flex flex-col gap-2 p-4">
             <div class="text-white flex truncate items-center flex-wrap gap-4 md:text-3xl not-md:font-bold">
                 <h2>{dataPortion.name}</h2>
@@ -82,4 +86,5 @@
             </a>
         </section>
     {/each}
+    {/if}
 </div>

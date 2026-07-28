@@ -12,6 +12,7 @@
     import MetaTagsElement from "$lib/components/other/MetaTagsElement.svelte";
     import DropdownElement from "$lib/components/navigationbar/DropdownElement.svelte";
     import ProgressBarElement from "$lib/components/other/ProgressBarElement.svelte";
+    import CopyrightInfo from "$lib/assets/img/icons/copyright.png"
 
 
     let {children} = $props();
@@ -43,8 +44,13 @@
 
             <!-- The other categories of the  -->
             <DropdownElement title="Others...">
-                <NavigationLinkElement href="/games" imgSrc={GamepadIcon}>Games</NavigationLinkElement>
-                <NavigationLinkElement href="/dex" imgSrc={NikoDexRecoveryIcon}>NikoDex Status</NavigationLinkElement>
+                <NavigationLinkElement href="/mc" imgSrc={GamepadIcon}>Minecraft</NavigationLinkElement>
+                <NavigationLinkElement href="/dex" imgSrc={NikoDexRecoveryIcon}>
+                    NikoDex Status
+                </NavigationLinkElement>
+                <NavigationLinkElement href="/copyright" imgSrc={CopyrightInfo}>
+                    Copyright Information
+                </NavigationLinkElement>
             </DropdownElement>
         </div>
     </div>
