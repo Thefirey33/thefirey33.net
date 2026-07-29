@@ -126,6 +126,6 @@
         </ul>
     </div>
     {#if (isExpanded)}
-        <p class="text-white max-h-30 not-md:max-w-80 ring-1 p-2 text-xl overflow-scroll">{fullDesc}</p>
+        <p class="text-white max-h-30 not-md:max-w-80 p-2 text-xl overflow-scroll">{fullDesc}</p>
     {/if}
 </div>
