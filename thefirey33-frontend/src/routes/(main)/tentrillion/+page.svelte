@@ -3,7 +3,7 @@
     import TenTrillionWallpaper from "$lib/assets/img/wallpapers/tentrillionWallpaper.png"
     import ReadCommitIcon from "$lib/assets/img/icons/read.png"
     import TenTrillionIcon from "$lib/assets/img/icons/tentrillion.png"
-    import BackendWarning from "$lib/components/other/BackendWarning.svelte";
+    import BackendWarningElement from "$lib/components/other/BackendWarningElement.svelte";
 
     let {data} = $props();
 
@@ -57,7 +57,7 @@
     <span class="max-h-120 w-full overflow-auto border-2 border-(--border-color) scrollbar-gutter-stable">
 
         {#if (!data.gitData.success)}
-            <BackendWarning errorMessage={data.gitData.errorMessage}/>
+            <BackendWarningElement errorMessage={data.gitData.errorMessage}/>
         {:else}
             {#each data.gitData.message as gitCommit, index (index)}
                 <div class="bg-black w-full border-2 flex flex-col gap-4 p-4 border-(--border-color)">

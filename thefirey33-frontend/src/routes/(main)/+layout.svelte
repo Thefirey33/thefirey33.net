@@ -12,7 +12,8 @@
     import MetaTagsElement from "$lib/components/other/MetaTagsElement.svelte";
     import DropdownElement from "$lib/components/navigationbar/DropdownElement.svelte";
     import ProgressBarElement from "$lib/components/other/ProgressBarElement.svelte";
-    import CopyrightInfo from "$lib/assets/img/icons/copyright.png"
+    import AuthenticityIcon from "$lib/assets/img/icons/authenticity.png"
+    import ToastNotificationElement from "$lib/components/other/ToastNotificationElement.svelte";
 
 
     let {children} = $props();
@@ -40,23 +41,22 @@
             <NavigationLinkElement href="/tentrillion" imgSrc={TenTrillionIcon}>TenTrillion</NavigationLinkElement>
             <NavigationLinkElement href="/arts" imgSrc={ArtIcon}>Arts</NavigationLinkElement>
             <NavigationLinkElement href="/coding" imgSrc={ProgrammingIcon}>Coding</NavigationLinkElement>
-            <NavigationLinkElement href="/lore" imgSrc={LoreIcon}>Lore</NavigationLinkElement>
+            <NavigationLinkElement href="/mc" imgSrc={GamepadIcon}>Minecraft</NavigationLinkElement>
+            <NavigationLinkElement href="/dex" imgSrc={NikoDexRecoveryIcon}>
+                NikoDex Status
+            </NavigationLinkElement>
 
-            <!-- The other categories of the  -->
-            <DropdownElement title="Others...">
-                <NavigationLinkElement href="/mc" imgSrc={GamepadIcon}>Minecraft</NavigationLinkElement>
-                <NavigationLinkElement href="/dex" imgSrc={NikoDexRecoveryIcon}>
-                    NikoDex Status
-                </NavigationLinkElement>
-                <NavigationLinkElement href="/copyright" imgSrc={CopyrightInfo}>
-                    Copyright Information
-                </NavigationLinkElement>
+            <DropdownElement title="Serious Topics...">
+                <NavigationLinkElement href="/lore" imgSrc={LoreIcon}>Lore</NavigationLinkElement>
+                <NavigationLinkElement href="/disclaimer" imgSrc={AuthenticityIcon}>Disclaimers</NavigationLinkElement>
             </DropdownElement>
         </div>
     </div>
 </nav>
 
+
 <!-- Actual content goes here. Maximum width is 1200px. -->
 <div class="max-w-400 min-w-90 h-full pt-25 m-auto p-7">
+    <ToastNotificationElement/>
     {@render children()}
 </div>

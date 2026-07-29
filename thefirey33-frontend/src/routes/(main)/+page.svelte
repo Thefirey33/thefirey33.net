@@ -77,7 +77,7 @@
             handle = requestAnimationFrame(updateClock);
         }
 
-        // Clear the TimeOut after the component is unmounted.
+        // Clear the TimeOut after the Disclaimer is unmounted.
         return () => {
             cancelAnimationFrame(handle);
         }

@@ -18,6 +18,10 @@ body {
         @apply bg-black text-white text-2xl border-4 min-w-25 p-2 border-(--border-color) hover:bg-(--border-color) hover:text-black transition-all cursor-pointer;
     }
 
+    table, th, td {
+        @apply border border-gray-800 p-2 bg-black;
+    }
+
     .section-title {
         @apply text-black bg-white font-bold text-center 2xl:text-4xl text-2xl
     }

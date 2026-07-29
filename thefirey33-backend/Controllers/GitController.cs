@@ -2,14 +2,13 @@ using System.Net;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
-using StackExchange.Redis;
 using thefirey33_backend.Types;
 
 namespace thefirey33_backend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class GitController(IConnectionMultiplexer connectionMultiplexer, IHttpClientFactory httpClientFactory)
+public class GitController(IHttpClientFactory httpClientFactory)
     : ControllerBase
 {
     /// <summary>

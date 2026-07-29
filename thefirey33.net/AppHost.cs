@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Hosting;
 using Projects;
 using Scalar.Aspire;
 
@@ -42,8 +43,9 @@ var nikoDexBackupDb = postgresSql.AddDatabase("nikodexdb");
 // This is where all the arts that were made for Thefirey33, or by me will be uploaded.
 var artPostingDb = postgresSql.AddDatabase("artdb");
 
-// This will be used for one game in the website, called "Kasane Teto Staring Simulator"
-var highScoreDb = postgresSql.AddDatabase("scoredb");
+// This is for the advanced whitelisting system in the Minecraft server.
+// Each joining user will require approval.
+var approvalDb = postgresSql.AddDatabase("approvaldb");
 
 var scalar = builder.AddScalarApiReference();
 
@@ -56,7 +58,6 @@ var backend =
         .WithReference(redis)
         .WithReference(nikoDexBackupDb)
         .WithReference(artPostingDb)
-        .WithReference(highScoreDb)
         .WithEnvironment("ADMIN_USERNAME", adminUsername)
         .WithEnvironment("ADMIN_PASSWORD", adminPassword)
         .WithHttpEndpoint(5540, 5540, isProxied: false, name: "api");
@@ -73,8 +74,11 @@ var gradleMinecraftServer = builder
     .WithHttpEndpoint(minecraftServerApiEndpoint, minecraftServerApiEndpoint, isProxied: false, name: "api")
     .WithEnvironment("SERVER_ENDPOINT", minecraftServerApiEndpoint.ToString)
     .WithEnvironment("TRUSTED_OPERATOR_UUID", trustedOperatorUuid)
+    .WithEnvironment("ADMIN_USERNAME", adminUsername)
+    .WithEnvironment("ADMIN_PASSWORD", adminPassword)
+    .WithReference(backend.GetEndpoint("api"))
     .WithLifetime(ContainerLifetime.Persistent)
-    .WithVolume("/data")
+    .WithVolume("fireservervolume", "/data")
     .WithExternalHttpEndpoints()
     .WithDockerfileBuilder("../thefirey33-fireserver", context =>
     {
@@ -82,10 +86,10 @@ var gradleMinecraftServer = builder
         fireServerPluginStage.WorkDir("/compile");
         fireServerPluginStage.Copy(".", ".");
         fireServerPluginStage.Run("chmod +x ./gradlew");
-        fireServerPluginStage.Run("./gradlew build");
+        fireServerPluginStage.Run("--mount=type=cache,target=/root/.gradle ./gradlew build --no-daemon");
 
         var runnerStage = context.Builder.From("marctv/minecraft-papermc-server:1.20.1", "runner");
-        runnerStage.Env("MEMORYSIZE", "6G");
+        if (!builder.Environment.IsDevelopment()) runnerStage.Env("MEMORYSIZE", "6G");
         runnerStage.CopyFrom("builderfireserver", "/compile/build/libs/*.jar", "./plugins/");
         runnerStage.Expose(25565);
 
@@ -107,6 +111,8 @@ var frontend = builder
     .WaitFor(gradleMinecraftServer);
 
 // Reference the front-end for the CORS policy.
-backend.WithReference(frontend.GetEndpoint("http"));
+backend
+    .WithReference(frontend.GetEndpoint("http"))
+    .WithReference(gradleMinecraftServer.GetEndpoint("api"));
 
 builder.Build().Run();

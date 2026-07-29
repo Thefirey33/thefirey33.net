@@ -16,10 +16,10 @@ public class AbilityTypeRecoveryDb
     /// </summary>
     [JsonPropertyName("name")]
     [MaxLength(256)]
-    public required string Name { get; set; }
+    public required string Name { get; init; }
 }
 
-public class NikoTypeRecoveryDb
+public class NikoTypeRecoveryDbResponse
 {
     /// <summary>
     ///     The ID of the Niko.
@@ -66,4 +66,28 @@ public class NikoTypeRecoveryDb
     /// </summary>
     [JsonPropertyName("is_blacklisted")]
     public bool IsBlacklisted { get; init; }
+
+    public static NikoTypeRecoveryDbResponse FromRecoveryDb(NikoTypeRecoveryDb recoveryDb)
+    {
+        return new NikoTypeRecoveryDbResponse
+        {
+            Name = recoveryDb.Name,
+            Abilities = recoveryDb.Abilities,
+            AuthorName = recoveryDb.AuthorName,
+            Description = recoveryDb.Description,
+            FullDescription = recoveryDb.FullDescription,
+            Id = recoveryDb.Id,
+            IsBlacklisted = recoveryDb.IsBlacklisted
+        };
+    }
+}
+
+public class NikoTypeRecoveryDb : NikoTypeRecoveryDbResponse
+{
+    /// <summary>
+    ///     The filepath of the image of the Nikosona.
+    /// </summary>
+    [JsonPropertyName("path")]
+    [MaxLength(256)]
+    public string? ImagePath { get; set; }
 }

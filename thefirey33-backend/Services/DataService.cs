@@ -26,7 +26,7 @@ public class DataService(IWebHostEnvironment webHostEnvironment)
     /// <param name="path">The path of the file to read.</param>
     /// <returns>Readed bytes.</returns>
     /// <exception cref="FileNotFoundException">When the file isn't found in the storage.</exception>
-    public async Task<byte[]> ReadBytes(string path)
+    public static async Task<byte[]> ReadBytes(string path)
     {
         if (!File.Exists(path)) throw new FileNotFoundException("The specified file wasn't found!");
         return await File.ReadAllBytesAsync(path);

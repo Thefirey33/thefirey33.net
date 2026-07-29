@@ -3,7 +3,7 @@
     import BackgroundImage from "$lib/assets/img/wallpapers/artsWallpaper.png"
     import CloseableMenu from "$lib/components/other/CloseableMenu.svelte";
     import {resolve} from "$app/paths";
-    import BackendWarning from "$lib/components/other/BackendWarning.svelte";
+    import BackendWarningElement from "$lib/components/other/BackendWarningElement.svelte";
 
     let {data} = $props();
 
@@ -14,7 +14,7 @@
 
 <div class="bg-black text-white md:text-xl p-4 w-full flex text-center  flex-col gap-4 border-4 border-(--border-color)">
     {#if !data.success || data.data === undefined}
-        <BackendWarning errorMessage={data.errorMessage}/>
+        <BackendWarningElement errorMessage={data.errorMessage}/>
     {:else}
         <h1 class="text-3xl">Arts!</h1>
         <p>Each of these arts are made by very cool ppl and they deserve attention!! :3</p>

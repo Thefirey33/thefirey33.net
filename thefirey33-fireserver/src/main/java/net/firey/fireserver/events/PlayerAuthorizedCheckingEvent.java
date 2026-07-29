@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
-public class OperatorCertificationEvent implements Listener {
-    public static final Logger LOGGER = LoggerFactory.getLogger(OperatorCertificationEvent.class.getName());
+public class PlayerAuthorizedCheckingEvent implements Listener {
+    public static final Logger LOGGER = LoggerFactory.getLogger(PlayerAuthorizedCheckingEvent.class.getName());
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {

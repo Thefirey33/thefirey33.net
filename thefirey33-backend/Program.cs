@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -23,11 +24,12 @@ builder.Services
     });
 
 builder.Services.AddSingleton<DataService>();
+builder.Services.AddScoped<IDexDataService, DexDataService>();
 
 // Add database context.
 builder.AddNpgsqlDbContext<ArtsContext>("artdb");
-builder.AddNpgsqlDbContext<ScoreContext>("scoredb");
 builder.AddNpgsqlDbContext<NikoDexRecoveryContext>("nikodexdb");
+builder.AddNpgsqlDbContext<ApprovalContext>("approvaldb");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -70,29 +72,42 @@ builder.Services
     .AddControllers();
 
 // Add the HTTP Client for the communication with other APIs out there. 
-builder.Services.AddHttpClient("GitHubAPI", client => { client.BaseAddress = new Uri("https://api.github.com"); });
+builder.Services
+    .AddHttpClient("GitHubAPI", client => { client.BaseAddress = new Uri("https://api.github.com"); });
+
+builder.Services
+    .AddHttpClient("NikoDexAPI", client =>
+    {
+        client.BaseAddress = new Uri("https://nikodex.net/api/");
+
+        // Explicitly define the user agent so it's easy to spot.
+        client.DefaultRequestHeaders.UserAgent.Add(ProductInfoHeaderValue.Parse("Thefirey33NikoDexBackupService"));
+    });
+
 
 // Add the Redis Client for caching.
 builder.AddRedisClient("fireycache");
 builder.AddRedisOutputCache("fireycache");
+
+// Add the NikoDex Recovery Service for the backups.
+builder.Services.AddHostedService<NikoDexRecoveryService>();
 
 builder
     .Services.AddCors(options =>
     {
         // Add the cors policy for the frontend.
         options.AddPolicy("AllowSpecificOrigin",
-            policy => policy.WithOrigins(Environment.GetEnvironmentVariable("FIREYFRONTEND_HTTP")
-                                         ?? throw new NullReferenceException("Frontend URL not specified!"))
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowAnyOrigin());
+            policy =>
+                policy.WithOrigins(Environment.GetEnvironmentVariable("FIREYFRONTEND_HTTP")
+                                   ?? throw new NullReferenceException("Frontend URL not specified!"))
+                    .WithOrigins(Environment.GetEnvironmentVariable("FIREYMINECRAFTSERVER_API") ??
+                                 throw new NullReferenceException("Minecraft Server URL not specified!")));
     })
     .AddRouting();
 
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
-
 app.UseHttpsRedirection();
 app.UseAntiforgery();
 app.UseAuthentication();
@@ -116,10 +131,6 @@ using (var scope = app.Services.CreateScope())
     // Migrate the art DB to the latest.
     var artDb = scope.ServiceProvider.GetRequiredService<ArtsContext>();
     await artDb.Database.MigrateAsync();
-
-    // Migrate to score DB to the latest.
-    var scoreDb = scope.ServiceProvider.GetRequiredService<ScoreContext>();
-    await scoreDb.Database.MigrateAsync();
 
     // Migrate the NikoDex DB to the latest.
     var nikoDexDb = scope.ServiceProvider.GetRequiredService<NikoDexRecoveryContext>();

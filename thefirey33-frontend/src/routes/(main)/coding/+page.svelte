@@ -3,7 +3,7 @@
     import BackgroundImage from "$lib/assets/img/wallpapers/codingWallpaper.png"
     import ReadIcon from "$lib/assets/img/icons/read.png"
     import ProgrammingDetails from "$lib/assets/data/json/programmingDetails.json"
-    import BackendWarning from "$lib/components/other/BackendWarning.svelte";
+    import BackendWarningElement from "$lib/components/other/BackendWarningElement.svelte";
 
     let {data} = $props();
 
@@ -51,7 +51,7 @@
 
 <div class="flex flex-col lg:gap-8 items-center">
     <section class="text-white md:text-xl mb-5 flex flex-col gap-4 flex-wrap">
-        <h1 class="text-white text-center md:text-3xl">Programming</h1>
+        <h1 class="text-white text-center text-3xl">Programming</h1>
         <p>Being my main interest, I have learned a lot of programming languages and made a lot of projects!</p>
         <p>All of them with their unique purposes! Some projects I've been involved in are in organizations, so check out my GitHub page for a list of all my projects!</p>
         <p>Along with many other fields in CyberSecurity, Artificial Intelligence, Game Design and the Cloud that I have skills in!</p>
@@ -68,7 +68,7 @@
 
 <div class="flex flex-col gap-4 mt-10">
     {#if !data.repositories.success}
-        <BackendWarning errorMessage={data.repositories.errorMessage}/>
+        <BackendWarningElement errorMessage={data.repositories.errorMessage}/>
     {:else}
     {#each data.repositories.message as dataPortion, index (index)}
         <section class="bg-black border-4 border-(--border-color) flex flex-col gap-2 p-4">

@@ -51,7 +51,7 @@ public class DataController(
         if (!fileExtension.TryGetContentType(file, out var contentType)) return StatusCode(500);
 
         // If the file is an image, then do some processing.
-        var byteData = await dataService.ReadBytes(file);
+        var byteData = await DataService.ReadBytes(file);
         var isImageFile = contentType.StartsWith("image");
 
         if (!isImageFile || !@protected)

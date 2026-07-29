@@ -46,6 +46,16 @@ export interface TenTrillionGitData {
 	author: Author;
 }
 
+/**
+ * The minimum amount of zoom.
+ */
+export const minFontSize = 15;
+
+/**
+ * The maximum amount of zoom.
+ */
+export const maxFontSize = 50;
+
 export async function getJson<T>(
 	fetch: {
 		(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;

@@ -7,10 +7,10 @@ using thefirey33_backend.Types.Database.Context;
 
 #nullable disable
 
-namespace thefirey33_backend.Migrations.Score
+namespace thefirey33_backend.Migrations.Approval
 {
-    [DbContext(typeof(ScoreContext))]
-    partial class ScoreContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ApprovalContext))]
+    partial class ApprovalContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace thefirey33_backend.Migrations.Score
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("thefirey33_backend.Types.Database.ScoreDbType", b =>
+            modelBuilder.Entity("thefirey33_backend.Types.Database.ApprovalDbType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,18 +30,19 @@ namespace thefirey33_backend.Migrations.Score
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasJsonPropertyName("name");
+                    b.Property<bool>("Approved")
+                        .HasColumnType("boolean")
+                        .HasJsonPropertyName("approved");
 
-                    b.Property<int>("Value")
-                        .HasColumnType("integer")
-                        .HasJsonPropertyName("value");
+                    b.Property<string>("Uuid")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasJsonPropertyName("uuid");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Scores");
+                    b.ToTable("Approvals");
                 });
 #pragma warning restore 612, 618
         }

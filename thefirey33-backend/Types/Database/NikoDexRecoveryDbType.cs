@@ -12,6 +12,12 @@ public class NikoDexRecoveryDbType
     public int Id { get; init; }
 
     /// <summary>
+    ///     The time that this backup was made.
+    /// </summary>
+    [JsonPropertyName("date")]
+    public DateTime Date { get; init; }
+
+    /// <summary>
     ///     The Nikos that this backup has.
     /// </summary>
     [JsonPropertyName("nikos")]

@@ -1,8 +1,9 @@
 package net.firey.fireserver;
 
 import net.firey.fireserver.apiserver.ApiServer;
+import net.firey.fireserver.authorization.AuthorizationManager;
 import net.firey.fireserver.events.ChatMessageStatusEvent;
-import net.firey.fireserver.events.OperatorCertificationEvent;
+import net.firey.fireserver.events.PlayerAuthorizedCheckingEvent;
 import net.firey.fireserver.events.ServerPingEvent;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
@@ -11,15 +12,22 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 public final class Fireserver extends JavaPlugin {
 
+    /**
+     * The authorization manager, that allows the server to be authorized.
+     */
+    public static final AuthorizationManager AUTHORIZATION_MANAGER = new AuthorizationManager();
+
     @Override
     public void onEnable() {
         Server server = this.getServer();
         BukkitScheduler scheduler = server.getScheduler();
         PluginManager pluginManager = server.getPluginManager();
 
+        AUTHORIZATION_MANAGER.Authorize();
+
         // Register the event listeners.
         pluginManager.registerEvents(new ServerPingEvent(), this);
-        pluginManager.registerEvents(new OperatorCertificationEvent(), this);
+        pluginManager.registerEvents(new PlayerAuthorizedCheckingEvent(), this);
         pluginManager.registerEvents(new ChatMessageStatusEvent(), this);
 
         // Run the task timer that displays the current status of the server.
