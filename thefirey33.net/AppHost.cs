@@ -108,7 +108,6 @@ var frontend = builder
     .PublishAsDockerFile()
     .WithNpm()
     .WithHttpEndpoint(5000, 5000, isProxied: false)
-    .PublishAsStaticWebsite()
     .WithExternalHttpEndpoints()
     .WithReference(backend.GetEndpoint("api"))
     .WithReference(gradleMinecraftServer.GetEndpoint("api"))
