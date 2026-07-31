@@ -3,6 +3,7 @@
   <component name="UserContentModel">
     <attachedFolders />
     <explicitIncludes>
+      <Path>resources</Path>
       <Path>thefirey33-fireserver</Path>
       <Path>thefirey33-frontend</Path>
     </explicitIncludes>
