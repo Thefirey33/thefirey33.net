@@ -88,7 +88,7 @@ const int minecraftServerApiEndpoint = 7000;
 // It exposes the default Minecraft Server port, and automatically starts.
 var gradleMinecraftServer = builder
     .AddDockerfile("fireyminecraftserver", "../thefirey33-fireserver")
-    .WithEndpoint(25565, 25565, isProxied: false)
+    .WithEndpoint(25565, 25565, isProxied: false, isExternal: true)
     .WithHttpEndpoint(minecraftServerApiEndpoint, minecraftServerApiEndpoint, isProxied: false, name: "api")
     .WithEnvironment("SERVER_ENDPOINT", minecraftServerApiEndpoint.ToString)
     .WithEnvironment("TRUSTED_OPERATOR_UUID", trustedOperatorUuid)

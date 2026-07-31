@@ -40,7 +40,7 @@
         <p class="text-white text-xl">Server
             Uptime: {formatUptime(data.minecraftServerInformation.message.serverUptime / 1000)}</p>
         {#if (data.minecraftServerInformation.message.currentPlayers.length <= 0)}
-            <p class="text-white md:text-2xl font-bold text-center">No players online.. Maybe you can join?</p>
+            <p class="text-white md:text-2xl font-bold text-center">No players online.</p>
         {:else}
             <p class="text-white md:text-2xl">Online Players:</p>
             <ul class="list-disc">
@@ -59,8 +59,9 @@
         </p>
 
         <p class="text-white mt-5">
-            After you join, the system will automatically kick you. That's okay! You will get approved
-            for entry later, where you can retry, and if you are approved for entry, you will be able to join!
+            To join this server, you will need "cloudflared". As it's hosted over a cloudflare tunnel.
+            Run "cloudflared access tcp --hostname mc.thefirey33.net --url localhost:25565", then add a Minecraft server
+            with the "localhost" as it's server.
         </p>
     </div>
 {/if}
