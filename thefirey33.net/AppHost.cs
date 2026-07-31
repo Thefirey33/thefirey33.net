@@ -61,6 +61,7 @@ var backend =
         .PublishAsDockerComposeService((resource, service) =>
         {
             service.Name = "fireybackend";
+            service.User = "0:0"; // Unfortunately, some things just don't turn out how they're supposed to be.
 
             service.AddVolume(new Volume
             {
