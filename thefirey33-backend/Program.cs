@@ -134,15 +134,6 @@ using (var scope = app.Services.CreateScope())
     var nikoDexDb = scope.ServiceProvider.GetRequiredService<NikoDexRecoveryContext>();
     var approvalDb = scope.ServiceProvider.GetRequiredService<ApprovalContext>();
 
-    // Due to the ralsei backend having constant issues with this,
-    // This is here to wait until the databases are ready to connect to.
-    while (!(await artDb.Database.CanConnectAsync() || await nikoDexDb.Database.CanConnectAsync() ||
-             await approvalDb.Database.CanConnectAsync()))
-    {
-        app.Logger.LogInformation("Waiting for databases...");
-        await Task.Delay(1000);
-    }
-
     app.Logger.LogInformation("Databases are OK, Migrating and Starting...");
 
     await artDb.Database.MigrateAsync();
