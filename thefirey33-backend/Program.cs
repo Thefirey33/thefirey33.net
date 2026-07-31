@@ -134,19 +134,9 @@ using (var scope = app.Services.CreateScope())
     var nikoDexDb = scope.ServiceProvider.GetRequiredService<NikoDexRecoveryContext>();
     var approvalDb = scope.ServiceProvider.GetRequiredService<ApprovalContext>();
 
-    artDb.Database.CanConnectAsync().GetAwaiter().OnCompleted(async void () =>
-    {
-        try
-        {
-            await artDb.Database.MigrateAsync();
-            await nikoDexDb.Database.MigrateAsync();
-            await approvalDb.Database.MigrateAsync();
-        }
-        catch (Exception e)
-        {
-            app.Logger.LogCritical(e.Message);
-        }
-    });
+    await artDb.Database.MigrateAsync();
+    await nikoDexDb.Database.MigrateAsync();
+    await approvalDb.Database.MigrateAsync();
 }
 
 app.Run();
