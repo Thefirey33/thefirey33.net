@@ -62,7 +62,6 @@ var backend =
         {
             service.Name = "fireybackend";
 
-            // This is where data is stored.
             service.AddVolume(new Volume
             {
                 Type = "volume",
