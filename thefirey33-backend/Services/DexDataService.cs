@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.EntityFrameworkCore;
 using thefirey33_backend.Types.Database;
 using thefirey33_backend.Types.Database.Context;
@@ -85,6 +86,22 @@ public class DexDataService(
                 return;
         }
 
+        var apiCheck = await _httpClient.GetAsync("ping");
+        if (apiCheck.StatusCode != HttpStatusCode.OK)
+        {
+            logger.LogWarning("API is unhealthy! Skipping backup...");
+            return;
+        }
+
+
+        var dexData = await _httpClient.GetFromJsonAsync<List<NikoTypeRecoveryDb>>("data");
+
+        if (dexData == null)
+        {
+            logger.LogWarning("NikoDex API returned null, skipping...");
+            return;
+        }
+
         var first = await nikoDexRecoveryContext.NikoDexRecovery.FirstOrDefaultAsync();
 
         // If a backup already exists, delete it.
@@ -96,13 +113,6 @@ public class DexDataService(
 
         // Delete all the images in the directory.
         Directory.Delete(StoragePath, true);
-
-        var dexData = await _httpClient.GetFromJsonAsync<List<NikoTypeRecoveryDb>>("data");
-        if (dexData == null)
-        {
-            logger.LogWarning("NikoDex API returned null, skipping...");
-            return;
-        }
 
         // Fetch each image one by one from the NikoDex API to create a full backup.
         // After that, set the ImagePath.
