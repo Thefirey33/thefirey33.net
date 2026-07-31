@@ -11,7 +11,7 @@ public class DataService(IWebHostEnvironment webHostEnvironment)
     {
         get
         {
-            var path = Path.Combine(webHostEnvironment.ContentRootPath, "ServerStorage");
+            var path = Path.Combine(webHostEnvironment.IsDevelopment() ? webHostEnvironment.ContentRootPath : "data", "ServerStorage");
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);

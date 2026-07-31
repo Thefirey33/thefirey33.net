@@ -43,7 +43,8 @@ public class DexDataService(
     {
         get
         {
-            var path = Path.Combine(webHostEnvironment.ContentRootPath, "DexStorage");
+            var path = Path.Combine(webHostEnvironment.IsDevelopment() ? webHostEnvironment.ContentRootPath : "data",
+                "DexStorage");
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);

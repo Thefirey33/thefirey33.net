@@ -1,3 +1,4 @@
+using Aspire.Hosting.Docker.Resources.ServiceNodes;
 using Microsoft.Extensions.Hosting;
 using Projects;
 using Scalar.Aspire;
@@ -33,8 +34,8 @@ var redis
 var postgresSql
     = builder.AddPostgres("fireydatabase")
         .WithDataVolume(isReadOnly: false)
-        .WithUserName(adminUsername)
-        .WithPassword(adminPassword)
+        .WithUserName(builder.AddParameter("postgres-username", true))
+        .WithPassword(builder.AddParameter("postgres-password", true))
         .WithDataVolume()
         .WithLifetime(ContainerLifetime.Persistent)
         .WithPgAdmin();
@@ -57,6 +58,17 @@ var scalar = builder.AddScalarApiReference();
 // Managed by the FireServer Minecraft Plugin.
 var backend =
     builder.AddProject<thefirey33_backend>("fireybackend")
+        .PublishAsDockerComposeService((resource, service) =>
+        {
+            service.Name = "fireybackend";
+
+            // This is where data is stored.
+            service.AddVolume(new Volume
+            {
+                Name = "fireybackend-volume",
+                Target = "/data"
+            });
+        })
         .WaitFor(redis)
         .WaitFor(postgresSql)
         .WithReference(redis)
