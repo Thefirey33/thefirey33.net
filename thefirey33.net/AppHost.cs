@@ -33,6 +33,9 @@ var redis
 var postgresSql
     = builder.AddPostgres("fireydatabase")
         .WithDataVolume(isReadOnly: false)
+        .WithUserName(adminUsername)
+        .WithPassword(adminPassword)
+        .WithDataVolume()
         .WithLifetime(ContainerLifetime.Persistent)
         .WithPgAdmin();
 
