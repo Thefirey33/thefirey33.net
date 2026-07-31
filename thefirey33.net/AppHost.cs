@@ -13,10 +13,10 @@ var compose =
     builder.AddDockerComposeEnvironment("compose");
 
 // The admin username of the admin interface.
-var adminUsername = builder.AddParameter("admin-username");
+var adminUsername = builder.AddParameter("admin-username", true);
 
 // The admin password of the admin interface.
-var adminPassword = builder.AddParameter("admin-password");
+var adminPassword = builder.AddParameter("admin-password", true);
 
 // The operator parameter.
 // Basically defines the operator of the Minecraft server.
