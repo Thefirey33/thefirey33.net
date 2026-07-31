@@ -106,7 +106,7 @@ var gradleMinecraftServer = builder
 var frontend = builder
     .AddViteApp("fireyfrontend", "../thefirey33-frontend")
     .WithNpm()
-    .WithHttpEndpoint(5000, 5000, isProxied: false)
+    .WithHttpEndpoint(8080, 80, isProxied: false)
     .WithExternalHttpEndpoints()
     .WithReference(backend.GetEndpoint("api"))
     .WithReference(gradleMinecraftServer.GetEndpoint("api"))
