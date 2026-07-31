@@ -105,7 +105,6 @@ var gradleMinecraftServer = builder
 // This connects with the main backend (port 5540) and the minecraft backend. (port 7000)
 var frontend = builder
     .AddViteApp("fireyfrontend", "../thefirey33-frontend")
-    .PublishAsDockerFile()
     .WithNpm()
     .WithHttpEndpoint(5000, 5000, isProxied: false)
     .WithExternalHttpEndpoints()
