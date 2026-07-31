@@ -49,7 +49,7 @@ export interface TenTrillionGitData {
 /**
  * The minimum amount of zoom.
  */
-export const minFontSize = 15;
+export const minFontSize = 18;
 
 /**
  * The maximum amount of zoom.

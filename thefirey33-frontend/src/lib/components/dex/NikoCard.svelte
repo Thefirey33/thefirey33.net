@@ -20,15 +20,17 @@
         ["coodles", "the most brainrotted cuddly being ever"],
         ["karll0424", "kit or nikkit?"],
         ["snowi", "the orin"],
+        ["vernhement", "heavenly sahur"],
         ["pretzel", "unsalt the pretzel"],
-        ["spooningtonIII", "v/s intercom voice"],
+        ["spooningtoniii", "v/s intercom voice"], // FIXME: This doesn't work!
         ["whatsapp_niko", "*WhatsApp Sound Effect*"],
         ["sketchydoof23", "TENNA!!!!!"],
         ["devsun", "is devsun an actual developer? find out soon on 'Are They A Developer?'"],
         ["rainwater", "the rain of water"],
         ["nightmargin", "thanks for creating oneshot nightmargin."],
         ["_adamgamer2370", "sea salt"],
-        ["[restricted]", ""]
+        ["[restricted]", ""],
+        ["reizei_iyuko", "kalashnikovs"]
     ]);
 
     /**
@@ -115,7 +117,7 @@
                             }}>{authorName}</button>
         </p>
         <p class="bg-white text-black w-fit px-1">Abilities:</p>
-        <ul class="list-disc list-inside mb-10 max-h-40 overflow-scroll">
+        <ul class="list-disc list-inside mb-10 max-h-40 overflow-auto">
             {#each abilities as ability, idx (idx)}
                 <li class="wrap-break-word">{ability.name}</li>
             {:else}
@@ -126,6 +128,6 @@
         </ul>
     </div>
     {#if (isExpanded)}
-        <p class="text-white max-h-30 not-md:max-w-80 p-2 text-xl overflow-scroll">{fullDesc}</p>
+        <p class="text-white max-h-30 not-md:max-w-80 p-2 text-xl overflow-auto">{fullDesc}</p>
     {/if}
 </div>

@@ -54,6 +54,25 @@ public class ArtController(ArtsContext artsContext, DataService dataService) : C
         return Ok(filteredHashSet);
     }
 
+    /// <summary>
+    ///     Deletes the specified art with an ID.
+    /// </summary>
+    /// <param name="id">ID.</param>
+    [HttpDelete("{id:int}")]
+    [Authorize]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var result = await artsContext.Arts.FirstOrDefaultAsync(x => x.Id == id);
+        if (result == null)
+            return NotFound();
+
+        artsContext.Arts.Remove(result);
+        DataService.DeleteFile(result.FilePath);
+
+        await artsContext.SaveChangesAsync();
+        return Ok();
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> PostArt([FromForm] ArtDbRequest artDbRequest,
@@ -96,7 +115,7 @@ public class ArtController(ArtsContext artsContext, DataService dataService) : C
         return Ok(objects);
     }
 
-    [HttpGet("uuid/{uuid}")]
+    [HttpGet("{uuid}")]
     [OutputCache(Duration = 60)]
     public async Task<IActionResult> GetArtViaUuid(string uuid)
     {

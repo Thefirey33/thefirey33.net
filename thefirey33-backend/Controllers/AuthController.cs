@@ -4,13 +4,18 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using thefirey33_backend.Services;
 using thefirey33_backend.Types;
 
 namespace thefirey33_backend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AuthController(IConfiguration configuration) : ControllerBase
+public class AuthController(
+    IConfiguration configuration,
+    ILogger<AuthController> logger,
+    IAuthorizationCodeService authorizationCodeService)
+    : ControllerBase
 {
     private readonly PasswordHasher<string> _passwordHasher = new();
 
@@ -69,10 +74,14 @@ public class AuthController(IConfiguration configuration) : ControllerBase
     /// </summary>
     /// <param name="userType">The userType, with the username and password details.</param>
     [HttpPost("login")]
-    public IActionResult Login([FromBody] UserType userType)
+    public IActionResult Login([FromBody] UserTypeRequest userType)
     {
+        // The IP Address of the specified person who is logging in will be logged.
+        logger.LogInformation("Attempt to LOGIN from IP: {Ip}", HttpContext.Connection.RemoteIpAddress);
+
         if (userType.Username != Environment.GetEnvironmentVariable("ADMIN_USERNAME") ||
-            !VerifyPassword(userType.Password)) return Unauthorized();
+            !VerifyPassword(userType.Password) ||
+            !authorizationCodeService.CheckAuthorizationCode(userType.AuthorizationCode)) return Unauthorized();
 
         var password = GenerateJwtToken(userType);
         Response.Cookies.Append("Token", password);
@@ -81,6 +90,16 @@ public class AuthController(IConfiguration configuration) : ControllerBase
         {
             Token = password
         });
+    }
+
+    /// <summary>
+    ///     Create the specified auth code.
+    /// </summary>
+    [HttpPost("code")]
+    public IActionResult CreateAuthCode()
+    {
+        authorizationCodeService.CreateAuthorizationCode();
+        return Ok();
     }
 
     [HttpGet("check")]

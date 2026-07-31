@@ -2,7 +2,7 @@
     import ZoomIn from "$lib/assets/img/documentreader/zoomin.png"
     import ZoomOut from "$lib/assets/img/documentreader/zoomout.png"
     import Dock from "$lib/assets/img/documentreader/docktoleft.png"
-    import {maxFontSize, minFontSize} from "$lib";
+    import {maxFontSize, minFontSize} from "$lib/types";
 
     let {fontSize = $bindable()} = $props()
 

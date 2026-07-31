@@ -34,6 +34,12 @@ namespace thefirey33_backend.Migrations.Approval
                         .HasColumnType("boolean")
                         .HasJsonPropertyName("approved");
 
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasJsonPropertyName("username");
+
                     b.Property<string>("Uuid")
                         .IsRequired()
                         .HasMaxLength(256)

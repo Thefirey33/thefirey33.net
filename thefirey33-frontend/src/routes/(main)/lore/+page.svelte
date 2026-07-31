@@ -2,7 +2,7 @@
     import BackgroundElement from "$lib/components/BackgroundElement.svelte";
 
     import LoreWallpaper from "$lib/assets/img/wallpapers/loreWallpaper.png"
-    import {minFontSize} from "$lib";
+    import {minFontSize} from "$lib/types";
     import DocumentViewerElement from "$lib/components/other/DocumentViewerElement.svelte";
 
     let {data} = $props()

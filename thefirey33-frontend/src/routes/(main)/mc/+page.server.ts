@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { getJson } from '$lib';
+import { getJson } from '$lib/types';
 import { env } from '$env/dynamic/private';
 
 interface ServerInformation {

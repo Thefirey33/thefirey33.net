@@ -4,6 +4,7 @@
     import CloseableMenu from "$lib/components/other/CloseableMenu.svelte";
     import {resolve} from "$app/paths";
     import BackendWarningElement from "$lib/components/other/BackendWarningElement.svelte";
+    import ReadDisclaimerFirst from "$lib/components/other/ReadDisclaimerFirst.svelte";
 
     let {data} = $props();
 
@@ -12,11 +13,13 @@
 
 <BackgroundElement urlBackground={BackgroundImage}/>
 
+
 <div class="bg-black text-white md:text-xl p-4 w-full flex text-center  flex-col gap-4 border-4 border-(--border-color)">
     {#if !data.success || data.data === undefined}
         <BackendWarningElement errorMessage={data.errorMessage}/>
     {:else}
         <h1 class="text-3xl">Arts!</h1>
+        <ReadDisclaimerFirst/>
         <p>Each of these arts are made by very cool ppl and they deserve attention!! :3</p>
         <p>I appreciate all of it, i love y'all &lt;3 /p!!</p>
         <em>To submit an art piece, send it to me via DMs!</em>

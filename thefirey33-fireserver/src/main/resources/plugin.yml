@@ -3,7 +3,7 @@ description: $description
 version: '${version}'
 
 main: net.firey.fireserver.Fireserver
-api-version: '1.20'
+api-version: '26.2'
 load: POSTWORLD
 
 authors: [ Thefirey33 ]

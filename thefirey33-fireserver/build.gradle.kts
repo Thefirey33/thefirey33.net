@@ -9,14 +9,14 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:26.2.build.+")
     implementation("io.javalin:javalin:7.2.2")
     implementation("org.slf4j:slf4j-simple:2.0.18")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.22.1")
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    toolchain.languageVersion.set(JavaLanguageVersion.of(25))
 }
 
 tasks {

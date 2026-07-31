@@ -1,7 +1,7 @@
 <script lang="ts">
     import DexStatusWallpaper from "$lib/assets/img/wallpapers/dexStatusWallpaper.png"
     import BackgroundElement from "$lib/components/BackgroundElement.svelte";
-    import type {Niko} from "$lib/dexrecovery";
+    import type {Niko} from "$lib/types/dexrecovery";
     import {onMount} from "svelte";
     import {setToast} from "$lib/toast-helper";
     import DownloadBackupIcon from "$lib/assets/img/dex/backup.png"
@@ -10,6 +10,7 @@
 
     import {resolve} from "$app/paths";
     import NikoCard from "$lib/components/dex/NikoCard.svelte";
+    import ReadDisclaimerFirst from "$lib/components/other/ReadDisclaimerFirst.svelte";
     let {data} = $props();
 
     /**
@@ -152,6 +153,8 @@
     This is the NikoDex Status tracker created by me, that tracks the NikoDex. It also takes a backup of
     the website, so you can still browse Nikos if the website is down!
 </p>
+
+<ReadDisclaimerFirst/>
 
 <div class="p-4 text-white items-center w-fit border-(--border-color) flex xl:flex-row flex-col gap-4 m-auto mt-5">
     <div class="flex flex-row gap-x-4 p-2 text-center items-center">Website

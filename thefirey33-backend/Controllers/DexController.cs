@@ -81,16 +81,17 @@ public class DexController(
     /// <returns>The list of Nikos.</returns>
     [HttpGet("page/{pageStart:int}")]
     [OutputCache(Duration = CacheTime)]
-    public async Task<IActionResult> GetNikos(int pageStart)
+    public async Task<List<NikoTypeRecoveryDbResponse>> GetNikos(int pageStart)
     {
         var results = await nikoDexRecoveryContext.NikoTypeRecoveryDb
             .Include(type => type.Abilities)
+            .OrderBy(response => response.Id)
             .Skip(pageStart * PaginationAmount)
             .Take(PaginationAmount)
             .Select(db => NikoTypeRecoveryDbResponse.FromRecoveryDb(db))
             .ToListAsync();
 
-        return Ok(results.OrderBy(response => response.Id));
+        return results;
     }
 
     /// <summary>

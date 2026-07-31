@@ -54,7 +54,7 @@
         <h1 class="text-white text-center text-3xl">Programming</h1>
         <p>Being my main interest, I have learned a lot of programming languages and made a lot of projects!</p>
         <p>All of them with their unique purposes! Some projects I've been involved in are in organizations, so check out my GitHub page for a list of all my projects!</p>
-        <p>Along with many other fields in CyberSecurity, Artificial Intelligence, Game Design and the Cloud that I have skills in!</p>
+        <p>Along with many other fields in CyberSecurity, Game Design and Cloud Based Development that I have skills in!</p>
     </section>
 
     <div class="w-fit m-auto grid gap-4 xl:grid-cols-14 md:grid-cols-7 grid-cols-4 transition-all bg-black">

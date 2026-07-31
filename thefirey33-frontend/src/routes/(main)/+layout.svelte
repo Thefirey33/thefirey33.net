@@ -26,7 +26,7 @@
 <ProgressBarElement/>
 <MetaTagsElement
         description="the thefirey33 network!"
-        image=""
+        image="https://thefirey33.net/front.png"
         title="thefirey33"
         web="https://thefirey33.net/"
 />
@@ -34,7 +34,7 @@
 <nav class="bg-black fixed z-30 flex flex-row items-center gap-4 justify-between w-screen min-h-15 border-(--border-color) border-b-4 p-2">
     <LogoElement bind:openState={navigationPanelIsOpen}/>
 
-    <div class="not-2xl:min-w-60 not-2xl:h-screen not-2xl:fixed not-2xl:p-4 {!navigationPanelIsOpen && "not-2xl:transform-[translate(-100%)]"} flex gap-2 flex-col 2xl:flex-row bg-black left-0 top-0 border-(--border-color) not-2xl:border-r-4 transition">
+    <div class="not-2xl:min-w-60 pointer-events-auto not-2xl:h-screen not-2xl:fixed not-2xl:p-4 {!navigationPanelIsOpen && "not-2xl:transform-[translate(-100%)]"} flex gap-2 flex-col 2xl:flex-row bg-black left-0 top-0 border-(--border-color) not-2xl:border-r-4 transition">
         <LogoElement _class="2xl:hidden" bind:openState={navigationPanelIsOpen}/>
 
         <div class="2xl:ml-auto flex 2xl:flex-row flex-col gap-2">

@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
-import type { DexRecoveryInformation } from '$lib/dexrecovery';
-import { getJson } from '$lib';
+import type { DexRecoveryInformation } from '$lib/types/dexrecovery';
+import { getJson } from '$lib/types';
 import { env } from '$env/dynamic/private';
 
 export const load: PageServerLoad = async ({ fetch }) => {

@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
-import { getJson, type TenTrillionGitData } from '$lib';
+import { getJson, type TenTrillionGitData } from '$lib/types';
 
 export const load: PageServerLoad = async ({ fetch }) => {
 	const data: {

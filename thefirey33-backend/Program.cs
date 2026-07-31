@@ -25,6 +25,7 @@ builder.Services
 
 builder.Services.AddSingleton<DataService>();
 builder.Services.AddScoped<IDexDataService, DexDataService>();
+builder.Services.AddSingleton<IAuthorizationCodeService, AuthorizationCodeService>();
 
 // Add database context.
 builder.AddNpgsqlDbContext<ArtsContext>("artdb");
@@ -67,9 +68,8 @@ builder.Logging
     .ClearProviders()
     .AddConsole();
 
-builder.Services
-    .AddAuthorization()
-    .AddControllers();
+builder.Services.AddAuthorization();
+builder.Services.AddControllers();
 
 // Add the HTTP Client for the communication with other APIs out there. 
 builder.Services
@@ -107,6 +107,7 @@ builder
 
 var app = builder.Build();
 
+app.UseRouting();
 app.MapDefaultEndpoints();
 app.UseHttpsRedirection();
 app.UseAntiforgery();
@@ -121,20 +122,32 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseRouting();
 app.UseCors();
 app.UseHsts();
 app.UseOutputCache();
 
+
 using (var scope = app.Services.CreateScope())
 {
-    // Migrate the art DB to the latest.
+    // Perform all the necessary migrations.
     var artDb = scope.ServiceProvider.GetRequiredService<ArtsContext>();
-    await artDb.Database.MigrateAsync();
-
-    // Migrate the NikoDex DB to the latest.
     var nikoDexDb = scope.ServiceProvider.GetRequiredService<NikoDexRecoveryContext>();
+    var approvalDb = scope.ServiceProvider.GetRequiredService<ApprovalContext>();
+
+    // Due to the ralsei backend having constant issues with this,
+    // This is here to wait until the databases are ready to connect to.
+    while (!(await artDb.Database.CanConnectAsync() || await nikoDexDb.Database.CanConnectAsync() ||
+             await approvalDb.Database.CanConnectAsync()))
+    {
+        app.Logger.LogInformation("Waiting for databases...");
+        await Task.Delay(1000);
+    }
+
+    app.Logger.LogInformation("Databases are OK, Migrating and Starting...");
+
+    await artDb.Database.MigrateAsync();
     await nikoDexDb.Database.MigrateAsync();
+    await approvalDb.Database.MigrateAsync();
 }
 
 app.Run();

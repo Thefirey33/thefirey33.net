@@ -4,7 +4,7 @@
 <!-- Other people understand with action and with a judge's gavel. -->
 
 <script lang="ts">
-    import {minFontSize} from "$lib";
+    import {minFontSize} from "$lib/types";
     import DocumentViewerElement from "$lib/components/other/DocumentViewerElement.svelte";
 
     let fontSize = $state(minFontSize);
@@ -15,6 +15,39 @@
     <h1 class="text-center text-3xl">
         Disclaimers
     </h1>
+
+
+    <p>
+        All of the assets that were not produced by Thefirey33, belong to their respective owners. OneShot and the game franchise,
+        belong to FutureCat and Komodo. OneShot is a game franchise, owned by
+        it's respective owner, Nightmargin. All assets belonging to the game "OneShot" belong to Nightmargin, FutureCat and Komodo Corporation.
+        The NikoDex Backup Service is an extension of the NikoDex that is for backup and recovery purposes only.
+        Do not attempt to copy someone else's Nikosona as your own. Any attempt that is noticed by Thefirey33 from anyone with this behaviour,
+        will be questioned. You are forbidden from using the NikoDex Backup section to claim any sort of Nikosona that you don't own as your own,
+        That is against the TOS of the NikoDex and the TOS of the Thefirey33 Network. You are allowed to use the Backup Service to make your own local version of the NikoDex, for experimentation purposes.
+        <strong class="underline italic text-white ">You are forbidden from doing these specified actions with the Backup Service:</strong>
+    </p>
+
+    <ul class="list-disc md:ml-20 ml-5">
+        <li style="font-size: {fontSize + 5}px">Training any sort of Artificial Intelligence on this data.</li>
+        <li>Attempting to claim any Niko as your own, that doesn't belong to you.</li>
+        <li>Attempting to claim with the JSON data that you can change a specified Niko however you please.</li>
+        <li>Attempting to change the image files "Change By" data to claim a Niko as yours.</li>
+        <li>Attempting to change the JSON files "Change By" data to claim a Niko as yours.</li>
+        <li>Trying to make a false NikoDex Support request with this data.</li>
+        <li>The NikoDex's TOS also applies to the NikoDex Tracker & Backup Service.</li>
+    </ul>
+
+    <p>
+        If you attempt to do any of these specified actions, especially the first action that is mentioned; you will be questioned.
+    </p>
+
+    <p>
+        You are forbidden from also copying any sort of image from the "Arts" section as your own (if they aren't created by you), they belong to their respective artists.
+        The respective artist owns that specified content, if you attempt to get around the API protection, your request will be flagged as Unauthorized Request, and you
+        will be questioned for your behaviour. Do not attempt to copy anyone else's work, or attempt to mitigate the watermark that is placed by the API.
+        The art piece belongs to the artist, and if you're not said artist, it doesn't belong to you.
+    </p>
 
     <p class="text-center italic text-xl">
         This section was added due to events that occurred starting from 08.07.2026.

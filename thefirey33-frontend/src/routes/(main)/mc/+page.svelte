@@ -57,5 +57,10 @@
                 navigator.clipboard.writeText(minecraftServerLink);
             }}>{minecraftServerLink}</button>
         </p>
+
+        <p class="text-white mt-5">
+            After you join, the system will automatically kick you. That's okay! You will get approved
+            for entry later, where you can retry, and if you are approved for entry, you will be able to join!
+        </p>
     </div>
 {/if}

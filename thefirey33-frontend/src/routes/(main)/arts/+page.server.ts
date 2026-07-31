@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
-import { type ArtResponse, getJson } from '$lib';
+import { type ArtResponse, getJson } from '$lib/types';
 
 export const load: PageServerLoad = async ({ fetch }) => {
 	// This will fetch all the related art content from the server.

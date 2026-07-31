@@ -37,7 +37,7 @@ public class DataService(IWebHostEnvironment webHostEnvironment)
     /// </summary>
     /// <param name="path">THe path of the file to delete.</param>
     /// <returns>Returns TRUE on deletion, Returns FALSE on failure.</returns>
-    public bool DeleteFile(string path)
+    public static bool DeleteFile(string path)
     {
         if (!File.Exists(path)) return false;
         File.Delete(path);

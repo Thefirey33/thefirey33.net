@@ -6,6 +6,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 #pragma warning disable ASPIREJAVASCRIPT001
 #pragma warning disable ASPIREDOCKERFILEBUILDER001
+#pragma warning disable ASPIREPERSISTENCE001
 
 var compose =
     builder.AddDockerComposeEnvironment("compose");
@@ -57,6 +58,7 @@ var backend =
         .WaitFor(postgresSql)
         .WithReference(redis)
         .WithReference(nikoDexBackupDb)
+        .WithReference(approvalDb)
         .WithReference(artPostingDb)
         .WithEnvironment("ADMIN_USERNAME", adminUsername)
         .WithEnvironment("ADMIN_PASSWORD", adminPassword)
@@ -77,19 +79,22 @@ var gradleMinecraftServer = builder
     .WithEnvironment("ADMIN_USERNAME", adminUsername)
     .WithEnvironment("ADMIN_PASSWORD", adminPassword)
     .WithReference(backend.GetEndpoint("api"))
-    .WithLifetime(ContainerLifetime.Persistent)
+    .WithPersistentLifetime()
     .WithVolume("fireservervolume", "/data")
-    .WithExternalHttpEndpoints()
     .WithDockerfileBuilder("../thefirey33-fireserver", context =>
     {
-        var fireServerPluginStage = context.Builder.From("eclipse-temurin:17-jdk-alpine", "builderfireserver");
+        var fireServerPluginStage = context.Builder.From("eclipse-temurin:25-jdk-alpine", "builderfireserver");
         fireServerPluginStage.WorkDir("/compile");
         fireServerPluginStage.Copy(".", ".");
         fireServerPluginStage.Run("chmod +x ./gradlew");
         fireServerPluginStage.Run("--mount=type=cache,target=/root/.gradle ./gradlew build --no-daemon");
 
-        var runnerStage = context.Builder.From("marctv/minecraft-papermc-server:1.20.1", "runner");
+        var runnerStage = context.Builder.From("itzg/minecraft-server:java25-jdk", "runner");
         if (!builder.Environment.IsDevelopment()) runnerStage.Env("MEMORYSIZE", "6G");
+        runnerStage.Run("rm -rf ./plugins");
+        runnerStage.Env("EULA", "TRUE"); // Accept the Minecraft EULA.
+        runnerStage.Env("TYPE", "PAPER");
+        runnerStage.Env("USES_PLUGINS", "true");
         runnerStage.CopyFrom("builderfireserver", "/compile/build/libs/*.jar", "./plugins/");
         runnerStage.Expose(25565);
 
@@ -107,8 +112,7 @@ var frontend = builder
     .WithExternalHttpEndpoints()
     .WithReference(backend.GetEndpoint("api"))
     .WithReference(gradleMinecraftServer.GetEndpoint("api"))
-    .WaitFor(backend)
-    .WaitFor(gradleMinecraftServer);
+    .WaitFor(backend);
 
 // Reference the front-end for the CORS policy.
 backend

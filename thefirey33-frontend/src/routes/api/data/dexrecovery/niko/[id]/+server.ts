@@ -1,8 +1,8 @@
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 import { json } from '@sveltejs/kit';
-import { getJson } from '$lib';
-import type { Niko } from '$lib/dexrecovery';
+import { getJson } from '$lib/types';
+import type { Niko } from '$lib/types/dexrecovery';
 
 export const GET: RequestHandler = async ({ fetch, params }) => {
 	const result: {
