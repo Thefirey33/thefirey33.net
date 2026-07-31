@@ -134,6 +134,12 @@ using (var scope = app.Services.CreateScope())
     var nikoDexDb = scope.ServiceProvider.GetRequiredService<NikoDexRecoveryContext>();
     var approvalDb = scope.ServiceProvider.GetRequiredService<ApprovalContext>();
 
+    while (!await artDb.Database.CanConnectAsync())
+    {
+        app.Logger.LogInformation("Waiting for databases...");
+        await Task.Delay(1000);
+    }
+
     await artDb.Database.MigrateAsync();
     await nikoDexDb.Database.MigrateAsync();
     await approvalDb.Database.MigrateAsync();

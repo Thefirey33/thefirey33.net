@@ -66,7 +66,7 @@ var backend =
             {
                 Type = "volume",
                 Name = "fireybackend-volume",
-                Target = "/data"
+                Target = "/app/data"
             });
         })
         .WaitFor(redis)
