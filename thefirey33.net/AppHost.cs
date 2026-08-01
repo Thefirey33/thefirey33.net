@@ -34,10 +34,8 @@ var redis
 var postgresSql
     = builder.AddPostgres("fireydatabase")
         .WithDataVolume(isReadOnly: false)
-        .WithUserName(builder.AddParameter("postgres-username", true))
         .WithPassword(builder.AddParameter("postgres-password", true))
         .WithDataVolume()
-        .WithLifetime(ContainerLifetime.Persistent)
         .WithPgAdmin();
 
 // This is where the backups of the NikoDex are stored.
