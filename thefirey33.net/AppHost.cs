@@ -124,7 +124,7 @@ var frontend = builder
     .WithHttpEndpoint(5000, 5000, isProxied: false)
     .WithExternalHttpEndpoints()
     .WithReference(backend.GetEndpoint("api"))
-    .WithEnvironment("ORIGIN", builder.AddParameter("admin-ip", true))
+    .WithEnvironment("ORIGIN", "https://thefirey33.net")
     .WithReference(gradleMinecraftServer.GetEndpoint("api"))
     .WaitFor(backend);
 

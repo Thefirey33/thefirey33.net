@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
@@ -32,6 +33,15 @@ builder.AddNpgsqlDbContext<ArtsContext>("artdb");
 builder.AddNpgsqlDbContext<NikoDexRecoveryContext>("nikodexdb");
 builder.AddNpgsqlDbContext<ApprovalContext>("approvaldb");
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    // Clear restrictions so it accepts proxy headers from localhost/Cloudflare Tunnel
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -55,14 +65,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             OnMessageReceived = context =>
             {
                 var authHeader = context.Request.Headers.Authorization.ToString();
-                
-                
                 if (!string.IsNullOrEmpty(authHeader) &&
                     authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
                     context.Token = authHeader["Bearer ".Length..].Trim();
 
-                if (context.Request.Cookies.TryGetValue("Token", out var token))
-                    context.Token = token;
+                if (!string.IsNullOrEmpty(context.Token)) return Task.CompletedTask;
+                var rawCookieHeader = context.Request.Headers.Cookie.ToString();
+
+                if (string.IsNullOrEmpty(rawCookieHeader)) return Task.CompletedTask;
+                var tokenCookie = rawCookieHeader.Split(';')
+                    .Select(c => c.Trim())
+                    .FirstOrDefault(c => c.StartsWith("Token=", StringComparison.OrdinalIgnoreCase));
+
+                if (tokenCookie != null) context.Token = tokenCookie["Token=".Length..];
 
                 return Task.CompletedTask;
             }
@@ -105,6 +120,7 @@ app.UseRouting();
 app.MapDefaultEndpoints();
 app.UseHttpsRedirection();
 app.UseAntiforgery();
+app.UseForwardedHeaders();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();
