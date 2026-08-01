@@ -5,33 +5,33 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>thefirey33_backend</RootNamespace>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.4.6-preview.1.26319.6" />
-        <PackageReference Include="Aspire.Npgsql" Version="13.4.6" />
-        <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.4.6" />
-        <PackageReference Include="Aspire.StackExchange.Redis" Version="13.4.6" />
-        <PackageReference Include="Aspire.StackExchange.Redis.OutputCaching" Version="13.4.6" />
-        <PackageReference Include="ExifLibrary" Version="1.0.13" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+        <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.4.6-preview.1.26319.6"/>
+        <PackageReference Include="Aspire.Npgsql" Version="13.4.6"/>
+        <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.4.6"/>
+        <PackageReference Include="Aspire.StackExchange.Redis" Version="13.4.6"/>
+        <PackageReference Include="Aspire.StackExchange.Redis.OutputCaching" Version="13.4.6"/>
+        <PackageReference Include="ExifLibrary" Version="1.0.13"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Scalar.AspNetCore" Version="2.16.16" />
-        <PackageReference Include="SkiaSharp" Version="4.151.0-rc.1.1" />
-        <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="4.151.0" />
-        <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.151.0" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.16.16"/>
+        <PackageReference Include="SkiaSharp" Version="4.151.0" />
+        <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.151.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\thefirey33.ServiceDefaults\thefirey33.ServiceDefaults.csproj" />
+        <ProjectReference Include="..\thefirey33.ServiceDefaults\thefirey33.ServiceDefaults.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Images\" />
-        <Folder Include="Migrations\NikoDexRecovery\" />
+        <Folder Include="Images\"/>
+        <Folder Include="Migrations\NikoDexRecovery\"/>
     </ItemGroup>
 
 </Project>
