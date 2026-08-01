@@ -58,6 +58,11 @@
             }}>{minecraftServerLink}</button>
         </p>
 
+
+        <p class="text-white mt-5">
+            The server is VANILLA 26.2.
+        </p>
+
         <p class="text-white mt-5">
             To join this server, you will need "cloudflared". As it's hosted over a cloudflare tunnel.
             Run "cloudflared access tcp --hostname mc.thefirey33.net --url localhost:25565", then add a Minecraft server
