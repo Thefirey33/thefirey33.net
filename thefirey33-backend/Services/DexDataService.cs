@@ -68,7 +68,6 @@ public class DexDataService(
         return file;
     }
 
-
     /// <summary>
     ///     This will create a backup of the dex entirely.
     /// </summary>
@@ -81,6 +80,16 @@ public class DexDataService(
         if (lastElement != null)
         {
             var timeSpan = DateTime.UtcNow - lastElement.Date;
+
+            var fileCheck = await nikoDexRecoveryContext.NikoTypeRecoveryDb
+                .ToListAsync();
+
+            var nonExistingFiles = fileCheck
+                .Where(db => File.Exists(db.ImagePath))
+                .ToList();
+
+            // Check if the specified image was downloaded. If it is not downloaded, download it.
+            foreach (var nikoTypeRecoveryDb in nonExistingFiles) await DownloadNikoImage(nikoTypeRecoveryDb);
 
             // If the backup timespan is smaller than the specified days, do not take a backup!
             if (timeSpan.Days < DayTimeSpan)
@@ -118,15 +127,7 @@ public class DexDataService(
         // Fetch each image one by one from the NikoDex API to create a full backup.
         // After that, set the ImagePath.
         logger.LogInformation("Gettting ready to fetch all images...");
-        foreach (var db in dexData)
-        {
-            var data = await _httpClient.GetByteArrayAsync($"image?id={db.Id}");
-
-            // Fetch the specified image.
-            var path = Path.Combine(StoragePath, CreateNikoFileString(db.Id));
-            await File.WriteAllBytesAsync(path, data);
-            db.ImagePath = path;
-        }
+        foreach (var db in dexData) await DownloadNikoImage(db);
 
 
         await nikoDexRecoveryContext.NikoDexRecovery.AddAsync(new NikoDexRecoveryDbType
@@ -139,6 +140,17 @@ public class DexDataService(
         await nikoDexRecoveryContext.SaveChangesAsync();
 
         logger.LogInformation("Successfully backed up {Date} instance of NikoDex.", DateTime.UtcNow);
+    }
+
+
+    private async Task DownloadNikoImage(NikoTypeRecoveryDb db)
+    {
+        var data = await _httpClient.GetByteArrayAsync($"image?id={db.Id}");
+
+        // Fetch the specified image.
+        var path = Path.Combine(StoragePath, CreateNikoFileString(db.Id));
+        await File.WriteAllBytesAsync(path, data);
+        db.ImagePath = path;
     }
 
     /// <summary>

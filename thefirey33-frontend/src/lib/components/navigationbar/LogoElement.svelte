@@ -14,7 +14,7 @@
     <!-- Back to root section -->
     <a class="flex flex-row gap-4 p-4 group text-white text-2xl cursor-pointer hover:bg-white hover:text-black transition-all"
        href={resolve("/")}>
-        <img alt="Logo" class="group-hover:ring-2 ring-black transition" src={Logo} width="32"/>
+        <img alt="Logo" class="w-8 h-8 group-hover:ring-2 ring-black transition" height="32" src={Logo} width="32"/>
 
         Thefirey33
     </a>

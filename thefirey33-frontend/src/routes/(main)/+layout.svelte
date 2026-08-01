@@ -46,7 +46,7 @@
                 NikoDex Status
             </NavigationLinkElement>
 
-            <DropdownElement title="Serious Topics...">
+            <DropdownElement title="Other...">
                 <NavigationLinkElement href="/lore" imgSrc={LoreIcon}>Lore</NavigationLinkElement>
                 <NavigationLinkElement href="/disclaimer" imgSrc={AuthenticityIcon}>Disclaimers</NavigationLinkElement>
             </DropdownElement>
