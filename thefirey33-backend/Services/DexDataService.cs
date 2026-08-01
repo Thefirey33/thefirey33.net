@@ -85,8 +85,7 @@ public class DexDataService(
                 .ToListAsync();
 
             var nonExistingFiles = fileCheck
-                .Where(db => !File.Exists(db.ImagePath))
-                .ToList();
+                .Where(db => !File.Exists(db.ImagePath));
 
             // Check if the specified image was downloaded. If it is not downloaded, download it.
             foreach (var nikoTypeRecoveryDb in nonExistingFiles) await DownloadNikoImage(nikoTypeRecoveryDb);

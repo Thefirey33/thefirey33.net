@@ -6,6 +6,7 @@
     import TenTrillionIcon from "$lib/assets/img/icons/tentrillion.png";
     import GamepadIcon from "$lib/assets/img/icons/gamepad.png";
     import ArtIcon from "$lib/assets/img/icons/art.png";
+    import FlagIcon from "$lib/assets/img/icons/flag.png"
     import ProgrammingIcon from "$lib/assets/img/icons/programming.png";
     import LoreIcon from "$lib/assets/img/icons/lore.png";
     import NikoDexRecoveryIcon from "$lib/assets/img/icons/nikodexbackup.png";
@@ -45,6 +46,15 @@
             <NavigationLinkElement href="/dex" imgSrc={NikoDexRecoveryIcon}>
                 NikoDex Status
             </NavigationLinkElement>
+
+            <DropdownElement title="Servers...">
+                <NavigationLinkElement external={true} href="https://thefirey33.net/" imgSrc={FlagIcon}>
+                    Türkiye
+                </NavigationLinkElement>
+                <NavigationLinkElement external={true} href="https://jp.thefirey33.net/" imgSrc={FlagIcon}>
+                    Japan
+                </NavigationLinkElement>
+            </DropdownElement>
 
             <DropdownElement title="Other...">
                 <NavigationLinkElement href="/lore" imgSrc={LoreIcon}>Lore</NavigationLinkElement>
