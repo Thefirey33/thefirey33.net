@@ -5,7 +5,11 @@ import { getJson } from '$lib/types';
 
 export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
 	if (url.pathname !== '/admin/login') {
-		const authorizationState = await fetch(`${env.FIREYBACKEND_API}/Auth/check`).then((r) => r.ok);
+		const authorizationState = await fetch(`${env.FIREYBACKEND_API}/Auth/check`, {
+			headers: {
+				Authorization: `Bearer ${cookies.get('Token')}`
+			}
+		}).then((r) => r.ok);
 		// Check the auth state of the current user.
 		if (!authorizationState) throw redirect(307, '/admin/login');
 	}
