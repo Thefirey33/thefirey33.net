@@ -54,7 +54,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             OnMessageReceived = context =>
             {
-                // Attempt to get the associated JWT bearer token.
+                var authHeader = context.Request.Headers.Authorization.ToString();
+                
+                
+                if (!string.IsNullOrEmpty(authHeader) &&
+                    authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                    context.Token = authHeader["Bearer ".Length..].Trim();
+
                 if (context.Request.Cookies.TryGetValue("Token", out var token))
                     context.Token = token;
 
