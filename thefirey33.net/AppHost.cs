@@ -103,7 +103,7 @@ var gradleMinecraftServer = builder
         fireServerPluginStage.Run("--mount=type=cache,target=/root/.gradle ./gradlew build --no-daemon");
 
         var runnerStage = context.Builder.From("itzg/minecraft-server:java25-jdk", "runner");
-        runnerStage.Env("MEMORYSIZE", "6G");
+        runnerStage.Env("MEMORY", "6G");
         runnerStage.Run("rm -rf ./plugins");
         runnerStage.Env("EULA", "TRUE"); // Accept the Minecraft EULA.
         runnerStage.Env("TYPE", "PAPER");
