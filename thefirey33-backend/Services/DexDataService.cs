@@ -85,7 +85,7 @@ public class DexDataService(
                 .ToListAsync();
 
             var nonExistingFiles = fileCheck
-                .Where(db => File.Exists(db.ImagePath))
+                .Where(db => !File.Exists(db.ImagePath))
                 .ToList();
 
             // Check if the specified image was downloaded. If it is not downloaded, download it.
