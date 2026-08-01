@@ -124,6 +124,7 @@ var frontend = builder
     .WithHttpEndpoint(5000, 5000, isProxied: false)
     .WithExternalHttpEndpoints()
     .WithReference(backend.GetEndpoint("api"))
+    .WithEnvironment("ORIGIN", "http://localhost:5000")
     .WithReference(gradleMinecraftServer.GetEndpoint("api"))
     .WaitFor(backend);
 
