@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -105,7 +106,7 @@ public class AuthController(
     [HttpGet("check")]
     public async Task<IActionResult> CheckJwtToken()
     {
-        var tokenCookie = Request.Cookies["Token"];
+        var tokenCookie = await HttpContext.GetTokenAsync("access_token");
 
         var jwtValidationParameters = new TokenValidationParameters
         {
