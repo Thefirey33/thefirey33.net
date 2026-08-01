@@ -90,6 +90,7 @@ public class DexDataService(
 
             // Check if the specified image was downloaded. If it is not downloaded, download it.
             foreach (var nikoTypeRecoveryDb in nonExistingFiles) await DownloadNikoImage(nikoTypeRecoveryDb);
+            await nikoDexRecoveryContext.SaveChangesAsync();
 
             // If the backup timespan is smaller than the specified days, do not take a backup!
             if (timeSpan.Days < DayTimeSpan)
