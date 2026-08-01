@@ -21,8 +21,6 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Scalar.AspNetCore" Version="2.16.16"/>
-        <PackageReference Include="SkiaSharp" Version="4.151.0" />
-        <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.151.0"/>
     </ItemGroup>
 
     <ItemGroup>
