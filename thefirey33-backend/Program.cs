@@ -91,19 +91,7 @@ builder.AddRedisOutputCache("fireycache");
 
 // Add the NikoDex Recovery Service for the backups.
 builder.Services.AddHostedService<NikoDexRecoveryService>();
-
-builder
-    .Services.AddCors(options =>
-    {
-        // Add the cors policy for the frontend.
-        options.AddPolicy("AllowSpecificOrigin",
-            policy =>
-                policy.WithOrigins(Environment.GetEnvironmentVariable("FIREYFRONTEND_HTTP")
-                                   ?? throw new NullReferenceException("Frontend URL not specified!"))
-                    .WithOrigins(Environment.GetEnvironmentVariable("FIREYMINECRAFTSERVER_API") ??
-                                 throw new NullReferenceException("Minecraft Server URL not specified!")));
-    })
-    .AddRouting();
+builder.Services.AddRouting();
 
 var app = builder.Build();
 
