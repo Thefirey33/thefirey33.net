@@ -30,7 +30,8 @@ export const actions = {
 				{
 					method: 'POST',
 					headers: {
-						'content-type': 'application/json'
+						'content-type': 'application/json',
+						Authorization: `Bearer ${cookies.get('Token')}`
 					},
 					body: payload
 				}

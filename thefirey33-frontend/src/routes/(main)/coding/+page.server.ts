@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
 import { getJson, type RepositoryGitData } from '$lib/types';
 
-export const load: PageServerLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ fetch, cookies }) => {
 	const result: {
 		message: RepositoryGitData[] | undefined;
 		success: boolean;

@@ -14,7 +14,11 @@ export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
 		message: Information | undefined;
 		success: boolean;
 		errorMessage?: string;
-	} = await getJson(fetch, `${env.FIREYBACKEND_API}/Information`);
+	} = await getJson(fetch, `${env.FIREYBACKEND_API}/Information`, {
+		headers: {
+			Authorization: `Bearer ${cookies.get('Token')}`
+		}
+	});
 
 	return { info: info };
 };

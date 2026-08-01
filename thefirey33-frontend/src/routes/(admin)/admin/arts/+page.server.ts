@@ -10,11 +10,12 @@ export const load: PageServerLoad = async ({ fetch }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, fetch }) => {
+	default: async ({ request, fetch, cookies }) => {
 		const formData = await request.formData();
 
 		const result = await fetch(`${env.FIREYBACKEND_API}/Art`, {
 			method: 'POST',
+			headers: { Authorization: `Bearer ${cookies.get('Token')}` },
 			body: formData
 		}).then(async (r) => {
 			return r.ok;

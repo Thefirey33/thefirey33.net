@@ -1,13 +1,14 @@
 import type { RequestHandler } from './$types';
 import { env } from '$env/dynamic/private';
 
-export const PUT: RequestHandler = async ({ fetch, params, url }) => {
+export const PUT: RequestHandler = async ({ fetch, params, url, cookies }) => {
 	const approvedSearchQuery = url.searchParams.get('approved') ?? 'false';
 
 	const result = await fetch(
 		`${env.FIREYBACKEND_API}/Approval/${params.uuid}?approved=${approvedSearchQuery}`,
 		{
-			method: 'PUT'
+			method: 'PUT',
+			headers: { Authorization: `Bearer ${cookies.get('Token')}` }
 		}
 	);
 

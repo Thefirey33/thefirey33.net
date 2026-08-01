@@ -2,14 +2,18 @@ import type { PageServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
 import { type ArtResponse, getJson } from '$lib/types';
 
-export const load: PageServerLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ fetch, cookies }) => {
 	// This will fetch all the related art content from the server.
 
 	const result: {
 		message: string[] | undefined;
 		success: boolean;
 		errorMessage?: string;
-	} = await getJson<string[]>(fetch, `${env.FIREYBACKEND_API}/Art/categories`);
+	} = await getJson<string[]>(fetch, `${env.FIREYBACKEND_API}/Art/categories`, {
+		headers: {
+			Authorization: `Bearer ${cookies.get('Token')}`
+		}
+	});
 
 	if (!result.success || result.message === undefined) {
 		return {
