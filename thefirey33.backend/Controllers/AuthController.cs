@@ -77,9 +77,6 @@ public class AuthController(
     [HttpPost("login")]
     public IActionResult Login([FromBody] UserTypeRequest userType)
     {
-        // The IP Address of the specified person who is logging in will be logged.
-        logger.LogInformation("Attempt to LOGIN from IP: {Ip}", HttpContext.Connection.RemoteIpAddress);
-
         if (userType.Username != Environment.GetEnvironmentVariable("ADMIN_USERNAME") ||
             !VerifyPassword(userType.Password) ||
             !authorizationCodeService.CheckAuthorizationCode(userType.AuthorizationCode)) return Unauthorized();
@@ -87,6 +84,7 @@ public class AuthController(
         var password = GenerateJwtToken(userType);
         Response.Cookies.Append("Token", password);
 
+        // Return the specified cookie with the Token.
         return Ok(new
         {
             Token = password
@@ -99,16 +97,23 @@ public class AuthController(
     [HttpPost("code")]
     public IActionResult CreateAuthCode()
     {
+        // Create the specified auth code.
         authorizationCodeService.CreateAuthorizationCode();
+
         return Ok();
     }
 
     [HttpGet("check")]
     public async Task<IActionResult> CheckJwtToken()
     {
+        // If the current session is a development session, skip the authentication phase.
+        if (Environment.GetEnvironmentVariable("STATE") == "DEVELOPMENT")
+            return Ok();
+
         if (User.Identity == null)
             return Unauthorized();
 
+        // Check if the specified user is authenticated or not.
         return User.Identity.IsAuthenticated ? Ok() : Unauthorized();
     }
 
@@ -131,7 +136,9 @@ public class AuthController(
             JwtAudience,
             claims,
             expires: DateTime.UtcNow.AddHours(5),
-            signingCredentials: creds);
+            signingCredentials: creds
+        );
+
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
