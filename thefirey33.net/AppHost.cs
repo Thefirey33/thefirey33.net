@@ -49,7 +49,10 @@ var artPostingDb = postgresSql.AddDatabase("artdb");
 // Each joining user will require approval.
 var approvalDb = postgresSql.AddDatabase("approvaldb");
 
+// The Scalar API reference.
 var scalar = builder.AddScalarApiReference();
+
+var applicationState = builder.Environment.IsDevelopment() ? "DEVELOPMENT" : "PRODUCTION";
 
 // This is the Minecraft Server.
 // Managed by the FireServer Minecraft Plugin.
@@ -73,9 +76,10 @@ var backend =
         .WithReference(nikoDexBackupDb)
         .WithReference(approvalDb)
         .WithReference(artPostingDb)
+        .WithEnvironment("STATE", applicationState)  // The current state of the whole application. Might be DEVELOPMENT, might be PRODUCTION.
         .WithEnvironment("ADMIN_USERNAME", adminUsername)
         .WithEnvironment("ADMIN_PASSWORD", adminPassword)
-        .WithHttpEndpoint(5540, 5540, isProxied: false, name: "api");
+        .WithHttpEndpoint(5540, name: "api");
 
 scalar.WithApiReference(backend);
 
@@ -84,17 +88,18 @@ const int minecraftServerApiEndpoint = 7000;
 // This is the Minecraft server that runs in a docker container.
 // It exposes the default Minecraft Server port, and automatically starts.
 var gradleMinecraftServer = builder
-    .AddDockerfile("fireyminecraftserver", "../thefirey33-fireserver")
-    .WithEndpoint(25565, 25565, isProxied: false, isExternal: true)
+    .AddDockerfile("fireyminecraftserver", "../thefirey33.fireserver")
+    .WithEndpoint(25565, 25565, isExternal: true)
     .WithHttpEndpoint(minecraftServerApiEndpoint, minecraftServerApiEndpoint, isProxied: false, name: "api")
     .WithEnvironment("SERVER_ENDPOINT", minecraftServerApiEndpoint.ToString)
     .WithEnvironment("TRUSTED_OPERATOR_UUID", trustedOperatorUuid)
     .WithEnvironment("ADMIN_USERNAME", adminUsername)
     .WithEnvironment("ADMIN_PASSWORD", adminPassword)
+    .WithEnvironment("STATE", applicationState) // The current state of the whole application. Might be DEVELOPMENT, might be PRODUCTION.
     .WithReference(backend.GetEndpoint("api"))
     .WithPersistentLifetime()
     .WithVolume("fireservervolume", "/data")
-    .WithDockerfileBuilder("../thefirey33-fireserver", context =>
+    .WithDockerfileBuilder("../thefirey33.fireserver", context =>
     {
         var fireServerPluginStage = context.Builder.From("eclipse-temurin:25-jdk-alpine", "builderfireserver");
         fireServerPluginStage.WorkDir("/compile");
@@ -117,10 +122,10 @@ var gradleMinecraftServer = builder
 // Add the front-end API to the stack.
 // This connects with the main backend (port 5540) and the minecraft backend. (port 7000)
 var frontend = builder
-    .AddViteApp("fireyfrontend", "../thefirey33-frontend")
+    .AddViteApp("fireyfrontend", "../thefirey33.frontend")
     .WithNpm()
     .PublishAsNodeServer("build/index.js", "./build")
-    .WithHttpEndpoint(5000, 5000, isProxied: false)
+    .WithHttpEndpoint(5000)
     .WithExternalHttpEndpoints()
     .WithReference(backend.GetEndpoint("api"))
     .WithEnvironment("ORIGIN", "https://thefirey33.net")

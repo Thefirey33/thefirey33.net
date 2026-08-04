@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\thefirey33-backend\thefirey33-backend.csproj" />
+      <ProjectReference Include="..\thefirey33.backend\thefirey33.backend.csproj" />
     </ItemGroup>
 
 </Project>

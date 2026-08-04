@@ -1,8 +1,8 @@
 bin/
 obj/
 /packages/
-/thefirey33-backend/ServerStorage
-/thefirey33-backend/DexStorage
+/thefirey33.backend/ServerStorage
+/thefirey33.backend/DexStorage
 riderModule.iml
 /_ReSharper.Caches/
 appsettings.Development.json
