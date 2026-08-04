@@ -106,27 +106,10 @@ public class AuthController(
     [HttpGet("check")]
     public async Task<IActionResult> CheckJwtToken()
     {
-        var tokenCookie = await HttpContext.GetTokenAsync("access_token");
+        if (User.Identity == null)
+            return Unauthorized();
 
-        var jwtValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = JwtIssuer,
-            ValidateAudience = true,
-            ValidAudience = JwtAudience,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = JwtKey,
-            ValidateLifetime = true
-        };
-        var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-
-        if (!jwtSecurityTokenHandler.CanReadToken(tokenCookie)) return Unauthorized();
-        var result = await jwtSecurityTokenHandler.ValidateTokenAsync(tokenCookie, jwtValidationParameters);
-
-        if (result.IsValid)
-            return Ok();
-
-        return Unauthorized();
+        return User.Identity.IsAuthenticated ? Ok() : Unauthorized();
     }
 
 

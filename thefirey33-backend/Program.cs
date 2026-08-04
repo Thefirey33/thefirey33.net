@@ -60,29 +60,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                                                                                throw new NullReferenceException(
                                                                                    "JWT Key must be provided!")))
         };
-
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
-                var authHeader = context.Request.Headers.Authorization.ToString();
-                if (!string.IsNullOrEmpty(authHeader) &&
-                    authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-                    context.Token = authHeader["Bearer ".Length..].Trim();
-
-                if (!string.IsNullOrEmpty(context.Token)) return Task.CompletedTask;
-                var rawCookieHeader = context.Request.Headers.Cookie.ToString();
-
-                if (string.IsNullOrEmpty(rawCookieHeader)) return Task.CompletedTask;
-                var tokenCookie = rawCookieHeader.Split(';')
-                    .Select(c => c.Trim())
-                    .FirstOrDefault(c => c.StartsWith("Token=", StringComparison.OrdinalIgnoreCase));
-
-                if (tokenCookie != null) context.Token = tokenCookie["Token=".Length..];
-
-                return Task.CompletedTask;
-            }
-        };
     });
 
 

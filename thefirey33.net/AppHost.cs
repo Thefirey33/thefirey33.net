@@ -1,4 +1,5 @@
 using Aspire.Hosting.Docker.Resources.ServiceNodes;
+using Microsoft.Extensions.Hosting;
 using Projects;
 using Scalar.Aspire;
 
@@ -32,7 +33,6 @@ var redis
 // Will be used for the forums and NikoDex backups.
 var postgresSql
     = builder.AddPostgres("fireydatabase")
-        .WithDataVolume(isReadOnly: false)
         .WithPassword(builder.AddParameter("postgres-password", true))
         .WithDataVolume()
         .WithPgAdmin();
