@@ -1,0 +1,14 @@
+[project]
+version = "1.0"
+name = "mad-mew-mew"
+requires-python = "< 3.12"
+dependencies = [
+    "transformers",
+    "fastapi[standard]",
+    "pydantic",
+    "torch",
+    "pillow",
+    "discord.py",
+    "better-fastapi-discord",
+    "uvicorn"
+]

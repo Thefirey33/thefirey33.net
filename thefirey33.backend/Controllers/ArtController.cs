@@ -23,15 +23,7 @@ public class ArtController(ArtsContext artsContext, DataService dataService) : C
     {
         var result = await artsContext.Arts.ToListAsync();
         // Mask the filepath so it's not accidentally sent.
-        return Ok(result.Select(type => new ArtDbResponse
-        {
-            Description = type.Description,
-            Id = type.Id,
-            Author = type.Author,
-            Category = type.Category,
-            Title = type.Title,
-            Uuid = type.Uuid
-        }));
+        return Ok(result.Select(ArtDbResponse.GetFrom));
     }
 
     /// <summary>
@@ -100,6 +92,33 @@ public class ArtController(ArtsContext artsContext, DataService dataService) : C
         });
 
         await artsContext.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    /// <summary>
+    /// Change a Art database entry.
+    /// </summary>
+    /// <param name="id">Id.</param>
+    /// <param name="artDbRequest">The Art Database Request.</param>
+    [HttpPut("{id:int}")]
+    [Authorize]
+    public async Task<IActionResult> PutArt(int id, [FromForm] ArtDbRequest artDbRequest)
+    {
+        var result = artsContext.Arts.FirstOrDefault(obj => obj.Id == id);
+
+        if (result == null)
+            return NotFound();
+
+        result.Author = artDbRequest.Author;
+        result.Category = artDbRequest.Category;
+        result.Description = artDbRequest.Description;
+        result.Title = artDbRequest.Title;
+
+        // Update the specified art entry.
+        artsContext.Arts.Update(result);
+        await artsContext.SaveChangesAsync();
+
         return Ok();
     }
 
@@ -124,14 +143,6 @@ public class ArtController(ArtsContext artsContext, DataService dataService) : C
             return NotFound();
 
         // Mask the filepath to somewhere else.
-        return Ok(new ArtDbResponse
-        {
-            Description = obj.Description,
-            Uuid = obj.Uuid,
-            Author = obj.Author,
-            Id = obj.Id,
-            Category = obj.Category,
-            Title = obj.Title
-        });
+        return Ok(ArtDbResponse.GetFrom(obj));
     }
 }

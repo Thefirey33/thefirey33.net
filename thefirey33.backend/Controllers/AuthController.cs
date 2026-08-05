@@ -14,7 +14,6 @@ namespace thefirey33_backend.Controllers;
 [Route("[controller]")]
 public class AuthController(
     IConfiguration configuration,
-    ILogger<AuthController> logger,
     IAuthorizationCodeService authorizationCodeService)
     : ControllerBase
 {
@@ -103,13 +102,13 @@ public class AuthController(
         return Ok();
     }
 
+    /// <summary>
+    /// Check if the user is authenticated or not.
+    /// </summary>
+    /// <returns></returns>
     [HttpGet("check")]
-    public async Task<IActionResult> CheckJwtToken()
+    public IActionResult CheckJwtToken()
     {
-        // If the current session is a development session, skip the authentication phase.
-        if (Environment.GetEnvironmentVariable("STATE") == "DEVELOPMENT")
-            return Ok();
-
         if (User.Identity == null)
             return Unauthorized();
 
@@ -126,9 +125,11 @@ public class AuthController(
     public string GenerateJwtToken(UserType userType)
     {
         var creds = new SigningCredentials(JwtKey, SecurityAlgorithms.HmacSha256);
+
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, userType.Username)
+            new Claim(ClaimTypes.NameIdentifier, userType.Username),
+            new Claim(ClaimTypes.Role, "Administrator")
         };
 
         var token = new JwtSecurityToken(
@@ -138,7 +139,6 @@ public class AuthController(
             expires: DateTime.UtcNow.AddHours(5),
             signingCredentials: creds
         );
-
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }

@@ -12,26 +12,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.Services
-    .AddEndpointsApiExplorer()
-    .AddAntiforgery()
-    .AddOpenApi()
-    .AddAntiforgery(options =>
-    {
-        options.HeaderName = "X-CSRF-TOKEN";
-        options.Cookie.Name = "X-CSRF-TOKEN";
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.HttpOnly = false;
-    });
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddAntiforgery();
+builder.Services.AddOpenApi();
+
+builder.Services.AddScoped<IDexDataService, DexDataService>();
 
 builder.Services.AddSingleton<DataService>();
-builder.Services.AddScoped<IDexDataService, DexDataService>();
 builder.Services.AddSingleton<IAuthorizationCodeService, AuthorizationCodeService>();
 
-// Add database context.
+// Arts Database
 builder.AddNpgsqlDbContext<ArtsContext>("artdb");
+
+// NikoDex Recovery Service Database
 builder.AddNpgsqlDbContext<NikoDexRecoveryContext>("nikodexdb");
+
+// Approval Database
 builder.AddNpgsqlDbContext<ApprovalContext>("approvaldb");
+
+// Question Database
+builder.AddNpgsqlDbContext<QuestionContext>("questiondb");
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -107,6 +107,7 @@ app.MapControllers();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
     app.MapScalarApiReference();
 }
 
@@ -117,14 +118,17 @@ app.UseOutputCache();
 
 using (var scope = app.Services.CreateScope())
 {
-    // Perform all the necessary migrations.
-    var artDb = scope.ServiceProvider.GetRequiredService<ArtsContext>();
-    var nikoDexDb = scope.ServiceProvider.GetRequiredService<NikoDexRecoveryContext>();
-    var approvalDb = scope.ServiceProvider.GetRequiredService<ApprovalContext>();
-
+    var artDb = scope.ServiceProvider.GetRequiredService<ArtsContext>(); // Arts Migration
     await artDb.Database.MigrateAsync();
+
+    var nikoDexDb = scope.ServiceProvider.GetRequiredService<NikoDexRecoveryContext>(); // NikoDex Recovery Service Migration
     await nikoDexDb.Database.MigrateAsync();
+
+    var approvalDb = scope.ServiceProvider.GetRequiredService<ApprovalContext>(); // Approval Service (for the Minecraft Server) Migration
     await approvalDb.Database.MigrateAsync();
+
+    var questionDb = scope.ServiceProvider.GetRequiredService<QuestionContext>(); // The Migration for the Question system.
+    await questionDb.Database.MigrateAsync();
 }
 
 app.Run();

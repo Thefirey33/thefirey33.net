@@ -8,6 +8,6 @@ namespace thefirey33_backend.Types.Database.Context
 {
     public class QuestionContext(DbContextOptions<QuestionContext> options) : DbContext(options)
     {
-
+        public DbSet<QuestionDbType> Questions { get; set; }
     }
 }

@@ -1,3 +1,4 @@
+using Aspire.Hosting.Docker.Resources.ComposeNodes;
 using Aspire.Hosting.Docker.Resources.ServiceNodes;
 using Microsoft.Extensions.Hosting;
 using Projects;
@@ -11,6 +12,23 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var compose =
     builder.AddDockerComposeEnvironment("compose");
+
+// Configure the Zapret networking here.
+// This allows the website to bypass the general blocking of gateway.discord.gg by several countries.
+compose.ConfigureComposeFile(options =>
+{
+    options.Networks = new Dictionary<string, Network>
+    {
+        {
+            // Zapret Network for the DPI bypass.
+            "zapret-network", new Network
+            {
+                Name = "zapret-network",
+                Driver = "bridge"
+            }
+        }
+    };
+});
 
 // The admin username of the admin interface.
 var adminUsername = builder.AddParameter("admin-username", true);
@@ -49,16 +67,44 @@ var artPostingDb = postgresSql.AddDatabase("artdb");
 // Each joining user will require approval.
 var approvalDb = postgresSql.AddDatabase("approvaldb");
 
+// This is for the Questions that can be asked on the website.
+// It will require Discord Authentication.
+var questionDb = postgresSql.AddDatabase("questiondb");
+
+// The Question System is managed by two services,
+// The Discord Authentication Service and Website's Backend Itself.
+
 // The Scalar API reference.
 var scalar = builder.AddScalarApiReference();
 
-var applicationState = builder.Environment.IsDevelopment() ? "DEVELOPMENT" : "PRODUCTION";
+// This is for the iptables manipulation, to bypass the Discord API filtering imposed by some countries.
+var zapret = builder.AddContainer("fireyfilteringbypass", "punkidow/zapret")
+    .PublishAsDockerComposeService((_, service) =>
+    {
+        service.Networks = ["zapret-network"];
+        service.Privileged = true;
+        service.Restart = "unless-stopped";
+    });
+
+// This is the filtering service.
+// For filtering content sent by the user.
+var filteringService = builder
+    .AddUvicornApp("fireyfilteringservice", "../thefirey33.contentfilter", "main:app")
+    .WithDockerfileBaseImage("python:3.11.15-trixie", "python:3.11.15-trixie")
+    .PublishAsDockerComposeService((_, service) => { service.Networks = ["zapret-network"]; })
+    .WithEnvironment("CLIENT_ID", builder.AddParameter("bot-client-id", true))
+    .WithEnvironment("CLIENT_SECRET", builder.AddParameter("bot-client-secret", true))
+    .WithEnvironment("REDIRECT_URI", builder.AddParameter("bot-redirect-uri"))
+    .WithEnvironment("BOT_TOKEN", builder.AddParameter("bot-token", true))
+    .WaitFor(zapret)
+    .WithHttpHealthCheck("/health")
+    .WithHttpEndpoint(name: "api", env: "PORT");
 
 // This is the Minecraft Server.
 // Managed by the FireServer Minecraft Plugin.
 var backend =
     builder.AddProject<thefirey33_backend>("fireybackend")
-        .PublishAsDockerComposeService((resource, service) =>
+        .PublishAsDockerComposeService((_, service) =>
         {
             service.Name = "fireybackend";
             service.User = "0:0"; // Unfortunately, some things just don't turn out how they're supposed to be.
@@ -71,18 +117,21 @@ var backend =
             });
         })
         .WaitFor(redis)
+        .WaitFor(filteringService)
         .WaitFor(postgresSql)
         .WithReference(redis)
-        .WithReference(nikoDexBackupDb)
-        .WithReference(approvalDb)
-        .WithReference(artPostingDb)
-        .WithEnvironment("STATE", applicationState)  // The current state of the whole application. Might be DEVELOPMENT, might be PRODUCTION.
+        .WithReference(questionDb) // This is the Database for all the Questions that the users can ask.
+        .WithReference(nikoDexBackupDb) // The NikoDex Backup Recovery Service's Database.
+        .WithReference(approvalDb) // The Approval (Minecraft Server Approval Service)'s Database.
+        .WithReference(artPostingDb) // The Arts database.
         .WithEnvironment("ADMIN_USERNAME", adminUsername)
         .WithEnvironment("ADMIN_PASSWORD", adminPassword)
-        .WithHttpEndpoint(5540, name: "api");
+        .WithHttpEndpoint(name: "api");
 
+// The API reference provided by Scalar.
 scalar.WithApiReference(backend);
 
+// The endpoint of the Minecraft Server.
 const int minecraftServerApiEndpoint = 7000;
 
 // This is the Minecraft server that runs in a docker container.
@@ -90,12 +139,10 @@ const int minecraftServerApiEndpoint = 7000;
 var gradleMinecraftServer = builder
     .AddDockerfile("fireyminecraftserver", "../thefirey33.fireserver")
     .WithEndpoint(25565, 25565, isExternal: true)
-    .WithHttpEndpoint(minecraftServerApiEndpoint, minecraftServerApiEndpoint, isProxied: false, name: "api")
-    .WithEnvironment("SERVER_ENDPOINT", minecraftServerApiEndpoint.ToString)
+    .WithHttpEndpoint(minecraftServerApiEndpoint, minecraftServerApiEndpoint, "api", "SERVER_ENDPOINT")
     .WithEnvironment("TRUSTED_OPERATOR_UUID", trustedOperatorUuid)
     .WithEnvironment("ADMIN_USERNAME", adminUsername)
     .WithEnvironment("ADMIN_PASSWORD", adminPassword)
-    .WithEnvironment("STATE", applicationState) // The current state of the whole application. Might be DEVELOPMENT, might be PRODUCTION.
     .WithReference(backend.GetEndpoint("api"))
     .WithPersistentLifetime()
     .WithVolume("fireservervolume", "/data")
@@ -108,8 +155,9 @@ var gradleMinecraftServer = builder
         fireServerPluginStage.Run("--mount=type=cache,target=/root/.gradle ./gradlew build --no-daemon");
 
         var runnerStage = context.Builder.From("itzg/minecraft-server:java25-jdk", "runner");
-        runnerStage.Env("MEMORY", "8G");
         runnerStage.Run("rm -rf ./plugins");
+        runnerStage.Env("VERSION", "26.2");
+        runnerStage.Env("MEMORY", "8G");
         runnerStage.Env("EULA", "TRUE"); // Accept the Minecraft EULA.
         runnerStage.Env("TYPE", "PAPER");
         runnerStage.Env("USES_PLUGINS", "true");
@@ -128,9 +176,12 @@ var frontend = builder
     .WithHttpEndpoint(5000)
     .WithExternalHttpEndpoints()
     .WithReference(backend.GetEndpoint("api"))
-    .WithEnvironment("ORIGIN", "https://thefirey33.net")
     .WithReference(gradleMinecraftServer.GetEndpoint("api"))
     .WaitFor(backend);
+
+// The ORIGIN should not be specified if the Application is not in production mode.
+if (builder.Environment.IsProduction())
+    frontend.WithEnvironment("ORIGIN", "https://thefirey33.net");
 
 // Reference the front-end for the CORS policy.
 backend

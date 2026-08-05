@@ -9,25 +9,25 @@ public class ArtDbRequest
     ///     The category of this art.
     /// </summary>
     [JsonPropertyName("category")]
-    public string? Category { get; init; }
+    public string? Category { get; set; }
 
     /// <summary>
     ///     The author of this art.
     /// </summary>
     [JsonPropertyName("author")]
-    public required string Author { get; init; }
+    public required string Author { get; set; }
 
     /// <summary>
     ///     The Title.
     /// </summary>
     [JsonPropertyName("title")]
     [MaxLength(100)]
-    public required string Title { get; init; }
+    public required string Title { get; set; }
 
     /// <summary>
     ///     The description.
     /// </summary>
     [JsonPropertyName("description")]
     [MaxLength(256)]
-    public required string Description { get; init; }
+    public required string Description { get; set; }
 }
