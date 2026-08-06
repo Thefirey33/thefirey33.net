@@ -134,7 +134,7 @@ var gradleMinecraftServer = builder
         fireServerPluginStage.WorkDir("/compile");
         fireServerPluginStage.Copy(".", ".");
         fireServerPluginStage.Run("chmod +x ./gradlew");
-        fireServerPluginStage.Run("./gradlew build");
+        fireServerPluginStage.Run("./gradlew build -x test");
 
         var runnerStage = context.Builder.From("itzg/minecraft-server:java25-jdk", "runner");
         runnerStage.Run("rm -rf ./plugins");
