@@ -56,7 +56,8 @@ var wireguardContainer = builder.AddContainer("fireywireguard", "linuxserver/wir
         service.Restart = "unless-stopped";
         service.Sysctls = new Dictionary<string, string>
         {
-            { "net.ipv4.ip_forward", "1" }
+            { "net.ipv4.ip_forward", "1" },
+            { "net.ipv4.conf.all.src_valid_mark", "1" }
         };
     });
 
