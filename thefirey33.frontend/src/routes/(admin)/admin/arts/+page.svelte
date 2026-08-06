@@ -5,11 +5,9 @@
     import {setToast} from "$lib/toast-helper";
     import {enhance} from "$app/forms";
     import {invalidateAll} from "$app/navigation";
+    import FileInputElement from "$lib/components/other/FileInputElement.svelte";
 
     let {data} = $props();
-
-    let fileInput: HTMLInputElement;
-    let files: FileList | undefined = $state();
 
 
     async function deleteEntry(index: number, id: number) {
@@ -33,37 +31,26 @@
 <form class="text-white p-4 max-w-200 m-auto not-md:justify-self-center flex flex-col gap-4"
       enctype="multipart/form-data" method="POST" use:enhance>
 
-    <h1 class="text-white text-3xl text-center">Upload Art!</h1>
+    <h1 class="text-white text-3xl text-center">Upload Art...</h1>
 
+    <label class="justify-between gap-4 flex items-center" for="Title">
+        Title:
+        <input class="login-field" maxlength="256" name="Title" placeholder="Title of post..." required type="text">
+    </label>
     <label class="justify-between gap-4 flex items-center" for="Author">
         Author:
         <input class="login-field" name="Author" placeholder="Author name..." required type="text">
-    </label>
-    <label class="justify-between gap-4 flex items-center" for="Author">
-        Category:
-        <input class="login-field" name="Category" placeholder="Existing/new category..." required type="text">
     </label>
     <label class="justify-between gap-4 flex items-center" for="Description">
         Description:
         <input class="login-field" maxlength="256" name="Description" placeholder="Description of post...." required
                type="text">
     </label>
-    <label class="justify-between gap-4 flex items-center" for="file">
-        File:
-        <button class="btn text-base" onclick={() => fileInput.click()} type="button">Select File..
-            {#if (files !== undefined && files.length > 0)}
-                ({files?.item(0)?.name})
-            {/if}
-        </button>
-        <input accept="image/png, image/jpg, image/jpeg, image/webp" bind:files={files} bind:this={fileInput}
-               class="hidden"
-               name="file" required
-               type="file">
+    <label class="justify-between gap-4 flex items-center" for="Author">
+        Category:
+        <input class="login-field" name="Category" placeholder="Existing/new category..." required type="text">
     </label>
-    <label class="justify-between gap-4 flex items-center" for="Title">
-        Title:
-        <input class="login-field" maxlength="256" name="Title" placeholder="Title of post..." required type="text">
-    </label>
+    <FileInputElement required={true}/>
     <button class="btn text-base" type="submit">Upload</button>
 </form>
 

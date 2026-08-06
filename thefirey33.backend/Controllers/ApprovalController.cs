@@ -56,7 +56,9 @@ public class ApprovalController(ApprovalContext approvalContext) : ControllerBas
     [Authorize]
     public async Task<List<ApprovalDbType>> ListApprovals()
     {
-        var result = await approvalContext.Approvals.ToListAsync();
+        var result = await approvalContext.Approvals
+            .OrderBy(db => db.Id)
+            .ToListAsync();
         return result;
     }
 

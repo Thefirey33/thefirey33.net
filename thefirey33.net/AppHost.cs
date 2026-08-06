@@ -1,4 +1,3 @@
-using Aspire.Hosting.Docker.Resources.ComposeNodes;
 using Aspire.Hosting.Docker.Resources.ServiceNodes;
 using Microsoft.Extensions.Hosting;
 using Projects;
@@ -12,23 +11,6 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var compose =
     builder.AddDockerComposeEnvironment("compose");
-
-// Configure the Zapret networking here.
-// This allows the website to bypass the general blocking of gateway.discord.gg by several countries.
-compose.ConfigureComposeFile(options =>
-{
-    options.Networks = new Dictionary<string, Network>
-    {
-        {
-            // Zapret Network for the DPI bypass.
-            "zapret-network", new Network
-            {
-                Name = "zapret-network",
-                Driver = "bridge"
-            }
-        }
-    };
-});
 
 // The admin username of the admin interface.
 var adminUsername = builder.AddParameter("admin-username", true);
@@ -81,7 +63,6 @@ var scalar = builder.AddScalarApiReference();
 var zapret = builder.AddContainer("fireyfilteringbypass", "punkidow/zapret")
     .PublishAsDockerComposeService((_, service) =>
     {
-        service.Networks = ["zapret-network"];
         service.Privileged = true;
         service.Restart = "unless-stopped";
     });
@@ -91,14 +72,13 @@ var zapret = builder.AddContainer("fireyfilteringbypass", "punkidow/zapret")
 var filteringService = builder
     .AddUvicornApp("fireyfilteringservice", "../thefirey33.contentfilter", "main:app")
     .WithDockerfileBaseImage("python:3.11.15-trixie", "python:3.11.15-trixie")
-    .PublishAsDockerComposeService((_, service) => { service.Networks = ["zapret-network"]; })
     .WithEnvironment("CLIENT_ID", builder.AddParameter("bot-client-id", true))
     .WithEnvironment("CLIENT_SECRET", builder.AddParameter("bot-client-secret", true))
     .WithEnvironment("REDIRECT_URI", builder.AddParameter("bot-redirect-uri"))
     .WithEnvironment("BOT_TOKEN", builder.AddParameter("bot-token", true))
     .WaitFor(zapret)
     .WithHttpHealthCheck("/health")
-    .WithHttpEndpoint(name: "api", env: "PORT");
+    .WithHttpEndpoint(env: "PORT");
 
 // This is the Minecraft Server.
 // Managed by the FireServer Minecraft Plugin.
@@ -120,6 +100,8 @@ var backend =
         .WaitFor(filteringService)
         .WaitFor(postgresSql)
         .WithReference(redis)
+        .WithReference(scalar)
+        .WithReference(filteringService)
         .WithReference(questionDb) // This is the Database for all the Questions that the users can ask.
         .WithReference(nikoDexBackupDb) // The NikoDex Backup Recovery Service's Database.
         .WithReference(approvalDb) // The Approval (Minecraft Server Approval Service)'s Database.
@@ -157,7 +139,7 @@ var gradleMinecraftServer = builder
         var runnerStage = context.Builder.From("itzg/minecraft-server:java25-jdk", "runner");
         runnerStage.Run("rm -rf ./plugins");
         runnerStage.Env("VERSION", "26.2");
-        runnerStage.Env("MEMORY", "8G");
+        runnerStage.Env("MEMORY", "1G");
         runnerStage.Env("EULA", "TRUE"); // Accept the Minecraft EULA.
         runnerStage.Env("TYPE", "PAPER");
         runnerStage.Env("USES_PLUGINS", "true");
@@ -176,6 +158,7 @@ var frontend = builder
     .WithHttpEndpoint(5000)
     .WithExternalHttpEndpoints()
     .WithReference(backend.GetEndpoint("api"))
+    .WithReference(filteringService.GetEndpoint("http"))
     .WithReference(gradleMinecraftServer.GetEndpoint("api"))
     .WaitFor(backend);
 

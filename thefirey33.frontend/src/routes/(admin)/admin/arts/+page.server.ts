@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types';
-import { type ArtResponse, getJson } from '$lib/types';
+import { type ArtResponse, AuthTokenName, getJson } from '$lib/types';
 import { env } from '$env/dynamic/private';
 
 export const load: PageServerLoad = async ({ fetch }) => {
@@ -15,7 +15,7 @@ export const actions: Actions = {
 
 		const result = await fetch(`${env.FIREYBACKEND_API}/Art`, {
 			method: 'POST',
-			headers: { Authorization: `Bearer ${cookies.get('Token')}` },
+			headers: { Authorization: `Bearer ${cookies.get(AuthTokenName)}` },
 			body: formData
 		}).then(async (r) => {
 			return r.ok;

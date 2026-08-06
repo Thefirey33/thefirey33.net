@@ -83,6 +83,10 @@ builder.Services
         client.DefaultRequestHeaders.UserAgent.Add(ProductInfoHeaderValue.Parse("Thefirey33NikoDexBackupService"));
     });
 
+// This is for the Python Backend portion that checks for innapropriate content.
+// It's also the backend HTTP Connection for the Mad Mew Mew Bot.
+builder.Services.AddHttpClient("FilteringServiceAPI",
+    client => { client.BaseAddress = new Uri("https+http://fireyfilteringservice"); });
 
 // Add the Redis Client for caching.
 builder.AddRedisClient("fireycache");
@@ -107,7 +111,6 @@ app.MapControllers();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-
     app.MapScalarApiReference();
 }
 
@@ -121,13 +124,17 @@ using (var scope = app.Services.CreateScope())
     var artDb = scope.ServiceProvider.GetRequiredService<ArtsContext>(); // Arts Migration
     await artDb.Database.MigrateAsync();
 
-    var nikoDexDb = scope.ServiceProvider.GetRequiredService<NikoDexRecoveryContext>(); // NikoDex Recovery Service Migration
+    var nikoDexDb =
+        scope.ServiceProvider.GetRequiredService<NikoDexRecoveryContext>(); // NikoDex Recovery Service Migration
     await nikoDexDb.Database.MigrateAsync();
 
-    var approvalDb = scope.ServiceProvider.GetRequiredService<ApprovalContext>(); // Approval Service (for the Minecraft Server) Migration
+    var approvalDb =
+        scope.ServiceProvider
+            .GetRequiredService<ApprovalContext>(); // Approval Service (for the Minecraft Server) Migration
     await approvalDb.Database.MigrateAsync();
 
-    var questionDb = scope.ServiceProvider.GetRequiredService<QuestionContext>(); // The Migration for the Question system.
+    var questionDb =
+        scope.ServiceProvider.GetRequiredService<QuestionContext>(); // The Migration for the Question system.
     await questionDb.Database.MigrateAsync();
 }
 

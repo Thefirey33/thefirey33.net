@@ -10,6 +10,44 @@ export interface ArtResponse {
 	description: string;
 }
 
+export interface QuestionDbType {
+	id: number;
+	time: string;
+	question: string;
+	attachment: string;
+	author_id: number;
+	author: string;
+	response: string | null;
+}
+
+/**
+ * The reply from discord.
+ */
+export interface DiscordReply {
+	id: string;
+	username: string;
+	discriminator: string;
+	avatar: string;
+	avatar_url: string;
+	locale: string;
+	email: string;
+	bot: boolean;
+	mfa_enabled: boolean;
+	flags: number;
+	premium_type: number;
+	public_flags: number;
+}
+
+/**
+ * The Discord Token's Name.
+ */
+export const DiscordTokenName = 'D-Token';
+
+/**
+ * The name of the Auth Token of the website.
+ */
+export const AuthTokenName = 'Token';
+
 /**
  * The author of the specified GitHub commit.
  */

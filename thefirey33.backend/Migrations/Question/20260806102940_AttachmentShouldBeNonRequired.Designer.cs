@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using thefirey33_backend.Types.Database.Context;
@@ -11,9 +12,11 @@ using thefirey33_backend.Types.Database.Context;
 namespace thefirey33_backend.Migrations.Question
 {
     [DbContext(typeof(QuestionContext))]
-    partial class QuestionContextModelSnapshot : ModelSnapshot
+    [Migration("20260806102940_AttachmentShouldBeNonRequired")]
+    partial class AttachmentShouldBeNonRequired
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,11 +39,6 @@ namespace thefirey33_backend.Migrations.Question
                         .HasColumnType("character varying(256)")
                         .HasJsonPropertyName("attachment");
 
-                    b.Property<string>("AuthorName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasJsonPropertyName("author");
-
                     b.Property<string>("Question")
                         .IsRequired()
                         .HasMaxLength(1024)
@@ -54,10 +52,6 @@ namespace thefirey33_backend.Migrations.Question
                     b.Property<string>("Response")
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
-
-                    b.Property<decimal>("UserId")
-                        .HasColumnType("numeric(20,0)")
-                        .HasJsonPropertyName("author_id");
 
                     b.HasKey("Id");
 

@@ -1,8 +1,0 @@
-transformers
-fastapi[standard]
-pydantic
-torch
-pillow
-discord.py
-better-fastapi-discord
-uvicorn

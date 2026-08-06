@@ -15,4 +15,9 @@
         <img alt="Manage" class="group-hover:invert transition h-8 w-8" src={ManageIcon}/>
         Manage Arts
     </a>
+
+    <a class="btn flex flex-row items-center gap-4 group" href={resolve("/admin/questions")}>
+        <img alt="Manage" class="group-hover:invert transition h-8 w-8" src={ManageIcon}/>
+        Manage Questions
+    </a>
 </div>

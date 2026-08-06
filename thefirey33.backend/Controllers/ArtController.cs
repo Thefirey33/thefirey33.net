@@ -18,10 +18,11 @@ public class ArtController(ArtsContext artsContext, DataService dataService) : C
     ///     Get all the arts in the database.
     /// </summary>
     [HttpGet]
-    [OutputCache(Duration = 60)]
     public async Task<IActionResult> GetAll()
     {
-        var result = await artsContext.Arts.ToListAsync();
+        var result = await artsContext.Arts
+            .OrderBy(db => db.Id)
+            .ToListAsync();
         // Mask the filepath so it's not accidentally sent.
         return Ok(result.Select(ArtDbResponse.GetFrom));
     }
@@ -30,11 +31,12 @@ public class ArtController(ArtsContext artsContext, DataService dataService) : C
     ///     Get the categories that the API contains.
     /// </summary>
     [HttpGet("categories")]
-    [OutputCache(Duration = 60)]
     public async Task<IActionResult> GetCategories()
     {
         var resultInitial = await artsContext.Arts
-            .Select(type => type.Category).ToListAsync();
+            .OrderBy(db => db.Id)
+            .Select(type => type.Category)
+            .ToListAsync();
 
         var filteredHashSet = new HashSet<string>();
         resultInitial.ForEach(s =>
@@ -57,6 +59,7 @@ public class ArtController(ArtsContext artsContext, DataService dataService) : C
         var result = await artsContext.Arts.FirstOrDefaultAsync(x => x.Id == id);
         if (result == null)
             return NotFound();
+
 
         artsContext.Arts.Remove(result);
         DataService.DeleteFile(result.FilePath);
@@ -97,7 +100,7 @@ public class ArtController(ArtsContext artsContext, DataService dataService) : C
     }
 
     /// <summary>
-    /// Change a Art database entry.
+    ///     Change a Art database entry.
     /// </summary>
     /// <param name="id">Id.</param>
     /// <param name="artDbRequest">The Art Database Request.</param>

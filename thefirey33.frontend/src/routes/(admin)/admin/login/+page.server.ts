@@ -1,6 +1,7 @@
 import type { Actions, PageServerLoad } from './$types';
 import { env } from '$env/dynamic/private';
 import { redirect } from '@sveltejs/kit';
+import { AuthTokenName } from '$lib/types';
 
 interface AuthorizationPayload {
 	token: string;
@@ -31,7 +32,7 @@ export const actions = {
 					method: 'POST',
 					headers: {
 						'content-type': 'application/json',
-						Authorization: `Bearer ${cookies.get('Token')}`
+						Authorization: `Bearer ${cookies.get(AuthTokenName)}`
 					},
 					body: payload
 				}
@@ -39,7 +40,8 @@ export const actions = {
 				if (!r.ok) throw new Error('Failed to authorize!');
 				return r.json();
 			});
-			cookies.set('Token', authorizationRequest.token, {
+
+			cookies.set(AuthTokenName, authorizationRequest.token, {
 				path: '/',
 				secure: true,
 				maxAge: 3600 * 5

@@ -1,6 +1,0 @@
-pyproject.toml
-mad_mew_mew.egg-info/PKG-INFO
-mad_mew_mew.egg-info/SOURCES.txt
-mad_mew_mew.egg-info/dependency_links.txt
-mad_mew_mew.egg-info/requires.txt
-mad_mew_mew.egg-info/top_level.txt

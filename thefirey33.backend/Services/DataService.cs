@@ -11,7 +11,8 @@ public class DataService(IWebHostEnvironment webHostEnvironment)
     {
         get
         {
-            var path = Path.Combine(webHostEnvironment.IsDevelopment() ? webHostEnvironment.ContentRootPath : "data", "ServerStorage");
+            var path = Path.Combine(webHostEnvironment.IsDevelopment() ? webHostEnvironment.ContentRootPath : "data",
+                "ServerStorage");
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -37,11 +38,27 @@ public class DataService(IWebHostEnvironment webHostEnvironment)
     /// </summary>
     /// <param name="path">THe path of the file to delete.</param>
     /// <returns>Returns TRUE on deletion, Returns FALSE on failure.</returns>
-    public static bool DeleteFile(string path)
+    public static void DeleteFile(string path)
     {
-        if (!File.Exists(path)) return false;
+        if (!File.Exists(path)) return;
         File.Delete(path);
-        return true;
+    }
+
+    /// <summary>
+    ///     Attempts to delete the file in the specified path.
+    /// </summary>
+    /// <param name="uuid">UUID of file.</param>
+    /// <returns>Returns TRUE on deletion, Returns FALSE on failure.</returns>
+    public void DeleteFileUuid(string uuid)
+    {
+        var file = Directory
+            .GetFiles(StoragePath)
+            .FirstOrDefault(predicate =>
+                Path.GetFileNameWithoutExtension(predicate).Equals(uuid, StringComparison.OrdinalIgnoreCase));
+        // Check if the file exists, if it doesn't then don't attempt the deletion.
+        if (file == null) return;
+
+        File.Delete(file);
     }
 
     /// <summary>

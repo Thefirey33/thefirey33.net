@@ -42,3 +42,9 @@
         {/if}
     </footer>
 </div>
+
+<style>
+    :root {
+        background-color: black;
+    }
+</style>
