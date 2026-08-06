@@ -134,12 +134,12 @@ var gradleMinecraftServer = builder
         fireServerPluginStage.WorkDir("/compile");
         fireServerPluginStage.Copy(".", ".");
         fireServerPluginStage.Run("chmod +x ./gradlew");
-        fireServerPluginStage.Run("--mount=type=cache,target=/root/.gradle ./gradlew build --no-daemon");
+        fireServerPluginStage.Run("./gradlew build");
 
         var runnerStage = context.Builder.From("itzg/minecraft-server:java25-jdk", "runner");
         runnerStage.Run("rm -rf ./plugins");
         runnerStage.Env("VERSION", "26.2");
-        runnerStage.Env("MEMORY", "1G");
+        runnerStage.Env("MEMORY", "8G");
         runnerStage.Env("EULA", "TRUE"); // Accept the Minecraft EULA.
         runnerStage.Env("TYPE", "PAPER");
         runnerStage.Env("USES_PLUGINS", "true");
