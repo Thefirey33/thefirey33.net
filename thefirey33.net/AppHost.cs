@@ -45,6 +45,7 @@ compose.ConfigureComposeFile(options =>
 
 var zapret = builder.AddContainer("fireyfilteringbypass", "matecik/zapret")
     .WithEnvironment("ZAPRET_DOMAINS", "gateway.discord.gg,discord.com")
+    .WithVolume("zapret-mount", "/opt/zapret")
     .PublishAsDockerComposeService((_, service) =>
     {
         service.Privileged = true;
