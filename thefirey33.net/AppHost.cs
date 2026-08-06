@@ -60,10 +60,11 @@ var questionDb = postgresSql.AddDatabase("questiondb");
 var scalar = builder.AddScalarApiReference();
 
 // This is for the iptables manipulation, to bypass the Discord API filtering imposed by some countries.
-var zapret = builder.AddContainer("fireyfilteringbypass", "punkidow/zapret")
+var zapret = builder.AddContainer("fireyfilteringbypass", "vernette/ss-zapret:v72.8")
     .PublishAsDockerComposeService((_, service) =>
     {
         service.Privileged = true;
+        service.CapAdd = ["NET_ADMIN"];
         service.Restart = "unless-stopped";
     });
 
@@ -134,7 +135,7 @@ var gradleMinecraftServer = builder
         fireServerPluginStage.WorkDir("/compile");
         fireServerPluginStage.Copy(".", ".");
         fireServerPluginStage.Run("chmod +x ./gradlew");
-        fireServerPluginStage.Run("./gradlew build -x test");
+        fireServerPluginStage.Run("--mount=type=cache,target=/root/.gradle ./gradlew build --no-daemon");
 
         var runnerStage = context.Builder.From("itzg/minecraft-server:java25-jdk", "runner");
         runnerStage.Run("rm -rf ./plugins");
