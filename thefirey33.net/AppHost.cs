@@ -60,7 +60,7 @@ var questionDb = postgresSql.AddDatabase("questiondb");
 var scalar = builder.AddScalarApiReference();
 
 // This is for the iptables manipulation, to bypass the Discord API filtering imposed by some countries.
-var zapret = builder.AddContainer("fireyfilteringbypass", "vernette/ss-zapret:v72.8")
+var zapret = builder.AddContainer("fireyfilteringbypass", "punkidow/zapret")
     .PublishAsDockerComposeService((_, service) =>
     {
         service.Privileged = true;
