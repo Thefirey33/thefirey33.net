@@ -1,4 +1,3 @@
-using System.Net.Sockets;
 using Aspire.Hosting.Docker.Resources.ComposeNodes;
 using Aspire.Hosting.Docker.Resources.ServiceNodes;
 using Microsoft.Extensions.Hosting;
@@ -32,27 +31,27 @@ var redis
         .WithRedisInsight();
 
 
-const string wireguardNetworkName = "wireguard-network";
+const string zapretNetworkName = "zapret-network";
 
 // Configure the wireguard network, so the Discord API can be called without SSL handshake errors.
 compose.ConfigureComposeFile(options =>
 {
     options.AddNetwork(new Network
     {
-        Name = wireguardNetworkName,
+        Name = zapretNetworkName,
         Driver = "bridge"
     });
 });
 
-var wireguardContainer = builder.AddContainer("fireywireguard", "metaligh/amneziawg")
-    .WithEndpoint(51820, 51820, protocol: ProtocolType.Udp)
+var zapret = builder.AddContainer("fireyfilteringbypass", "matecik/zapret")
     .PublishAsDockerComposeService((_, service) =>
     {
-        service.CapAdd = ["NET_ADMIN", "SYS_MODULE"];
-        service.Devices = ["/dev/net/tun"];
+        service.Privileged = true;
+        service.Networks = [zapretNetworkName];
+        service.CapAdd = ["NET_ADMIN"];
         service.Restart = "unless-stopped";
-        service.Networks = [wireguardNetworkName];
     });
+
 
 // The PostgresSQL database.
 // Will be used for the forums and NikoDex backups.
@@ -88,7 +87,11 @@ var scalar = builder.AddScalarApiReference();
 var filteringService = builder
     .AddUvicornApp("fireyfilteringservice", "../thefirey33.contentfilter", "main:app")
     .WithDockerfileBaseImage("python:3.11.15-trixie", "python:3.11.15-trixie")
-    .PublishAsDockerComposeService((_, service) => { service.Networks = [wireguardNetworkName]; })
+    .PublishAsDockerComposeService((_, service) =>
+    {
+        service.Networks = [zapretNetworkName];
+        service.NetworkMode = "service:network";
+    })
     .WithEnvironment("CLIENT_ID", builder.AddParameter("bot-client-id", true))
     .WithEnvironment("CLIENT_SECRET", builder.AddParameter("bot-client-secret", true))
     .WithEnvironment("REDIRECT_URI", builder.AddParameter("bot-redirect-uri"))
@@ -103,7 +106,7 @@ var backend =
         .PublishAsDockerComposeService((_, service) =>
         {
             service.Name = "fireybackend";
-            service.Networks.Add(wireguardNetworkName);
+            service.Networks.Add(zapretNetworkName);
             service.User = "0:0"; // Unfortunately, some things just don't turn out how they're supposed to be.
 
             service.AddVolume(new Volume
@@ -174,7 +177,7 @@ var frontend = builder
     .PublishAsNodeServer("build/index.js", "./build")
     .WithHttpEndpoint(5000)
     .WithExternalHttpEndpoints()
-    .PublishAsDockerComposeService((resource, service) => { service.Networks.Add(wireguardNetworkName); })
+    .PublishAsDockerComposeService((resource, service) => { service.Networks.Add(zapretNetworkName); })
     .WithReference(backend.GetEndpoint("api"))
     .WithReference(filteringService.GetEndpoint("http"))
     .WithReference(gradleMinecraftServer.GetEndpoint("api"))

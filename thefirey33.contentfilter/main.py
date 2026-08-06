@@ -23,6 +23,7 @@ nsfw_speech_detection = pipeline("text-classification", model="eliasalbouzidi/di
 
 # This is for detecting images, that are potentially NSFW.
 nsfw_image_detection = pipeline("image-classification", model="Falconsai/nsfw_image_detection")
+
 bot = Bot(command_prefix="!", intents=discord.Intents.all())
 
 @asynccontextmanager
