@@ -48,7 +48,7 @@ var wireguardContainer = builder.AddContainer("fireywireguard", "linuxserver/wir
     .WithEnvironment("PUID", "1000")
     .WithEnvironment("PGID", "1000")
     .WithEnvironment("TZ", "Etc/UTC")
-    .WithBindMount("./wireguard-config", "/config")
+    .WithVolume("wireguard-config", "/config")
     .PublishAsDockerComposeService((_, service) =>
     {
         service.CapAdd = ["NET_ADMIN", "SYS_MODULE"];
