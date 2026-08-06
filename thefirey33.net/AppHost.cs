@@ -58,16 +58,6 @@ var questionDb = postgresSql.AddDatabase("questiondb");
 
 // The Scalar API reference.
 var scalar = builder.AddScalarApiReference();
-
-// This is for the iptables manipulation, to bypass the Discord API filtering imposed by some countries.
-var zapret = builder.AddContainer("fireyfilteringbypass", "punkidow/zapret")
-    .PublishAsDockerComposeService((_, service) =>
-    {
-        service.Privileged = true;
-        service.CapAdd = ["NET_ADMIN"];
-        service.Restart = "unless-stopped";
-    });
-
 // This is the filtering service.
 // For filtering content sent by the user.
 var filteringService = builder
@@ -77,7 +67,6 @@ var filteringService = builder
     .WithEnvironment("CLIENT_SECRET", builder.AddParameter("bot-client-secret", true))
     .WithEnvironment("REDIRECT_URI", builder.AddParameter("bot-redirect-uri"))
     .WithEnvironment("BOT_TOKEN", builder.AddParameter("bot-token", true))
-    .WaitFor(zapret)
     .WithHttpHealthCheck("/health")
     .WithHttpEndpoint(env: "PORT");
 
