@@ -1,4 +1,3 @@
-using Aspire.Hosting.Docker.Resources.ComposeNodes;
 using Aspire.Hosting.Docker.Resources.ServiceNodes;
 using Microsoft.Extensions.Hosting;
 using Projects;
@@ -29,30 +28,6 @@ var redis
         .WithDataVolume(isReadOnly: false)
         .WithPersistence()
         .WithRedisInsight();
-
-
-const string zapretNetworkName = "zapret-network";
-
-// Configure the wireguard network, so the Discord API can be called without SSL handshake errors.
-compose.ConfigureComposeFile(options =>
-{
-    options.AddNetwork(new Network
-    {
-        Name = zapretNetworkName,
-        Driver = "bridge"
-    });
-});
-
-var zapret = builder.AddContainer("fireyfilteringbypass", "matecik/zapret")
-    .WithEnvironment("ZAPRET_DOMAINS", "gateway.discord.gg,discord.com")
-    .WithVolume("zapret-mount", "/opt/zapret")
-    .PublishAsDockerComposeService((_, service) =>
-    {
-        service.Privileged = true;
-        service.Networks = [zapretNetworkName];
-        service.CapAdd = ["NET_ADMIN"];
-        service.Restart = "unless-stopped";
-    });
 
 
 // The PostgresSQL database.
@@ -89,7 +64,6 @@ var scalar = builder.AddScalarApiReference();
 var filteringService = builder
     .AddUvicornApp("fireyfilteringservice", "../thefirey33.contentfilter", "main:app")
     .WithDockerfileBaseImage("python:3.11.15-trixie", "python:3.11.15-trixie")
-    .PublishAsDockerComposeService((_, service) => { service.Networks = [zapretNetworkName]; })
     .WithEnvironment("CLIENT_ID", builder.AddParameter("bot-client-id", true))
     .WithEnvironment("CLIENT_SECRET", builder.AddParameter("bot-client-secret", true))
     .WithEnvironment("REDIRECT_URI", builder.AddParameter("bot-redirect-uri"))
@@ -104,7 +78,6 @@ var backend =
         .PublishAsDockerComposeService((_, service) =>
         {
             service.Name = "fireybackend";
-            service.Networks.Add(zapretNetworkName);
             service.User = "0:0"; // Unfortunately, some things just don't turn out how they're supposed to be.
 
             service.AddVolume(new Volume
@@ -175,7 +148,6 @@ var frontend = builder
     .PublishAsNodeServer("build/index.js", "./build")
     .WithHttpEndpoint(5000)
     .WithExternalHttpEndpoints()
-    .PublishAsDockerComposeService((resource, service) => { service.Networks.Add(zapretNetworkName); })
     .WithReference(backend.GetEndpoint("api"))
     .WithReference(filteringService.GetEndpoint("http"))
     .WithReference(gradleMinecraftServer.GetEndpoint("api"))
