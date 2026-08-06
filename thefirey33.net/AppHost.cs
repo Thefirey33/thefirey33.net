@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using Aspire.Hosting.Docker.Resources.ComposeNodes;
 using Aspire.Hosting.Docker.Resources.ServiceNodes;
 using Microsoft.Extensions.Hosting;
@@ -39,26 +40,18 @@ compose.ConfigureComposeFile(options =>
     options.AddNetwork(new Network
     {
         Name = wireguardNetworkName,
-        Driver = "bridge",
-        Attachable = true
+        Driver = "bridge"
     });
 });
 
-var wireguardContainer = builder.AddContainer("fireywireguard", "linuxserver/wireguard")
-    .WithEnvironment("PUID", "1000")
-    .WithEnvironment("PGID", "1000")
-    .WithEnvironment("TZ", "Etc/UTC")
-    .WithVolume("wireguard-config", "/config")
+var wireguardContainer = builder.AddContainer("fireywireguard", "metaligh/amneziawg")
+    .WithEndpoint(51820, 51820, protocol: ProtocolType.Udp)
     .PublishAsDockerComposeService((_, service) =>
     {
         service.CapAdd = ["NET_ADMIN", "SYS_MODULE"];
-        service.Name = "wireguard";
+        service.Devices = ["/dev/net/tun"];
         service.Restart = "unless-stopped";
-        service.Sysctls = new Dictionary<string, string>
-        {
-            { "net.ipv4.ip_forward", "1" },
-            { "net.ipv4.conf.all.src_valid_mark", "1" }
-        };
+        service.Networks = [wireguardNetworkName];
     });
 
 // The PostgresSQL database.
