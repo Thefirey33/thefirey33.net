@@ -61,6 +61,7 @@ var questionDb = postgresSql.AddDatabase("questiondb");
 var scalar = builder.AddScalarApiReference();
 
 var cloudflareWarpService = builder.AddContainer("fireywarp", "caomingjun/warp")
+    .WithBindMount("/var/lib/cloudflare-warp", "/data")
     .PublishAsDockerComposeService((_, service) =>
     {
         service.User = "0:0";
