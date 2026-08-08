@@ -101,25 +101,5 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="fireycache" uuid="7d0fe1ca-9600-4cbb-9faa-9b712261b59e">
-      <driver-ref>redis</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>jdbc.RedisDriver</jdbc-driver>
-      <jdbc-url>jdbc:redis://7AR5sQEFmY88YmjZaPUXD1@localhost:35445?ssl=true&amp;verifyServerCertificate=false</jdbc-url>
-      <jdbc-additional-properties>
-        <property name="aspireResourceId" value="fireycache-rnkgmxnz" />
-      </jdbc-additional-properties>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="fireydatabase" uuid="25379088-3a8c-4017-affc-f04aee3694a8">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:41285/?password=admin&amp;user=postgres</jdbc-url>
-      <jdbc-additional-properties>
-        <property name="aspireResourceId" value="fireydatabase-swfawpeu" />
-      </jdbc-additional-properties>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
   </component>
 </project>

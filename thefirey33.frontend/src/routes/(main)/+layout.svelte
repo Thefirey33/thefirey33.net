@@ -61,14 +61,6 @@
             <NavigationLinkElement href="/dex" imgSrc={NikoDexRecoveryIcon}>
                 NikoDex Status
             </NavigationLinkElement>
-            <DropdownElement title="Servers...">
-                <NavigationLinkElement external={true} href="https://thefirey33.net/" imgSrc={FlagIcon}>
-                    Türkiye
-                </NavigationLinkElement>
-                <NavigationLinkElement external={true} href="https://jp.thefirey33.net/" imgSrc={FlagIcon}>
-                    Japan
-                </NavigationLinkElement>
-            </DropdownElement>
             <DropdownElement title="Other...">
                 <NavigationLinkElement href="/lore" imgSrc={LoreIcon}>Lore</NavigationLinkElement>
                 <NavigationLinkElement href="/disclaimer" imgSrc={AuthenticityIcon}
