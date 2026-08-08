@@ -64,8 +64,10 @@ var cloudflareWarpService = builder.AddContainer("fireywarp", "caomingjun/warp")
     .PublishAsDockerComposeService((_, service) =>
     {
         service.ContainerName = "fireywarp";
+        service.User = "0:0";
         service.CapAdd = ["NET_ADMIN"];
         service.Restart = "unless-stopped";
+        service.Ports = ["1080:1080"];
         service.Sysctls = new Dictionary<string, string>
         {
             { "net.ipv6.conf.all.disable_ipv6", "0" },
@@ -74,7 +76,8 @@ var cloudflareWarpService = builder.AddContainer("fireywarp", "caomingjun/warp")
             { "net.ipv6.conf.all.forwarding", "1" },
             { "net.ipv6.conf.all.accept_ra", "2" }
         };
-    });
+    })
+    .WithHttpEndpoint(1080, name: "proxy");
 
 // This is the filtering service.
 // For filtering content sent by the user.
@@ -84,6 +87,7 @@ var filteringService = builder
     .WithEnvironment("CLIENT_ID", builder.AddParameter("bot-client-id", true))
     .WithEnvironment("CLIENT_SECRET", builder.AddParameter("bot-client-secret", true))
     .WithEnvironment("REDIRECT_URI", builder.AddParameter("bot-redirect-uri"))
+    .WithEnvironment("PROXY", cloudflareWarpService.GetEndpoint("proxy"))
     .WithEnvironment("BOT_TOKEN", builder.AddParameter("bot-token", true))
     .WithHttpHealthCheck("/health")
     .WithHttpEndpoint(env: "PORT");
