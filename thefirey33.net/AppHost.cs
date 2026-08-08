@@ -81,7 +81,6 @@ var cloudflareWarpService = builder.AddContainer("fireywarp", "caomingjun/warp")
 var filteringService = builder
     .AddUvicornApp("fireyfilteringservice", "../thefirey33.contentfilter", "main:app")
     .WithDockerfileBaseImage("python:3.11.15-trixie", "python:3.11.15-trixie")
-    .PublishAsDockerComposeService((_, service) => { service.NetworkMode = "container:fireywarp"; })
     .WithEnvironment("CLIENT_ID", builder.AddParameter("bot-client-id", true))
     .WithEnvironment("CLIENT_SECRET", builder.AddParameter("bot-client-secret", true))
     .WithEnvironment("REDIRECT_URI", builder.AddParameter("bot-redirect-uri"))
