@@ -65,12 +65,6 @@ var cloudflareWarpService = builder.AddContainer("fireywarp", "caomingjun/warp")
     {
         service.ContainerName = "fireywarp";
         service.CapAdd = ["NET_ADMIN"];
-        service.AddVolume(new Volume
-        {
-            Name = "warp-volume",
-            Target = "./data",
-            Source = "/var/lib/cloudflare-warp"
-        });
         service.Restart = "unless-stopped";
         service.Sysctls = new Dictionary<string, string>
         {
