@@ -63,7 +63,6 @@ var scalar = builder.AddScalarApiReference();
 var cloudflareWarpService = builder.AddContainer("fireywarp", "caomingjun/warp")
     .PublishAsDockerComposeService((_, service) =>
     {
-        service.ContainerName = "fireywarp";
         service.User = "0:0";
         service.CapAdd = ["NET_ADMIN"];
         service.Restart = "unless-stopped";
