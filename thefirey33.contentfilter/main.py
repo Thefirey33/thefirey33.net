@@ -18,9 +18,6 @@ import authorization
 basicConfig(level=logging.INFO)
 logger = getLogger(__name__)
 
-# This is for detecting text, that are potentially NSFW.
-nsfw_speech_detection = pipeline("text-classification", model="eliasalbouzidi/distilbert-nsfw-text-classifier")
-
 # This is for detecting images, that are potentially NSFW.
 nsfw_image_detection = pipeline("image-classification", model="Falconsai/nsfw_image_detection")
 
@@ -90,11 +87,5 @@ async def content_check(description: str = Form(), file: UploadFile | None = Fil
         # Check if the specified image is NSFW, if it is, label it as UNSAFE.
         if image_detection_result[0]['label'] == 'nsfw':
             unsafe = True
-
-    text_detection_result = nsfw_speech_detection(description)
-
-    # Check if the text is NSFW, if it is, then label it as UNSAFE.
-    if text_detection_result[0]['label'] == 'nsfw':
-        unsafe = True
 
     return unsafe
