@@ -59,11 +59,35 @@ var questionDb = postgresSql.AddDatabase("questiondb");
 
 // The Scalar API reference.
 var scalar = builder.AddScalarApiReference();
+
+var cloudflareWarpService = builder.AddContainer("fireywarp", "caomingjun/warp")
+    .PublishAsDockerComposeService((_, service) =>
+    {
+        service.ContainerName = "fireywarp";
+        service.CapAdd = ["NET_ADMIN"];
+        service.AddVolume(new Volume
+        {
+            Name = "warp-volume",
+            Target = "./data",
+            Source = "/var/lib/cloudflare-warp"
+        });
+        service.Restart = "unless-stopped";
+        service.Sysctls = new Dictionary<string, string>
+        {
+            { "net.ipv6.conf.all.disable_ipv6", "0" },
+            { "net.ipv4.conf.all.src_valid_mark", "1" },
+            { "net.ipv4.ip_forward", "1" },
+            { "net.ipv6.conf.all.forwarding", "1" },
+            { "net.ipv6.conf.all.accept_ra", "2" }
+        };
+    });
+
 // This is the filtering service.
 // For filtering content sent by the user.
 var filteringService = builder
     .AddUvicornApp("fireyfilteringservice", "../thefirey33.contentfilter", "main:app")
     .WithDockerfileBaseImage("python:3.11.15-trixie", "python:3.11.15-trixie")
+    .PublishAsDockerComposeService((_, service) => { service.NetworkMode = "container:fireywarp"; })
     .WithEnvironment("CLIENT_ID", builder.AddParameter("bot-client-id", true))
     .WithEnvironment("CLIENT_SECRET", builder.AddParameter("bot-client-secret", true))
     .WithEnvironment("REDIRECT_URI", builder.AddParameter("bot-redirect-uri"))
