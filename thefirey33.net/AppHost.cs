@@ -60,24 +60,6 @@ var questionDb = postgresSql.AddDatabase("questiondb");
 // The Scalar API reference.
 var scalar = builder.AddScalarApiReference();
 
-var cloudflareWarpService = builder.AddContainer("fireywarp", "caomingjun/warp")
-    .WithBindMount("/var/lib/cloudflare-warp", "/data")
-    .PublishAsDockerComposeService((_, service) =>
-    {
-        service.User = "0:0";
-        service.CapAdd = ["NET_ADMIN"];
-        service.Restart = "unless-stopped";
-        service.Ports = ["1080:1080"];
-        service.Sysctls = new Dictionary<string, string>
-        {
-            { "net.ipv6.conf.all.disable_ipv6", "0" },
-            { "net.ipv4.conf.all.src_valid_mark", "1" },
-            { "net.ipv4.ip_forward", "1" },
-            { "net.ipv6.conf.all.forwarding", "1" },
-            { "net.ipv6.conf.all.accept_ra", "2" }
-        };
-    })
-    .WithHttpEndpoint(1080, name: "proxy");
 
 // This is the filtering service.
 // For filtering content sent by the user.
@@ -87,10 +69,36 @@ var filteringService = builder
     .WithEnvironment("CLIENT_ID", builder.AddParameter("bot-client-id", true))
     .WithEnvironment("CLIENT_SECRET", builder.AddParameter("bot-client-secret", true))
     .WithEnvironment("REDIRECT_URI", builder.AddParameter("bot-redirect-uri"))
-    .WithEnvironment("PROXY", cloudflareWarpService.GetEndpoint("proxy"))
     .WithEnvironment("BOT_TOKEN", builder.AddParameter("bot-token", true))
     .WithHttpHealthCheck("/health")
     .WithHttpEndpoint(env: "PORT");
+
+// If it's the development environment, do not attempt to create a Cloudflare WARP Service.
+if (!builder.Environment.IsDevelopment())
+{
+    var cloudflareWarpService = builder.AddContainer("fireywarp", "caomingjun/warp")
+        .WithBindMount("/var/lib/cloudflare-warp", "/data")
+        .PublishAsDockerComposeService((_, service) =>
+        {
+            service.User =
+                "0:0"; // The Cloudflare WARP Service needs to run as ROOT in order to be able to edit the interfaces.
+            service.CapAdd = ["NET_ADMIN"];
+            service.Restart = "unless-stopped";
+            service.Ports = ["1080:1080"];
+            service.Sysctls = new Dictionary<string, string>
+            {
+                { "net.ipv6.conf.all.disable_ipv6", "0" },
+                { "net.ipv4.conf.all.src_valid_mark", "1" },
+                { "net.ipv4.ip_forward", "1" },
+                { "net.ipv6.conf.all.forwarding", "1" },
+                { "net.ipv6.conf.all.accept_ra", "2" }
+            };
+        })
+        .WithHttpEndpoint(1080, 1080, "proxy");
+
+    filteringService.WithEnvironment("PROXY", cloudflareWarpService.GetEndpoint("proxy"));
+}
+
 
 // This is the Minecraft Server.
 // Managed by the FireServer Minecraft Plugin.
@@ -125,42 +133,6 @@ var backend =
 // The API reference provided by Scalar.
 scalar.WithApiReference(backend);
 
-// The endpoint of the Minecraft Server.
-const int minecraftServerApiEndpoint = 7000;
-
-// This is the Minecraft server that runs in a docker container.
-// It exposes the default Minecraft Server port, and automatically starts.
-var gradleMinecraftServer = builder
-    .AddDockerfile("fireyminecraftserver", "../thefirey33.fireserver")
-    .WithEndpoint(25565, 25565, isExternal: true)
-    .WithHttpEndpoint(minecraftServerApiEndpoint, minecraftServerApiEndpoint, "api", "SERVER_ENDPOINT")
-    .WithEnvironment("TRUSTED_OPERATOR_UUID", trustedOperatorUuid)
-    .WithEnvironment("ADMIN_USERNAME", adminUsername)
-    .WithEnvironment("ADMIN_PASSWORD", adminPassword)
-    .WithReference(backend.GetEndpoint("api"))
-    .WithPersistentLifetime()
-    .WithVolume("fireservervolume", "/data")
-    .WithDockerfileBuilder("../thefirey33.fireserver", context =>
-    {
-        var fireServerPluginStage = context.Builder.From("eclipse-temurin:25-jdk-alpine", "builderfireserver");
-        fireServerPluginStage.WorkDir("/compile");
-        fireServerPluginStage.Copy(".", ".");
-        fireServerPluginStage.Run("chmod +x ./gradlew");
-        fireServerPluginStage.Run("--mount=type=cache,target=/root/.gradle ./gradlew build --no-daemon");
-
-        var runnerStage = context.Builder.From("itzg/minecraft-server:java25-jdk", "runner");
-        runnerStage.Run("rm -rf ./plugins");
-        runnerStage.Env("VERSION", "26.2");
-        runnerStage.Env("MEMORY", "8G");
-        runnerStage.Env("EULA", "TRUE"); // Accept the Minecraft EULA.
-        runnerStage.Env("TYPE", "PAPER");
-        runnerStage.Env("USES_PLUGINS", "true");
-        runnerStage.CopyFrom("builderfireserver", "/compile/build/libs/*.jar", "./plugins/");
-        runnerStage.Expose(25565);
-
-        return Task.CompletedTask;
-    });
-
 // Add the front-end API to the stack.
 // This connects with the main backend (port 5540) and the minecraft backend. (port 7000)
 var frontend = builder
@@ -171,7 +143,6 @@ var frontend = builder
     .WithExternalHttpEndpoints()
     .WithReference(backend.GetEndpoint("api"))
     .WithReference(filteringService.GetEndpoint("http"))
-    .WithReference(gradleMinecraftServer.GetEndpoint("api"))
     .WaitFor(backend);
 
 // The ORIGIN should not be specified if the Application is not in production mode.
@@ -180,7 +151,6 @@ if (builder.Environment.IsProduction())
 
 // Reference the front-end for the CORS policy.
 backend
-    .WithReference(frontend.GetEndpoint("http"))
-    .WithReference(gradleMinecraftServer.GetEndpoint("api"));
+    .WithReference(frontend.GetEndpoint("http"));
 
 builder.Build().Run();

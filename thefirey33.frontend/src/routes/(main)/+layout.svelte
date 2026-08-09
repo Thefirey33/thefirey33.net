@@ -1,24 +1,22 @@
 <script lang="ts">
-	import '../layout.css';
-	import LogoElement from '$lib/components/navigationbar/LogoElement.svelte';
-	import NavigationLinkElement from '$lib/components/navigationbar/NavigationLinkElement.svelte';
-	// Icons.
-	import TenTrillionIcon from '$lib/assets/img/icons/tentrillion.png';
-	import GamepadIcon from '$lib/assets/img/icons/gamepad.png';
-	import ArtIcon from '$lib/assets/img/icons/art.png';
-	import FlagIcon from '$lib/assets/img/icons/flag.png';
-	import ProgrammingIcon from '$lib/assets/img/icons/programming.png';
-	import LoreIcon from '$lib/assets/img/icons/lore.png';
-	import QuestionsIcon from '$lib/assets/img/icons/question.png';
-	import NikoDexRecoveryIcon from '$lib/assets/img/icons/nikodexbackup.png';
-	import MetaTagsElement from '$lib/components/other/MetaTagsElement.svelte';
-	import DropdownElement from '$lib/components/navigationbar/DropdownElement.svelte';
-	import ProgressBarElement from '$lib/components/other/ProgressBarElement.svelte';
-	import AuthenticityIcon from '$lib/assets/img/icons/authenticity.png';
-	import ToastNotificationElement from '$lib/components/other/ToastNotificationElement.svelte';
-	import {page} from '$app/state';
+    import '../layout.css';
+    import LogoElement from '$lib/components/navigationbar/LogoElement.svelte';
+    import NavigationLinkElement from '$lib/components/navigationbar/NavigationLinkElement.svelte';
+    // Icons.
+    import TenTrillionIcon from '$lib/assets/img/icons/tentrillion.png';
+    import ArtIcon from '$lib/assets/img/icons/art.png';
+    import ProgrammingIcon from '$lib/assets/img/icons/programming.png';
+    import LoreIcon from '$lib/assets/img/icons/lore.png';
+    import QuestionsIcon from '$lib/assets/img/icons/question.png';
+    import NikoDexRecoveryIcon from '$lib/assets/img/icons/nikodexbackup.png';
+    import MetaTagsElement from '$lib/components/other/MetaTagsElement.svelte';
+    import DropdownElement from '$lib/components/navigationbar/DropdownElement.svelte';
+    import ProgressBarElement from '$lib/components/other/ProgressBarElement.svelte';
+    import AuthenticityIcon from '$lib/assets/img/icons/authenticity.png';
+    import ToastNotificationElement from '$lib/components/other/ToastNotificationElement.svelte';
+    import {page} from '$app/state';
 
-	let {children} = $props();
+    let {children} = $props();
 
     // Is the navigation panel is open?
     let navigationPanelIsOpen = $state(false);
@@ -57,7 +55,6 @@
                 </NavigationLinkElement>
             </DropdownElement>
             <NavigationLinkElement href="/coding" imgSrc={ProgrammingIcon}>Coding</NavigationLinkElement>
-            <NavigationLinkElement href="/mc" imgSrc={GamepadIcon}>Minecraft</NavigationLinkElement>
             <NavigationLinkElement href="/dex" imgSrc={NikoDexRecoveryIcon}>
                 NikoDex Status
             </NavigationLinkElement>
