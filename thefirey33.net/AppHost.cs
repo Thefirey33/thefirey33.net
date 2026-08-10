@@ -54,12 +54,19 @@ var approvalDb = postgresSql.AddDatabase("approvaldb");
 // It will require Discord Authentication.
 var questionDb = postgresSql.AddDatabase("questiondb");
 
+#region CatPetterzDatabases
+
+// This is the database that stores each cat. 
+// Each state of each cat is stored in this database.
+var catpetterzDb = postgresSql.AddDatabase("catpetterz");
+
+#endregion
+
 // The Question System is managed by two services,
 // The Discord Authentication Service and Website's Backend Itself.
 
 // The Scalar API reference.
 var scalar = builder.AddScalarApiReference();
-
 
 // This is the filtering service.
 // For filtering content sent by the user.
@@ -94,10 +101,66 @@ if (!builder.Environment.IsDevelopment())
                 { "net.ipv6.conf.all.accept_ra", "2" }
             };
         })
-        .WithHttpEndpoint(1080, 1080, "proxy");
+        .WithHttpEndpoint(targetPort: 1080, name: "proxy");
 
     filteringService.WithEnvironment("PROXY", cloudflareWarpService.GetEndpoint("proxy"));
 }
+
+// The backend for the CatPetterz Game.
+// Which manages the databases and authentication.
+var catpetterzBackend
+    = builder.AddProject<thefirey33_catpetterzBackend>("catpetterzbackend")
+        .PublishAsDockerComposeService((_, service) =>
+        {
+            // Add the database that contains the data of the catpetterz game.
+            service.User = "0:0";
+
+            service.AddVolume(new Volume
+            {
+                Type = "volume",
+                Name = "catpetterz-volume",
+                Target = "/data"
+            });
+        })
+        .WithReference(filteringService)
+        .WithReference(catpetterzDb)
+        .WithReference(scalar)
+        .WaitFor(filteringService);
+
+// The Scalar API reference for the CatPetterz API.
+scalar.WithApiReference(catpetterzBackend);
+
+var catpetterzGame = builder.AddDockerfile("catpetterzgame", "../thefirey33.catpetterz")
+    .WithDockerfileBuilder("../thefirey33.catpetterz", context =>
+    {
+        // Build the game image to the release image.
+        var builderImage = context.Builder.From("barichello/godot-ci", "builder");
+        builderImage.WorkDir("/compile");
+        builderImage.Copy(".", ".");
+        builderImage.Run("mkdir ./build");
+        builderImage.Run("""godot --headless --export-release --verbose "Web" ./build/index.html""");
+
+        // This game is hosted with NGINX as it's hoster server.
+        // Then it's proxied by YARP.
+        var runnerImage = context.Builder.From("nginx", "runner");
+        runnerImage.CopyFrom("builder", "/compile/build", "/usr/share/nginx/html");
+        runnerImage.Run("rm /etc/nginx/nginx.conf");
+        runnerImage.Copy("nginx.conf", "/etc/nginx/nginx.conf");
+        runnerImage.Expose(80);
+    })
+    .WithHttpEndpoint(targetPort: 80);
+
+
+// The general gateway of the game.
+// This is what manages the game's routing.
+builder.AddYarp("catpetterzgateway")
+    .WithHttpEndpoint(7000, 7000)
+    .WithExternalHttpEndpoints()
+    .WithConfiguration(yarp =>
+    {
+        yarp.AddRoute(catpetterzGame.GetEndpoint("http"));
+        yarp.AddRoute("/api/{**catch-all}", catpetterzBackend);
+    });
 
 
 // This is the Minecraft Server.

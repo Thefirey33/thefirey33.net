@@ -5,7 +5,6 @@ This is the website for Thefirey33's Portfolio purposes. It hosts a Svelte front
 ## Architecture
 
 - ASP.NET Core with JWT Bearer Authentication (Backend)
-- Minecraft Server, Game Version 26.2
 - SvelteKit with Vite and Cookie Based Authentication (Front-End)
 
 The backend uses a one-use AuthToken system that when a login to the Admin page is requested, the specified token will be printed to the log.

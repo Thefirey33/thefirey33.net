@@ -10,6 +10,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "thefirey33.ServiceDefaults"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "thefirey33.fireserver", "thefirey33.fireserver", "{999EAD04-45CB-4631-8980-F07F7EC528B1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "thefirey33.catpetterzBackend", "thefirey33.catpetterzBackend\thefirey33.catpetterzBackend.csproj", "{89F4C959-26A1-4694-95A2-D7DFDA0F2A97}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "thefirey33.contentfilter", "thefirey33.contentfilter", "{C30FA9B1-5333-439E-B9C2-190C5E56350F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "thefirey33.catpetterz", "thefirey33.catpetterz", "{4EFAF957-72D1-4C3A-AB3E-A447DE1852BF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "thefirey33.catpetterzBackend", "thefirey33.catpetterzBackend", "{45E19E52-A208-452C-9FF8-769544345187}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,5 +36,9 @@ Global
 		{85CF736D-1F2B-445B-B624-11ABBD8154B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85CF736D-1F2B-445B-B624-11ABBD8154B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85CF736D-1F2B-445B-B624-11ABBD8154B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89F4C959-26A1-4694-95A2-D7DFDA0F2A97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89F4C959-26A1-4694-95A2-D7DFDA0F2A97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89F4C959-26A1-4694-95A2-D7DFDA0F2A97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89F4C959-26A1-4694-95A2-D7DFDA0F2A97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

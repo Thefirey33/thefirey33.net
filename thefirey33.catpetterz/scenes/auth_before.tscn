@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://dibcecllmxcj"]
+
+[ext_resource type="PackedScene" uid="uid://deoaj1ibvj75n" path="res://objects/authorization_show_element.tscn" id="1_4pnxm"]
+[ext_resource type="Script" uid="uid://bjmi1hxvdulx2" path="res://scripts/objects/auth_screen.gd" id="1_etlxw"]
+[ext_resource type="Script" uid="uid://ba36x53q285xe" path="res://scripts/introduction/prestart_check_handler.gd" id="3_8yi1a"]
+[ext_resource type="PackedScene" uid="uid://4gu16iyytumw" path="res://objects/loading_spinner.tscn" id="3_wfsfp"]
+
+[node name="auth_before" type="Control" unique_id=890532724]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -800.0
+offset_bottom = -600.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=908983848]
+layout_mode = 0
+offset_right = 800.0
+offset_bottom = 600.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1814329439]
+layout_mode = 2
+script = ExtResource("1_etlxw")
+
+[node name="profile_picture" parent="CenterContainer/VBoxContainer" unique_id=925983005 instance=ExtResource("1_4pnxm")]
+layout_mode = 2
+
+[node name="continue_account" type="Button" parent="CenterContainer/VBoxContainer" unique_id=537133317]
+layout_mode = 2
+disabled = true
+text = "Continue As This Account"
+script = ExtResource("3_8yi1a")
+
+[node name="create_first_cat_check" type="HTTPRequest" parent="CenterContainer/VBoxContainer/continue_account" unique_id=984176137]
+
+[node name="log_out_account" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1438040022]
+layout_mode = 2
+disabled = true
+text = "Use A Different Account"
+
+[node name="loading_spinner" parent="CenterContainer" unique_id=1047950739 instance=ExtResource("3_wfsfp")]
+layout_mode = 2
+
+[connection signal="on_auth_ready" from="CenterContainer/VBoxContainer/profile_picture" to="CenterContainer/VBoxContainer" method="_on_profile_picture_on_auth_ready"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/continue_account" to="CenterContainer/VBoxContainer/continue_account" method="_on_pressed"]
+[connection signal="request_completed" from="CenterContainer/VBoxContainer/continue_account/create_first_cat_check" to="CenterContainer/VBoxContainer/continue_account" method="_on_create_first_cat_check_request_completed"]

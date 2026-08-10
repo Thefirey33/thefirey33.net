@@ -15,7 +15,7 @@ authenticationCommunicationService = DiscordOAuthClient(
     os.environ["CLIENT_SECRET"],
     "",
     ("identify", "email"),
-    proxy=os.environ["PROXY"]
+    proxy=os.getenv("PROXY")
 )
 
 @router.get("/callback", tags=["oauth2"])

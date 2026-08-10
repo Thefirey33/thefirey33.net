@@ -63,10 +63,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 
-builder.Logging
-    .ClearProviders()
-    .AddConsole();
-
+builder.Services.AddHttpLogging();
+builder.Services.AddLogging();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
@@ -99,9 +97,9 @@ builder.Services.AddRouting();
 var app = builder.Build();
 
 app.UseRouting();
+app.UseHttpLogging();
 app.MapDefaultEndpoints();
 app.UseHttpsRedirection();
-app.UseAntiforgery();
 app.UseForwardedHeaders();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -116,6 +114,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors();
 app.UseHsts();
+app.UseAntiforgery();
 app.UseOutputCache();
 
 

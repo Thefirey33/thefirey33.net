@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://deoaj1ibvj75n"]
+
+[ext_resource type="Texture2D" uid="uid://co2dg5xh0dnam" path="res://sprites/default/default_profile.png" id="1_mnqdq"]
+[ext_resource type="Script" uid="uid://dimnvpbykuvym" path="res://scripts/objects/authorization_show_element.gd" id="2_tdiyg"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_eqb7x"]
+
+[node name="profile_picture_container" type="PanelContainer" unique_id=791655689]
+offset_right = 268.0
+offset_bottom = 72.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_eqb7x")
+script = ExtResource("2_tdiyg")
+
+[node name="profile_picture" type="TextureRect" parent="." unique_id=96332746]
+texture_filter = 1
+texture_repeat = 2
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+offset_transform_position = Vector2(-46.75, -32)
+texture = ExtResource("1_mnqdq")
+
+[node name="authentication_request" type="HTTPRequest" parent="profile_picture" unique_id=1728869417]
+
+[node name="profile_picture_request" type="HTTPRequest" parent="profile_picture" unique_id=793096041]
+
+[node name="username_description" type="RichTextLabel" parent="profile_picture" unique_id=112633026]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.156
+anchor_top = -0.062000003
+anchor_right = 4.1870003
+anchor_bottom = 1.062
+offset_left = 0.01599884
+offset_top = -0.031999826
+offset_right = 0.031982422
+offset_bottom = 0.03199768
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+text = "Loading..."
+vertical_alignment = 1
+
+[connection signal="request_completed" from="profile_picture/authentication_request" to="." method="_on_authorize_request_completed"]
+[connection signal="request_completed" from="profile_picture/profile_picture_request" to="." method="_on_profile_picture_request_request_completed"]
