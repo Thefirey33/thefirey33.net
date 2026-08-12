@@ -27,9 +27,6 @@ builder.AddNpgsqlDbContext<ArtsContext>("artdb");
 // NikoDex Recovery Service Database
 builder.AddNpgsqlDbContext<NikoDexRecoveryContext>("nikodexdb");
 
-// Approval Database
-builder.AddNpgsqlDbContext<ApprovalContext>("approvaldb");
-
 // Question Database
 builder.AddNpgsqlDbContext<QuestionContext>("questiondb");
 
@@ -126,11 +123,6 @@ using (var scope = app.Services.CreateScope())
     var nikoDexDb =
         scope.ServiceProvider.GetRequiredService<NikoDexRecoveryContext>(); // NikoDex Recovery Service Migration
     await nikoDexDb.Database.MigrateAsync();
-
-    var approvalDb =
-        scope.ServiceProvider
-            .GetRequiredService<ApprovalContext>(); // Approval Service (for the Minecraft Server) Migration
-    await approvalDb.Database.MigrateAsync();
 
     var questionDb =
         scope.ServiceProvider.GetRequiredService<QuestionContext>(); // The Migration for the Question system.

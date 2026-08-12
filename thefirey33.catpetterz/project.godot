@@ -20,12 +20,18 @@ config/icon="res://icon.svg"
 
 Global="*uid://cwt32ui8423js"
 HttpRequestHandler="*uid://toev28cg4lay"
+LoadingSpinner="*uid://4gu16iyytumw"
 
 [display]
 
 window/size/viewport_width=800
 window/size/viewport_height=600
 window/stretch/mode="viewport"
+
+[gui]
+
+theme/custom="uid://b7dhtn46x7i6v"
+theme/custom_font="uid://cgjm0axxyukg4"
 
 [physics]
 

@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://d0nu6tdfr1d87"]
+
+[ext_resource type="Script" uid="uid://c16jn4wr7fmcq" path="res://scripts/debug/debug_test_handler.gd" id="1_5dyag"]
+
+[node name="debug_test" type="Control" unique_id=615686689]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="container" type="VBoxContainer" parent="." unique_id=636693746]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5dyag")
+
+[node name="test_drawing_utility" type="Button" parent="container" unique_id=1668237768]
+layout_mode = 2
+text = "open drawing feature (testing purposes only)"
+
+[connection signal="pressed" from="container/test_drawing_utility" to="container" method="_on_test_drawing_utility_pressed"]

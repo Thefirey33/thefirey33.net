@@ -3,8 +3,23 @@
 [ext_resource type="Texture2D" uid="uid://rkagsi8b8saw" path="res://sprites/default/loading_icon.png" id="1_1505q"]
 [ext_resource type="Script" uid="uid://7ue7mx6scpj2" path="res://scripts/loading_spinner_handler.gd" id="3_th1ic"]
 
-[node name="loading_spinner" type="TextureRect" unique_id=1047950739]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t4ehh"]
+bg_color = Color(0, 0, 0, 0.2784314)
+
+[node name="loading_spinner_panel" type="Panel" unique_id=1469083107]
+z_index = 20
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_t4ehh")
+
+[node name="loading_spinner" type="TextureRect" parent="." unique_id=1047950739]
 texture_filter = 1
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5

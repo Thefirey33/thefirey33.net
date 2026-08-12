@@ -6,11 +6,6 @@
 <div class="flex flex-col gap-y-5 w-fit">
     <p class="text-white text-xl">Navigate to the sections below.</p>
 
-    <a class="btn flex flex-row items-center gap-4 group" href={resolve("/admin/approval")}>
-        <img alt="Manage" class="group-hover:invert transition h-8 w-8" src={ManageIcon}/>
-        Manage Minecraft Server Approvals
-    </a>
-
     <a class="btn flex flex-row items-center gap-4 group" href={resolve("/admin/arts")}>
         <img alt="Manage" class="group-hover:invert transition h-8 w-8" src={ManageIcon}/>
         Manage Arts

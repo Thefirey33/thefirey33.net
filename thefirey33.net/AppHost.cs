@@ -46,10 +46,6 @@ var nikoDexBackupDb = postgresSql.AddDatabase("nikodexdb");
 // This is where all the arts that were made for Thefirey33, or by me will be uploaded.
 var artPostingDb = postgresSql.AddDatabase("artdb");
 
-// This is for the advanced whitelisting system in the Minecraft server.
-// Each joining user will require approval.
-var approvalDb = postgresSql.AddDatabase("approvaldb");
-
 // This is for the Questions that can be asked on the website.
 // It will require Discord Authentication.
 var questionDb = postgresSql.AddDatabase("questiondb");
@@ -109,7 +105,7 @@ if (!builder.Environment.IsDevelopment())
 // The backend for the CatPetterz Game.
 // Which manages the databases and authentication.
 var catpetterzBackend
-    = builder.AddProject<thefirey33_catpetterzBackend>("catpetterzbackend")
+    = builder.AddProject<thefirey33_catpetterzbackend>("catpetterzbackend")
         .PublishAsDockerComposeService((_, service) =>
         {
             // Add the database that contains the data of the catpetterz game.
@@ -122,6 +118,7 @@ var catpetterzBackend
                 Target = "/data"
             });
         })
+        .WithEnvironment("REDIRECT_URI", builder.AddParameter("catpatterz-redirect-uri"))
         .WithReference(filteringService)
         .WithReference(catpetterzDb)
         .WithReference(scalar)
@@ -162,9 +159,8 @@ builder.AddYarp("catpetterzgateway")
         yarp.AddRoute("/api/{**catch-all}", catpetterzBackend);
     });
 
-
-// This is the Minecraft Server.
-// Managed by the FireServer Minecraft Plugin.
+// The backend for the entire website.
+// This manages all 
 var backend =
     builder.AddProject<thefirey33_backend>("fireybackend")
         .PublishAsDockerComposeService((_, service) =>
@@ -187,7 +183,6 @@ var backend =
         .WithReference(filteringService)
         .WithReference(questionDb) // This is the Database for all the Questions that the users can ask.
         .WithReference(nikoDexBackupDb) // The NikoDex Backup Recovery Service's Database.
-        .WithReference(approvalDb) // The Approval (Minecraft Server Approval Service)'s Database.
         .WithReference(artPostingDb) // The Arts database.
         .WithEnvironment("ADMIN_USERNAME", adminUsername)
         .WithEnvironment("ADMIN_PASSWORD", adminPassword)
@@ -210,7 +205,7 @@ var frontend = builder
 
 // The ORIGIN should not be specified if the Application is not in production mode.
 if (builder.Environment.IsProduction())
-    frontend.WithEnvironment("ORIGIN", "https://thefirey33.net");
+    frontend.WithEnvironment("ORIGIN", builder.AddParameter("website-origin"));
 
 // Reference the front-end for the CORS policy.
 backend

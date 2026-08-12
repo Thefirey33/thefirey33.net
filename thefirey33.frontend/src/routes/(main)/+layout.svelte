@@ -12,6 +12,7 @@
     import MetaTagsElement from '$lib/components/other/MetaTagsElement.svelte';
     import DropdownElement from '$lib/components/navigationbar/DropdownElement.svelte';
     import ProgressBarElement from '$lib/components/other/ProgressBarElement.svelte';
+    import CatPetterzIcon from "$lib/assets/img/icons/gamepad.png"
     import AuthenticityIcon from '$lib/assets/img/icons/authenticity.png';
     import ToastNotificationElement from '$lib/components/other/ToastNotificationElement.svelte';
     import {page} from '$app/state';
@@ -52,6 +53,9 @@
                 <NavigationLinkElement href="/arts" imgSrc={ArtIcon}>Arts</NavigationLinkElement>
                 <NavigationLinkElement href="/questions" imgSrc={QuestionsIcon}
                 >Questions
+                </NavigationLinkElement>
+                <NavigationLinkElement disabled={true} href="" imgSrc={CatPetterzIcon}>
+                    CatPetterz (Coming Soon)
                 </NavigationLinkElement>
             </DropdownElement>
             <NavigationLinkElement href="/coding" imgSrc={ProgrammingIcon}>Coding</NavigationLinkElement>

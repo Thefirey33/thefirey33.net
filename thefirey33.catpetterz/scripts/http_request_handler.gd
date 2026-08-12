@@ -5,6 +5,7 @@ class_name HTTPRequestHandler
 ## The origin of the current browser window.
 static var origin = JavaScriptBridge.eval("window.location.origin")
 
+
 ## This combines two URLs together.
 ##
 ## @param absolute: The absolute of the URI.

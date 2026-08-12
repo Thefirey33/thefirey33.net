@@ -6,7 +6,7 @@ public class NikoDexRecoveryService(
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var periodicTimer = new PeriodicTimer(TimeSpan.FromDays(DexDataService.DayTimeSpan));
+        var periodicTimer = new PeriodicTimer(TimeSpan.FromHours(DexDataService.HoursTimeSpan));
         using var scope = serviceProvider.CreateScope();
         var nikoDexRecoveryContext = scope.ServiceProvider.GetService<IDexDataService>();
 

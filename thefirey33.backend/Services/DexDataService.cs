@@ -30,8 +30,7 @@ public class DexDataService(
     /// <summary>
     ///     The timespan between each backup.
     /// </summary>
-    public const int DayTimeSpan = 15;
-
+    public const int HoursTimeSpan = 1;
 
     /**
     * The HTTP Client that will connect to the NikoDex API.
@@ -92,7 +91,7 @@ public class DexDataService(
             await nikoDexRecoveryContext.SaveChangesAsync();
 
             // If the backup timespan is smaller than the specified days, do not take a backup!
-            if (timeSpan.Days < DayTimeSpan)
+            if (timeSpan.Days < HoursTimeSpan)
                 return;
         }
 
