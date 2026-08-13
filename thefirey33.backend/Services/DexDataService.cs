@@ -111,7 +111,24 @@ public class DexDataService(
             return;
         }
 
-        var first = await nikoDexRecoveryContext.NikoDexRecovery.FirstOrDefaultAsync();
+        // NOTE: This is an emergency fix.
+
+        await nikoDexRecoveryContext.NikoDexRecovery.ForEachAsync(entry =>
+        {
+            nikoDexRecoveryContext.NikoDexRecovery.Remove(entry);
+        });
+
+        await nikoDexRecoveryContext.NikoTypeRecoveryDb.ForEachAsync(entry =>
+        {
+            nikoDexRecoveryContext.NikoTypeRecoveryDb.Remove(entry);
+        });
+
+        await nikoDexRecoveryContext.AbilityTypeRecoveryDb.ForEachAsync(entry =>
+        {
+            nikoDexRecoveryContext.AbilityTypeRecoveryDb.Remove(entry);
+        });
+
+        await nikoDexRecoveryContext.SaveChangesAsync();
 
         // Delete all the images in the directory.
         Directory.Delete(StoragePath, true);
@@ -122,20 +139,11 @@ public class DexDataService(
         foreach (var db in dexData) await DownloadNikoImage(db);
 
 
-        if (first != null)
+        await nikoDexRecoveryContext.NikoDexRecovery.AddAsync(new NikoDexRecoveryDbType
         {
-            first.Date = DateTime.UtcNow;
-            first.Nikos = dexData;
-            nikoDexRecoveryContext.NikoDexRecovery.Update(first);
-        }
-        else
-        {
-            await nikoDexRecoveryContext.NikoDexRecovery.AddAsync(new NikoDexRecoveryDbType
-            {
-                Date = DateTime.UtcNow,
-                Nikos = dexData
-            });
-        }
+            Date = DateTime.UtcNow,
+            Nikos = dexData
+        });
 
         // Save the changes to the database async.
         await nikoDexRecoveryContext.SaveChangesAsync();
