@@ -113,13 +113,6 @@ public class DexDataService(
 
         var first = await nikoDexRecoveryContext.NikoDexRecovery.FirstOrDefaultAsync();
 
-        // If a backup already exists, delete it.
-        if (first != null)
-        {
-            nikoDexRecoveryContext.NikoDexRecovery.Remove(first);
-            await nikoDexRecoveryContext.SaveChangesAsync();
-        }
-
         // Delete all the images in the directory.
         Directory.Delete(StoragePath, true);
 
