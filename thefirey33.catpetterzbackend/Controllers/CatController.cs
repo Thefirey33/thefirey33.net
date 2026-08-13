@@ -1,14 +1,14 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using thefirey33.catpetterzBackend.AuthenticationHandler;
 using thefirey33.catpetterzBackend.Types.Database;
 
 namespace thefirey33.catpetterzBackend.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
-public class CatController(CatpetterzDbContext catpetterzDbContext) : ControllerBase
+public class CatController(CatPetterzDbContext catPetterzDbContext) : ControllerBase
 {
     /// <summary>
     ///     Check if the user has any cats.
@@ -19,12 +19,12 @@ public class CatController(CatpetterzDbContext catpetterzDbContext) : Controller
     [Authorize]
     public async Task<IActionResult> CheckUserAnyCats()
     {
-        var userIdClaim = User.FindFirst(DiscordAuthenticationChallengeHandler.UserIdClaim);
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
 
         if (userIdClaim == null)
             return NotFound();
 
-        var seqContainsAny = await catpetterzDbContext.Cats.AnyAsync(db => db.OwnerUserId == userIdClaim.Value);
+        var seqContainsAny = await catPetterzDbContext.Cats.AnyAsync(db => db.OwnerUserId == userIdClaim.Value);
         return seqContainsAny ? Ok() : NotFound();
     }
 }

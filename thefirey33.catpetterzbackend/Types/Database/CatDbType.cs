@@ -37,7 +37,7 @@ public class CatDbType
     ///     The user must feed the specified cat, otherwise if it reaches the maximum of 255, the hunger penalty will be acted!
     /// </summary>
     [JsonPropertyName("hunger")]
-    public byte Hunger { get; set; }
+    public float Hunger { get; set; }
 
     /// <summary>
     ///     This is the thirst of the cat.
@@ -45,7 +45,7 @@ public class CatDbType
     ///     cat will be instantly gone!
     /// </summary>
     [JsonPropertyName("thirst")]
-    public byte Thirst { get; set; }
+    public float Thirst { get; set; }
 
     /// <summary>
     ///     The path of the image of the cat.

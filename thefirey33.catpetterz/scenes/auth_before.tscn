@@ -47,11 +47,11 @@ script = ExtResource("4_ookta")
 
 [node name="redirect_link_request" type="HTTPRequest" parent="CenterContainer/auth_panel/log_out_account" unique_id=325814242]
 
-[node name="Button" type="Button" parent="CenterContainer/auth_panel" unique_id=198159977]
+[node name="lua_api_reference" type="Button" parent="CenterContainer/auth_panel" unique_id=198159977]
 layout_mode = 2
 text = "Lua API Reference"
 
-[node name="Button2" type="Button" parent="CenterContainer/auth_panel" unique_id=1986665612]
+[node name="about" type="Button" parent="CenterContainer/auth_panel" unique_id=1986665612]
 layout_mode = 2
 text = "About"
 

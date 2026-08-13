@@ -9,17 +9,17 @@ public class NikoDexRecoveryDbType
     ///     The ID.
     /// </summary>
     [JsonPropertyName("id")]
-    public int Id { get; init; }
+    public int Id { get; set; }
 
     /// <summary>
     ///     The time that this backup was made.
     /// </summary>
     [JsonPropertyName("date")]
-    public DateTime Date { get; init; }
+    public DateTime Date { get; set; }
 
     /// <summary>
     ///     The Nikos that this backup has.
     /// </summary>
     [JsonPropertyName("nikos")]
-    public required List<NikoTypeRecoveryDb> Nikos { get; init; }
+    public required List<NikoTypeRecoveryDb> Nikos { get; set; }
 }

@@ -3,7 +3,7 @@ class_name HTTPRequestHandler
 
 
 ## The origin of the current browser window.
-static var origin = JavaScriptBridge.eval("window.location.origin")
+static var origin: String = JavaScriptBridge.eval("window.location.origin")
 
 
 ## This combines two URLs together.

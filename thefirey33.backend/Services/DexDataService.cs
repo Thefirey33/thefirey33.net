@@ -30,7 +30,7 @@ public class DexDataService(
     /// <summary>
     ///     The timespan between each backup.
     /// </summary>
-    public const int HoursTimeSpan = 1;
+    public const int HoursTimeSpan = 5;
 
     /**
     * The HTTP Client that will connect to the NikoDex API.
@@ -129,15 +129,23 @@ public class DexDataService(
         foreach (var db in dexData) await DownloadNikoImage(db);
 
 
-        await nikoDexRecoveryContext.NikoDexRecovery.AddAsync(new NikoDexRecoveryDbType
+        if (first != null)
         {
-            Date = DateTime.UtcNow,
-            Nikos = dexData
-        });
+            first.Date = DateTime.UtcNow;
+            first.Nikos = dexData;
+            nikoDexRecoveryContext.NikoDexRecovery.Update(first);
+        }
+        else
+        {
+            await nikoDexRecoveryContext.NikoDexRecovery.AddAsync(new NikoDexRecoveryDbType
+            {
+                Date = DateTime.UtcNow,
+                Nikos = dexData
+            });
+        }
 
         // Save the changes to the database async.
         await nikoDexRecoveryContext.SaveChangesAsync();
-
         logger.LogInformation("Successfully backed up {Date} instance of NikoDex.", DateTime.UtcNow);
     }
 

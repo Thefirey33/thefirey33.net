@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Global="*uid://cwt32ui8423js"
+WebSocketGatewayHandler="*uid://2f0pj1hostx7"
 HttpRequestHandler="*uid://toev28cg4lay"
 LoadingSpinner="*uid://4gu16iyytumw"
 
@@ -27,6 +28,10 @@ LoadingSpinner="*uid://4gu16iyytumw"
 window/size/viewport_width=800
 window/size/viewport_height=600
 window/stretch/mode="viewport"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/GDSignalR/plugin.cfg")
 
 [gui]
 

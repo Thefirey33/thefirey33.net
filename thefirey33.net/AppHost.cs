@@ -38,6 +38,12 @@ var postgresSql
         .WithDataVolume()
         .WithPgAdmin();
 
+var mongoDb
+    = builder.AddMongoDB("catpetterzdatabase")
+        .WithImageTag("7.0.21")
+        .WithDataVolume()
+        .WithMongoExpress();
+
 // This is where the backups of the NikoDex are stored.
 // Every month, the backend will request to the NikoDex and will store a backup of the Dex.
 // With this, the Dex, if in case of emergency, will have a backup to go to.
@@ -50,13 +56,10 @@ var artPostingDb = postgresSql.AddDatabase("artdb");
 // It will require Discord Authentication.
 var questionDb = postgresSql.AddDatabase("questiondb");
 
-#region CatPetterzDatabases
-
-// This is the database that stores each cat. 
-// Each state of each cat is stored in this database.
-var catpetterzDb = postgresSql.AddDatabase("catpetterz");
-
-#endregion
+// The CatPetterz NoSQL database.
+// This is a NoSQL database because we have to keep thousands of cats in storage,
+// So all of them can be updated quickly instead of relying on busying PostgreSQL.
+var catpetterzDb = mongoDb.AddDatabase("catpetterzdb");
 
 // The Question System is managed by two services,
 // The Discord Authentication Service and Website's Backend Itself.
@@ -118,9 +121,10 @@ var catpetterzBackend
                 Target = "/data"
             });
         })
+        .WaitFor(catpetterzDb)
+        .WithReference(catpetterzDb)
         .WithEnvironment("REDIRECT_URI", builder.AddParameter("catpatterz-redirect-uri"))
         .WithReference(filteringService)
-        .WithReference(catpetterzDb)
         .WithReference(scalar)
         .WaitFor(filteringService);
 
@@ -135,7 +139,7 @@ var catpetterzGame = builder.AddDockerfile("catpetterzgame", "../thefirey33.catp
         builderImage.WorkDir("/compile");
         builderImage.Copy(".", ".");
         builderImage.Run("mkdir ./build");
-        builderImage.Run("""godot --headless --export-release --verbose "Web" ./build/index.html""");
+        builderImage.Run("""godot --headless --export-debug --verbose "Web" ./build/index.html""");
 
         // This game is hosted with NGINX as it's hoster server.
         // Then it's proxied by YARP.
@@ -156,7 +160,10 @@ builder.AddYarp("catpetterzgateway")
     .WithConfiguration(yarp =>
     {
         yarp.AddRoute(catpetterzGame.GetEndpoint("http"));
-        yarp.AddRoute("/api/{**catch-all}", catpetterzBackend);
+
+        var cluster = yarp.AddCluster(catpetterzBackend);
+        yarp.AddRoute("/api/{**catch-all}", cluster);
+        yarp.AddRoute("/ws/{**catch-all}", cluster);
     });
 
 // The backend for the entire website.

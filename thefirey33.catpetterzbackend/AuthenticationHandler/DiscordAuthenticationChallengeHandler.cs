@@ -21,11 +21,6 @@ public class DiscordAuthenticationChallengeHandler(
     public const string AvatarUrlClaim = "AvatarUrl";
 
     /// <summary>
-    ///     This is the claim of the AvatarUrl.
-    /// </summary>
-    public const string UserIdClaim = "UserId";
-
-    /// <summary>
     ///     This is the HTTPClient for the filtering service API's auth check.
     /// </summary>
     private readonly HttpClient _httpClient = httpClientFactory.CreateClient("FilteringServiceAPI");
@@ -75,7 +70,7 @@ public class DiscordAuthenticationChallengeHandler(
 
         var claims = new[]
         {
-            new Claim(UserIdClaim, response.Id),
+            new Claim(ClaimTypes.NameIdentifier, response.Id),
             new Claim(ClaimTypes.Name, response.Username),
             new Claim(ClaimTypes.Email, response.Email),
             new Claim(AvatarUrlClaim, response.AvatarUrl ?? string.Empty)

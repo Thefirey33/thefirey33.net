@@ -36,7 +36,7 @@ public class AuthManagerController(IHttpClientFactory httpClientFactory) : Contr
         // Attempt to find all the claims that this user has.
         var nameClaim = User.FindFirst(ClaimTypes.Name);
         var emailClaim = User.FindFirst(ClaimTypes.Email);
-        var userIdClaim = User.FindFirst(DiscordAuthenticationChallengeHandler.UserIdClaim);
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         var profileClaim = User.FindFirst(DiscordAuthenticationChallengeHandler.AvatarUrlClaim);
 
         // If the specified claims do not exist for this user,
