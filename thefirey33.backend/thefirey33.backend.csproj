@@ -20,6 +20,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="Polly" Version="8.7.0"/>
         <PackageReference Include="Scalar.AspNetCore" Version="2.16.17"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3"/>
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3"/>

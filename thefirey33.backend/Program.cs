@@ -69,6 +69,7 @@ builder.Services.AddControllers();
 builder.Services
     .AddHttpClient("GitHubAPI", client => { client.BaseAddress = new Uri("https://api.github.com"); });
 
+
 builder.Services
     .AddHttpClient("NikoDexAPI", client =>
     {

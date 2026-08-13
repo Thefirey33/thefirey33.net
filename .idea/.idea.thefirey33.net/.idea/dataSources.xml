@@ -161,5 +161,35 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="fireycache" uuid="73c37c33-4bf0-42b0-ac6f-a7af62116942">
+      <driver-ref>redis</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>jdbc.RedisDriver</jdbc-driver>
+      <jdbc-url>jdbc:redis://7AR5sQEFmY88YmjZaPUXD1@localhost:45099?ssl=true&amp;verifyServerCertificate=false</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="aspireResourceId" value="fireycache-nbgfrsst" />
+      </jdbc-additional-properties>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="fireydatabase" uuid="743fcebf-36da-4747-a528-2064f9c65e75">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:41307/?password=admin&amp;user=postgres</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="aspireResourceId" value="fireydatabase-azgerkfv" />
+      </jdbc-additional-properties>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="catpetterzdatabase" uuid="6f2ed730-2c06-47b4-8ad0-ee7b22b35e05">
+      <driver-ref>mongo.4</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
+      <jdbc-url>mongodb://admin:tmRCv2uwcmTZJaJJd1yZ8u@localhost:37899/?authSource=admin&amp;authMechanism=SCRAM-SHA-256</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="aspireResourceId" value="catpetterzdatabase-wrgrshbc" />
+      </jdbc-additional-properties>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

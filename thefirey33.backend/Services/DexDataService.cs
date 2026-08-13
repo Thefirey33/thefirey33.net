@@ -1,5 +1,5 @@
 using System.Net;
-using Microsoft.EntityFrameworkCore;
+using Polly.CircuitBreaker;
 using thefirey33_backend.Types.Database;
 using thefirey33_backend.Types.Database.Context;
 using thefirey33_backend.Types.Database.Dex;
@@ -80,21 +80,12 @@ public class DexDataService(
         {
             var timeSpan = DateTime.UtcNow - lastElement.Date;
 
-            var fileCheck = await nikoDexRecoveryContext.NikoTypeRecoveryDb
-                .ToListAsync();
-
-            var nonExistingFiles = fileCheck
-                .Where(db => !File.Exists(db.ImagePath));
-
-            // Check if the specified image was downloaded. If it is not downloaded, download it.
-            foreach (var nikoTypeRecoveryDb in nonExistingFiles) await DownloadNikoImage(nikoTypeRecoveryDb);
-            await nikoDexRecoveryContext.SaveChangesAsync();
-
             // If the backup timespan is smaller than the specified days, do not take a backup!
             if (timeSpan.Days < HoursTimeSpan)
                 return;
         }
 
+        // Last API stability checks before the processing.
         var apiCheck = await _httpClient.GetAsync("ping");
         if (apiCheck.StatusCode != HttpStatusCode.OK)
         {
@@ -102,50 +93,39 @@ public class DexDataService(
             return;
         }
 
-
+        // Finally, take all the data of the dex and start processing it.
         var dexData = await _httpClient.GetFromJsonAsync<List<NikoTypeRecoveryDb>>("data");
-
         if (dexData == null)
         {
             logger.LogWarning("NikoDex API returned null, skipping...");
             return;
         }
 
-        // NOTE: This is an emergency fix.
-
-        await nikoDexRecoveryContext.NikoDexRecovery.ForEachAsync(entry =>
-        {
-            nikoDexRecoveryContext.NikoDexRecovery.Remove(entry);
-        });
-
-        await nikoDexRecoveryContext.NikoTypeRecoveryDb.ForEachAsync(entry =>
-        {
-            nikoDexRecoveryContext.NikoTypeRecoveryDb.Remove(entry);
-        });
-
-        await nikoDexRecoveryContext.AbilityTypeRecoveryDb.ForEachAsync(entry =>
-        {
-            nikoDexRecoveryContext.AbilityTypeRecoveryDb.Remove(entry);
-        });
-
-        await nikoDexRecoveryContext.SaveChangesAsync();
-
-        // Delete all the images in the directory.
         Directory.Delete(StoragePath, true);
 
-        // Fetch each image one by one from the NikoDex API to create a full backup.
-        // After that, set the ImagePath.
-        logger.LogInformation("Gettting ready to fetch all images...");
-        foreach (var db in dexData) await DownloadNikoImage(db);
+        // Create the NikoDex Image Downloading Tasks.
+        var tasks = dexData.Select(DownloadNikoImage).ToList();
 
+        // Send all the specified requests at once.
+        // On failure, tell Polly to WAIT until the breaker re-opens so the Request can be re-sent.
+        await Task.WhenAll(tasks);
 
-        await nikoDexRecoveryContext.NikoDexRecovery.AddAsync(new NikoDexRecoveryDbType
+        // Update all the Nikos in the list.
+        if (lastElement != null)
         {
-            Date = DateTime.UtcNow,
-            Nikos = dexData
-        });
+            lastElement.Nikos = dexData;
+            lastElement.Date = DateTime.UtcNow;
+            nikoDexRecoveryContext.NikoDexRecovery.Update(lastElement);
+        }
+        else
+        {
+            nikoDexRecoveryContext.NikoDexRecovery.Add(new NikoDexRecoveryDbType
+            {
+                Date = DateTime.UtcNow,
+                Nikos = dexData
+            });
+        }
 
-        // Save the changes to the database async.
         await nikoDexRecoveryContext.SaveChangesAsync();
         logger.LogInformation("Successfully backed up {Date} instance of NikoDex.", DateTime.UtcNow);
     }
@@ -153,12 +133,22 @@ public class DexDataService(
 
     private async Task DownloadNikoImage(NikoTypeRecoveryDb db)
     {
-        var data = await _httpClient.GetByteArrayAsync($"image?id={db.Id}");
+        try
+        {
+            var data = await _httpClient.GetByteArrayAsync($"image?id={db.Id}");
 
-        // Fetch the specified image.
-        var path = Path.Combine(StoragePath, CreateNikoFileString(db.Id));
-        await File.WriteAllBytesAsync(path, data);
-        db.ImagePath = path;
+            // Fetch the specified image.
+            var path = Path.Combine(StoragePath, CreateNikoFileString(db.Id));
+            await File.WriteAllBytesAsync(path, data);
+            db.ImagePath = path;
+        }
+        catch (BrokenCircuitException e)
+        {
+            // Retry after the circuit is open again.
+            if (e.RetryAfter == null) logger.LogError("Retry failure! Couldn't execute.");
+            else await Task.Delay(e.RetryAfter.Value.Milliseconds);
+            await DownloadNikoImage(db);
+        }
     }
 
     /// <summary>
@@ -166,7 +156,7 @@ public class DexDataService(
     /// </summary>
     /// <param name="id">The ID of the niko.</param>
     /// <returns>The filename and extension. "niko-{id}.png"</returns>
-    public static string CreateNikoFileString(int id)
+    private static string CreateNikoFileString(int id)
     {
         return $"niko-{id}.png";
     }

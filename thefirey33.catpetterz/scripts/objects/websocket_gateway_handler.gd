@@ -17,8 +17,9 @@ func get_websocket_origin():
 	
 func _init() -> void:
 	# Set the initial processing of the Gateway handler to false.
-	
 	set_process(false)
+	
+	self.z_index = 20
 
 func start_websocket_connection() -> void:
 	var err = socket.connect_to_url(
@@ -32,6 +33,8 @@ func start_websocket_connection() -> void:
 	else:
 		print("Failed to connect to the Gateway!")
 		set_process(false)
+	
+var connection_texture: Texture2D = connection_nonready
 		
 func _process(_delta: float) -> void:
 	socket.poll()
@@ -39,5 +42,22 @@ func _process(_delta: float) -> void:
 	var state = socket.get_ready_state()
 	if state == WebSocketPeer.STATE_CLOSED:
 		print("Disconnected from Gateway with code %d" % socket.get_close_code())
+		connection_texture = connection_nonready
 		set_process(false)
+	elif state == WebSocketPeer.STATE_OPEN:
+		connection_texture = connection_ready
+		
+		while socket.get_available_packet_count():
+			# Receives the websocket update for each cat.
+			
+			var packet = socket.get_packet()
+			if socket.was_string_packet():
+				var packet_data = packet.get_string_from_utf8()
+				var json_data = JSON.parse_string(packet_data)
+				
+				if json_data != null and json_data is Array:
+					pass
+		
+	self.texture = connection_texture
+	
 	

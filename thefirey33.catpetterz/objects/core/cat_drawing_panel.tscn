@@ -1,5 +1,24 @@
 [gd_scene format=3 uid="uid://bkhg20dtvmk6u"]
 
+[ext_resource type="Script" uid="uid://dr1jrsi5ldj7m" path="res://scripts/objects/core/drawing_section_panel.gd" id="1_u4tmy"]
+[ext_resource type="Texture2D" uid="uid://cxn2odw7pr0yi" path="res://sprites/panel_textures/wooden_texture.jpg" id="2_yg5p2"]
+[ext_resource type="Texture2D" uid="uid://qjcr6x6vob4x" path="res://sprites/default/game_logo_arts.png" id="3_3a7k2"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_u4tmy"]
+texture = ExtResource("2_yg5p2")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yg5p2"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3a7k2"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ao1od"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jblt2"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_avbus"]
+
 [node name="cat_drawing_panel" type="Control" unique_id=1400412962]
 layout_mode = 3
 anchors_preset = 15
@@ -7,3 +26,63 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="split_canvas_section" type="HSplitContainer" parent="." unique_id=696845365]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+split_offsets = PackedInt32Array(595)
+dragging_enabled = false
+dragger_visibility = 2
+drag_area_highlight_in_editor = true
+split_offset = 595
+
+[node name="canvas" type="TextureRect" parent="split_canvas_section" unique_id=1988409547]
+layout_mode = 2
+mouse_default_cursor_shape = 3
+script = ExtResource("1_u4tmy")
+
+[node name="tools" type="Panel" parent="split_canvas_section" unique_id=659386583]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_u4tmy")
+
+[node name="MarginContainer" type="MarginContainer" parent="split_canvas_section/tools" unique_id=241020471]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="tool_container" type="VBoxContainer" parent="split_canvas_section/tools/MarginContainer" unique_id=1920901153]
+layout_mode = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="split_canvas_section/tools/MarginContainer/tool_container" unique_id=354683690]
+layout_mode = 2
+
+[node name="arts_logo" type="TextureRect" parent="split_canvas_section/tools/MarginContainer/tool_container/CenterContainer" unique_id=1931920141]
+custom_maximum_size = Vector2(166.94, 65)
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 0
+texture = ExtResource("3_3a7k2")
+
+[node name="color_selector" type="ColorPickerButton" parent="split_canvas_section/tools/MarginContainer/tool_container" unique_id=468856038]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_yg5p2")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_3a7k2")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_ao1od")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_jblt2")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_avbus")
+text = "Color..."
+edit_alpha = false
+edit_intensity = false
+
+[connection signal="gui_input" from="split_canvas_section/canvas" to="split_canvas_section/canvas" method="_on_gui_input"]

@@ -163,7 +163,7 @@ builder.AddYarp("catpetterzgateway")
 
         var cluster = yarp.AddCluster(catpetterzBackend);
         yarp.AddRoute("/api/{**catch-all}", cluster);
-        yarp.AddRoute("/ws/{**catch-all}", cluster);
+        yarp.AddRoute("/updategateway/{**catch-all}", cluster);
     });
 
 // The backend for the entire website.
