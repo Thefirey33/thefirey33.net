@@ -1,23 +1,22 @@
 [gd_scene format=3 uid="uid://bkhg20dtvmk6u"]
 
+[ext_resource type="Script" uid="uid://b57y0p0bsp0r7" path="res://scripts/objects/background_transparent_renderer.gd" id="1_35765"]
 [ext_resource type="Script" uid="uid://dr1jrsi5ldj7m" path="res://scripts/objects/core/drawing_section_panel.gd" id="1_u4tmy"]
-[ext_resource type="Texture2D" uid="uid://cxn2odw7pr0yi" path="res://sprites/panel_textures/wooden_texture.jpg" id="2_yg5p2"]
-[ext_resource type="Texture2D" uid="uid://qjcr6x6vob4x" path="res://sprites/default/game_logo_arts.png" id="3_3a7k2"]
+[ext_resource type="Script" uid="uid://bco80nflcugv5" path="res://scripts/canvas_minimum_size_controller.gd" id="2_35765"]
+[ext_resource type="Texture2D" uid="uid://b0a6ivrbqce6b" path="res://sprites/panel_textures/wooden_texture.png" id="2_jblt2"]
+[ext_resource type="Texture2D" uid="uid://b7kd6vkt02ohg" path="res://sprites/icons/pen.png" id="3_ao1od"]
+[ext_resource type="Texture2D" uid="uid://dvuoe7gptiajs" path="res://sprites/icons/eraser.png" id="4_jblt2"]
+[ext_resource type="Script" uid="uid://luu50wguvce5" path="res://scripts/objects/brush_renderer.gd" id="5_avbus"]
+[ext_resource type="Texture2D" uid="uid://cl7ao08rdaogq" path="res://sprites/icons/lasso.png" id="7_tvpau"]
+[ext_resource type="Script" uid="uid://d1k1j5k7cigfo" path="res://scripts/objects/lasso_brush_renderer.gd" id="8_ylrfh"]
+[ext_resource type="Theme" uid="uid://b7dhtn46x7i6v" path="res://theme/main_theme.tres" id="9_ylrfh"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_u4tmy"]
-texture = ExtResource("2_yg5p2")
-axis_stretch_horizontal = 1
-axis_stretch_vertical = 1
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yg5p2"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3a7k2"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ao1od"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jblt2"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_avbus"]
+texture = ExtResource("2_jblt2")
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+region_rect = Rect2(0, 0, 1520, 2224)
+modulate_color = Color(0.64704293, 0.6156662, 0.48618227, 1)
 
 [node name="cat_drawing_panel" type="Control" unique_id=1400412962]
 layout_mode = 3
@@ -26,6 +25,18 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="background_layer" type="ColorRect" parent="." unique_id=1410514982]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.8474744, 0.84747446, 0.84747446, 1)
+script = ExtResource("1_35765")
 
 [node name="split_canvas_section" type="HSplitContainer" parent="." unique_id=696845365]
 layout_mode = 1
@@ -34,19 +45,21 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-split_offsets = PackedInt32Array(595)
-dragging_enabled = false
-dragger_visibility = 2
+split_offsets = PackedInt32Array(450)
 drag_area_highlight_in_editor = true
-split_offset = 595
+split_offset = 450
+script = ExtResource("2_35765")
 
 [node name="canvas" type="TextureRect" parent="split_canvas_section" unique_id=1988409547]
+texture_filter = 1
 layout_mode = 2
 mouse_default_cursor_shape = 3
 script = ExtResource("1_u4tmy")
 
 [node name="tools" type="Panel" parent="split_canvas_section" unique_id=659386583]
+texture_repeat = 3
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxTexture_u4tmy")
 
 [node name="MarginContainer" type="MarginContainer" parent="split_canvas_section/tools" unique_id=241020471]
@@ -56,33 +69,89 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
 [node name="tool_container" type="VBoxContainer" parent="split_canvas_section/tools/MarginContainer" unique_id=1920901153]
 layout_mode = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="split_canvas_section/tools/MarginContainer/tool_container" unique_id=354683690]
+[node name="tool_grid" type="GridContainer" parent="split_canvas_section/tools/MarginContainer/tool_container" unique_id=1149339172]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+columns = 3
 
-[node name="arts_logo" type="TextureRect" parent="split_canvas_section/tools/MarginContainer/tool_container/CenterContainer" unique_id=1931920141]
-custom_maximum_size = Vector2(166.94, 65)
-clip_contents = true
+[node name="pen_tool" type="TextureButton" parent="split_canvas_section/tools/MarginContainer/tool_container/tool_grid" unique_id=165940673 node_paths=PackedStringArray("target_canvas")]
+texture_filter = 1
 layout_mode = 2
-size_flags_horizontal = 0
-texture = ExtResource("3_3a7k2")
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("3_ao1od")
+texture_pressed = ExtResource("3_ao1od")
+texture_hover = ExtResource("3_ao1od")
+script = ExtResource("5_avbus")
+target_canvas = NodePath("../../../../../canvas")
 
-[node name="color_selector" type="ColorPickerButton" parent="split_canvas_section/tools/MarginContainer/tool_container" unique_id=468856038]
+[node name="erase_tool" type="TextureButton" parent="split_canvas_section/tools/MarginContainer/tool_container/tool_grid" unique_id=319853728 node_paths=PackedStringArray("target_canvas")]
+texture_filter = 1
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxEmpty_yg5p2")
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_3a7k2")
-theme_override_styles/hover = SubResource("StyleBoxEmpty_ao1od")
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_jblt2")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_avbus")
-text = "Color..."
-edit_alpha = false
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("4_jblt2")
+texture_pressed = ExtResource("4_jblt2")
+texture_hover = ExtResource("4_jblt2")
+script = ExtResource("5_avbus")
+mode_outline = 1
+target_canvas = NodePath("../../../../../canvas")
+
+[node name="lasso_tool" type="TextureButton" parent="split_canvas_section/tools/MarginContainer/tool_container/tool_grid" unique_id=1570947328 node_paths=PackedStringArray("target_canvas")]
+texture_filter = 1
+layout_mode = 2
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("7_tvpau")
+texture_pressed = ExtResource("7_tvpau")
+texture_hover = ExtResource("7_tvpau")
+script = ExtResource("8_ylrfh")
+mode_outline = 2
+target_canvas = NodePath("../../../../../canvas")
+
+[node name="brush_size_slider" type="SpinBox" parent="split_canvas_section/tools/MarginContainer/tool_container" unique_id=869670423]
+texture_filter = 1
+layout_mode = 2
+mouse_default_cursor_shape = 2
+min_value = 1.0
+max_value = 30.0
+value = 5.0
+prefix = "Size:"
+suffix = "px"
+
+[node name="color_picker" type="ColorPicker" parent="split_canvas_section/tools/MarginContainer/tool_container" unique_id=1949816646]
+layout_mode = 2
+theme = ExtResource("9_ylrfh")
 edit_intensity = false
+picker_shape = 2
+can_add_swatches = false
+hex_visible = false
+presets_visible = false
 
+[node name="bottom_toolbar" type="HBoxContainer" parent="split_canvas_section/tools/MarginContainer/tool_container" unique_id=673903458]
+layout_mode = 2
+
+[node name="upload" type="Button" parent="split_canvas_section/tools/MarginContainer/tool_container/bottom_toolbar" unique_id=2011999911]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+text = "OK"
+
+[node name="delete_selection" type="Button" parent="split_canvas_section/tools/MarginContainer/tool_container/bottom_toolbar" unique_id=2005426567]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+text = "Delete Selection"
+
+[connection signal="dragged" from="split_canvas_section" to="split_canvas_section" method="_on_dragged"]
 [connection signal="gui_input" from="split_canvas_section/canvas" to="split_canvas_section/canvas" method="_on_gui_input"]
+[connection signal="mouse_entered" from="split_canvas_section/canvas" to="split_canvas_section/canvas" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="split_canvas_section/canvas" to="split_canvas_section/canvas" method="_on_mouse_exited"]
+[connection signal="value_changed" from="split_canvas_section/tools/MarginContainer/tool_container/brush_size_slider" to="split_canvas_section/canvas" method="_on_h_slider_value_changed"]
+[connection signal="button_down" from="split_canvas_section/tools/MarginContainer/tool_container/bottom_toolbar/delete_selection" to="split_canvas_section/canvas" method="_on_delete_selection_button_down"]

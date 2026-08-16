@@ -1,3 +1,171 @@
 [gd_resource type="Theme" format=3 uid="uid://b7dhtn46x7i6v"]
 
+[ext_resource type="FontFile" uid="uid://cgjm0axxyukg4" path="res://fonts/comic_sans_ms.ttf" id="1_1knni"]
+[ext_resource type="Texture2D" uid="uid://xpwqlm24xkbh" path="res://sprites/panel_textures/wooden_button_texture.png" id="1_afw5t"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_75705"]
+load_path = "res://.godot/imported/wooden_button_texture.png-4d90fe0d24e6dbd5b584093223a6d9a5.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_4xa5k"]
+texture = SubResource("CompressedTexture2D_75705")
+texture_margin_left = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 5.0
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_4xa5k"]
+load_path = "res://.godot/imported/wooden_button_texture.png-4d90fe0d24e6dbd5b584093223a6d9a5.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dkcgw"]
+texture = SubResource("CompressedTexture2D_4xa5k")
+texture_margin_bottom = 3.0
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 2
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ftk8o"]
+load_path = "res://.godot/imported/wooden_button_texture.png-4d90fe0d24e6dbd5b584093223a6d9a5.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1g5yx"]
+texture = SubResource("CompressedTexture2D_ftk8o")
+texture_margin_bottom = 5.0
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 2
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tvpau"]
+texture = ExtResource("1_afw5t")
+texture_margin_bottom = 5.0
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 2
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_6sc48"]
+load_path = "res://.godot/imported/wooden_button_texture.png-4d90fe0d24e6dbd5b584093223a6d9a5.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_fqy7u"]
+texture = SubResource("CompressedTexture2D_6sc48")
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 2
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_a7tdx"]
+load_path = "res://.godot/imported/wooden_button_texture.png-4d90fe0d24e6dbd5b584093223a6d9a5.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_6sc48"]
+texture = SubResource("CompressedTexture2D_a7tdx")
+modulate_color = Color(0.3254902, 0.3254902, 0.3254902, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_os614"]
+texture = ExtResource("1_afw5t")
+modulate_color = Color(0.5254902, 0.5254902, 0.5254902, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ftk8o"]
+texture = ExtResource("1_afw5t")
+texture_margin_bottom = 5.0
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_m8g5i"]
+load_path = "res://.godot/imported/wooden_button_texture.png-4d90fe0d24e6dbd5b584093223a6d9a5.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_a7tdx"]
+texture = SubResource("CompressedTexture2D_m8g5i")
+texture_margin_bottom = 5.0
+modulate_color = Color(0.51718444, 0.5171845, 0.51718444, 1)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_1knni"]
+load_path = "res://.godot/imported/wooden_button_texture.png-4d90fe0d24e6dbd5b584093223a6d9a5.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_75705"]
+texture = SubResource("CompressedTexture2D_1knni")
+texture_margin_bottom = 3.0
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_cibxr"]
+load_path = "res://.godot/imported/wooden_button_texture.png-4d90fe0d24e6dbd5b584093223a6d9a5.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_adhqp"]
+texture = SubResource("CompressedTexture2D_cibxr")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ttrd0"]
+texture = ExtResource("1_afw5t")
+texture_margin_bottom = 5.0
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_adhqp"]
+load_path = "res://.godot/imported/wooden_button_texture.png-4d90fe0d24e6dbd5b584093223a6d9a5.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_t4k2v"]
+texture = SubResource("CompressedTexture2D_adhqp")
+texture_margin_bottom = 5.0
+modulate_color = Color(0.51718444, 0.5171845, 0.51718444, 1)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_dut6s"]
+load_path = "res://.godot/imported/wooden_button_texture.png-4d90fe0d24e6dbd5b584093223a6d9a5.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cibxr"]
+texture = SubResource("CompressedTexture2D_dut6s")
+texture_margin_bottom = 3.0
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_t4k2v"]
+load_path = "res://.godot/imported/wooden_button_texture.png-4d90fe0d24e6dbd5b584093223a6d9a5.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_m8g5i"]
+texture = SubResource("CompressedTexture2D_t4k2v")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_afw5t"]
+texture = ExtResource("1_afw5t")
+texture_margin_top = 5.0
+texture_margin_right = 5.0
+texture_margin_bottom = 5.0
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+modulate_color = Color(0.49354547, 0.49354553, 0.49354553, 1)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_os614"]
+load_path = "res://.godot/imported/wooden_button_texture.png-4d90fe0d24e6dbd5b584093223a6d9a5.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dut6s"]
+texture = SubResource("CompressedTexture2D_os614")
+texture_margin_left = 2.0
+texture_margin_right = 2.0
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+modulate_color = Color(0.72882164, 0.72882205, 0.728822, 1)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_afw5t"]
+load_path = "res://.godot/imported/wooden_button_texture.png-4d90fe0d24e6dbd5b584093223a6d9a5.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1knni"]
+texture = SubResource("CompressedTexture2D_afw5t")
+texture_margin_bottom = 3.0
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+modulate_color = Color(0.90359825, 0.90359825, 0.903598, 1)
+
 [resource]
+Button/constants/align_to_largest_stylebox = 0
+Button/constants/h_separation = 4
+Button/constants/icon_max_width = 0
+Button/constants/outline_size = 0
+Button/font_sizes/font_size = 16
+Button/fonts/font = ExtResource("1_1knni")
+Button/styles/disabled = SubResource("StyleBoxTexture_4xa5k")
+Button/styles/focus = SubResource("StyleBoxTexture_dkcgw")
+Button/styles/hover = SubResource("StyleBoxTexture_1g5yx")
+Button/styles/normal = SubResource("StyleBoxTexture_tvpau")
+Button/styles/pressed = SubResource("StyleBoxTexture_fqy7u")
+PopupMenu/styles/hover = SubResource("StyleBoxTexture_6sc48")
+PopupMenu/styles/panel = SubResource("StyleBoxTexture_os614")
+SpinBox/styles/down_background = SubResource("StyleBoxTexture_ftk8o")
+SpinBox/styles/down_background_disabled = SubResource("StyleBoxTexture_a7tdx")
+SpinBox/styles/down_background_hovered = SubResource("StyleBoxTexture_75705")
+SpinBox/styles/down_background_pressed = SubResource("StyleBoxTexture_adhqp")
+SpinBox/styles/up_background = SubResource("StyleBoxTexture_ttrd0")
+SpinBox/styles/up_background_disabled = SubResource("StyleBoxTexture_t4k2v")
+SpinBox/styles/up_background_hovered = SubResource("StyleBoxTexture_cibxr")
+SpinBox/styles/up_background_pressed = SubResource("StyleBoxTexture_m8g5i")
+SpinBoxInnerLineEdit/base_type = &"LineEdit"
+SpinBoxInnerLineEdit/styles/normal = SubResource("StyleBoxTexture_afw5t")
+TabContainer/colors/font_hovered_color = Color(0.95, 0.95, 0.95, 1)
+TabContainer/colors/font_outline_color = Color(1, 1, 1, 1)
+TabContainer/colors/font_selected_color = Color(0.95, 0.95, 0.95, 1)
+TabContainer/colors/font_unselected_color = Color(0.7, 0.7, 0.7, 1)
+TabContainer/styles/tab_focus = SubResource("StyleBoxTexture_dut6s")
+TabContainer/styles/tab_hovered = SubResource("StyleBoxTexture_1knni")
+TabContainer/styles/tab_selected = SubResource("StyleBoxTexture_dut6s")
+TabContainer/styles/tab_unselected = SubResource("StyleBoxTexture_tvpau")

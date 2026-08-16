@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://deoaj1ibvj75n" path="res://objects/authorization_show_element.tscn" id="1_4pnxm"]
 [ext_resource type="Script" uid="uid://bjmi1hxvdulx2" path="res://scripts/objects/auth_screen.gd" id="1_etlxw"]
-[ext_resource type="Texture2D" uid="uid://qjcr6x6vob4x" path="res://sprites/default/game_logo_arts.png" id="2_al5r6"]
+[ext_resource type="Texture2D" uid="uid://wdkbtfgg7hw1" path="res://sprites/default/cat_petterz_logo.png" id="2_ookta"]
 [ext_resource type="Script" uid="uid://ba36x53q285xe" path="res://scripts/introduction/prestart_check_handler.gd" id="3_8yi1a"]
 [ext_resource type="Script" uid="uid://b0wsope2oe4pg" path="res://scripts/objects/redirect_to_login.gd" id="4_ookta"]
 
@@ -27,7 +27,7 @@ script = ExtResource("1_etlxw")
 
 [node name="TextureRect" type="TextureRect" parent="CenterContainer/auth_panel" unique_id=1350511662]
 layout_mode = 2
-texture = ExtResource("2_al5r6")
+texture = ExtResource("2_ookta")
 
 [node name="profile_picture" parent="CenterContainer/auth_panel" unique_id=925983005 instance=ExtResource("1_4pnxm")]
 layout_mode = 2
