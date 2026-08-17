@@ -1,0 +1,9 @@
+[submodule "thefirey33.frontendold/submodules/cpp-httplib"]
+	path = thefirey33.frontendold/submodules/cpp-httplib
+	url = https://github.com/yhirose/cpp-httplib.git
+[submodule "thefirey33.frontendold/submodules/spdlog"]
+	path = thefirey33.frontendold/submodules/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "thefirey33.frontendold/submodules/json"]
+	path = thefirey33.frontendold/submodules/json
+	url = https://github.com/nlohmann/json.git

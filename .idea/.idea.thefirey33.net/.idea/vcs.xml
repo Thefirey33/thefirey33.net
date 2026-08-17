@@ -2,5 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/thefirey33.frontendold/submodules/cpp-httplib" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/thefirey33.frontendold/submodules/spdlog" vcs="Git" />
   </component>
 </project>

@@ -105,6 +105,7 @@ if (!builder.Environment.IsDevelopment())
     filteringService.WithEnvironment("PROXY", cloudflareWarpService.GetEndpoint("proxy"));
 }
 
+
 // The backend for the CatPetterz Game.
 // Which manages the databases and authentication.
 var catpetterzBackend
@@ -198,6 +199,25 @@ var backend =
 // The API reference provided by Scalar.
 scalar.WithApiReference(backend);
 
+// This is for the old frontend.
+// Something made for the fun of it, the C++ frontend of the website.
+var oldFrontend = builder.AddDockerfile("fireyoldfrontend", "../thefirey33.frontendold")
+    .WithDockerfileBuilder("../thefirey33.frontendold", context =>
+    {
+        var runner = context.Builder.From("alpine:3.14");
+        runner.WorkDir("/server");
+        runner.Run("apk add --no-cache cmake build-base git");
+        runner.Copy(".", ".");
+        runner.Run("cmake -S . -B build");
+        runner.Run("cmake --build build");
+
+        // Run the old frontend's executable for running.
+        runner.Entrypoint(["./build/old_web"]);
+    })
+    .WaitFor(backend)
+    .WithReference(backend.GetEndpoint("api"))
+    .WithHttpEndpoint(8080, 8080, env: "PORT");
+
 // Add the front-end API to the stack.
 // This connects with the main backend (port 5540) and the minecraft backend. (port 7000)
 var frontend = builder
@@ -214,8 +234,6 @@ var frontend = builder
 if (builder.Environment.IsProduction())
     frontend.WithEnvironment("ORIGIN", builder.AddParameter("website-origin"));
 
-// Reference the front-end for the CORS policy.
-backend
-    .WithReference(frontend.GetEndpoint("http"));
+backend.WithReference(frontend.GetEndpoint("http"));
 
 builder.Build().Run();
