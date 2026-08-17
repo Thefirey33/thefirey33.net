@@ -217,6 +217,7 @@ var oldFrontend = builder.AddDockerfile("fireyoldfrontend", "../thefirey33.front
     })
     .WaitFor(backend)
     .WithReference(backend.GetEndpoint("api"))
+    .WithExternalHttpEndpoints()
     .WithHttpEndpoint(8080, 8080, env: "PORT");
 
 // Add the front-end API to the stack.
