@@ -211,6 +211,7 @@ var oldFrontend = builder.AddDockerfile("fireyoldfrontend", "../thefirey33.front
         runner.Copy(".", ".");
         runner.Run("cmake -S . -B build");
         runner.Run("cmake --build build");
+        runner.Expose(8080);
 
         // Run the old frontend's executable for running.
         runner.Entrypoint(["./build/old_web"]);
