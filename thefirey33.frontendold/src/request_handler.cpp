@@ -43,7 +43,7 @@ request_handler::request_handler(httplib::Server &server, routes_handler &routes
             // Piece together the HTML content for the art section.
             ss << "<center>" << std::endl; // Begin the centering section.
 
-            ss << "<img src=\"" << "/data/" << uuid << "\"/>" << std::endl;
+            ss << "<img width=\"300\" height=\"300\" src=\"" << "/data/" << uuid << "\"/>" << std::endl;
             ss << "<br/>" << std::endl;
             // The very cool seperator element. This website is designed to look like shit, so why not?
 
