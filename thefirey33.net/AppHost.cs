@@ -216,10 +216,9 @@ var oldFrontend = builder.AddDockerfile("fireyoldfrontend", "../thefirey33.front
         // Run the old frontend's executable for running.
         runner.Entrypoint(["./build/old_web"]);
     })
-    .PublishAsDockerComposeService((_, service) => { service.Ports = ["8080", "8080"]; })
+    .PublishAsDockerComposeService((_, service) => { service.Ports = ["8080:8080"]; })
     .WaitFor(backend)
     .WithReference(backend.GetEndpoint("api"))
-    .WithExternalHttpEndpoints()
     .WithHttpEndpoint(8080, 8080, env: "PORT");
 
 // Add the front-end API to the stack.
