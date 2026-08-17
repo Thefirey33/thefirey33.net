@@ -104,68 +104,69 @@ if (!builder.Environment.IsDevelopment())
 
     filteringService.WithEnvironment("PROXY", cloudflareWarpService.GetEndpoint("proxy"));
 }
-
-
+else
+{
 // The backend for the CatPetterz Game.
 // Which manages the databases and authentication.
-var catpetterzBackend
-    = builder.AddProject<thefirey33_catpetterzbackend>("catpetterzbackend")
-        .PublishAsDockerComposeService((_, service) =>
-        {
-            // Add the database that contains the data of the catpetterz game.
-            service.User = "0:0";
-
-            service.AddVolume(new Volume
+    var catpetterzBackend
+        = builder.AddProject<thefirey33_catpetterzbackend>("catpetterzbackend")
+            .PublishAsDockerComposeService((_, service) =>
             {
-                Type = "volume",
-                Name = "catpetterz-volume",
-                Target = "/data"
-            });
-        })
-        .WaitFor(catpetterzDb)
-        .WithReference(catpetterzDb)
-        .WithEnvironment("REDIRECT_URI", builder.AddParameter("catpatterz-redirect-uri"))
-        .WithReference(filteringService)
-        .WithReference(scalar)
-        .WaitFor(filteringService);
+                // Add the database that contains the data of the catpetterz game.
+                service.User = "0:0";
+
+                service.AddVolume(new Volume
+                {
+                    Type = "volume",
+                    Name = "catpetterz-volume",
+                    Target = "/data"
+                });
+            })
+            .WaitFor(catpetterzDb)
+            .WithReference(catpetterzDb)
+            .WithEnvironment("REDIRECT_URI", builder.AddParameter("catpatterz-redirect-uri"))
+            .WithReference(filteringService)
+            .WithReference(scalar)
+            .WaitFor(filteringService);
 
 // The Scalar API reference for the CatPetterz API.
-scalar.WithApiReference(catpetterzBackend);
+    scalar.WithApiReference(catpetterzBackend);
 
-var catpetterzGame = builder.AddDockerfile("catpetterzgame", "../thefirey33.catpetterz")
-    .WithDockerfileBuilder("../thefirey33.catpetterz", context =>
-    {
-        // Build the game image to the release image.
-        var builderImage = context.Builder.From("barichello/godot-ci", "builder");
-        builderImage.WorkDir("/compile");
-        builderImage.Copy(".", ".");
-        builderImage.Run("mkdir ./build");
-        builderImage.Run("""godot --headless --export-debug --verbose "Web" ./build/index.html""");
+    var catpetterzGame = builder.AddDockerfile("catpetterzgame", "../thefirey33.catpetterz")
+        .WithDockerfileBuilder("../thefirey33.catpetterz", context =>
+        {
+            // Build the game image to the release image.
+            var builderImage = context.Builder.From("barichello/godot-ci", "builder");
+            builderImage.WorkDir("/compile");
+            builderImage.Copy(".", ".");
+            builderImage.Run("mkdir ./build");
+            builderImage.Run("""godot --headless --export-debug --verbose "Web" ./build/index.html""");
 
-        // This game is hosted with NGINX as it's hoster server.
-        // Then it's proxied by YARP.
-        var runnerImage = context.Builder.From("nginx", "runner");
-        runnerImage.CopyFrom("builder", "/compile/build", "/usr/share/nginx/html");
-        runnerImage.Run("rm /etc/nginx/nginx.conf");
-        runnerImage.Copy("nginx.conf", "/etc/nginx/nginx.conf");
-        runnerImage.Expose(80);
-    })
-    .WithHttpEndpoint(targetPort: 80);
+            // This game is hosted with NGINX as it's hoster server.
+            // Then it's proxied by YARP.
+            var runnerImage = context.Builder.From("nginx", "runner");
+            runnerImage.CopyFrom("builder", "/compile/build", "/usr/share/nginx/html");
+            runnerImage.Run("rm /etc/nginx/nginx.conf");
+            runnerImage.Copy("nginx.conf", "/etc/nginx/nginx.conf");
+            runnerImage.Expose(80);
+        })
+        .WithHttpEndpoint(targetPort: 80);
 
 
 // The general gateway of the game.
 // This is what manages the game's routing.
-builder.AddYarp("catpetterzgateway")
-    .WithHttpEndpoint(7000, 7000)
-    .WithExternalHttpEndpoints()
-    .WithConfiguration(yarp =>
-    {
-        yarp.AddRoute(catpetterzGame.GetEndpoint("http"));
+    builder.AddYarp("catpetterzgateway")
+        .WithHttpEndpoint(7000, 7000)
+        .WithExternalHttpEndpoints()
+        .WithConfiguration(yarp =>
+        {
+            yarp.AddRoute(catpetterzGame.GetEndpoint("http"));
 
-        var cluster = yarp.AddCluster(catpetterzBackend);
-        yarp.AddRoute("/api/{**catch-all}", cluster);
-        yarp.AddRoute("/updategateway/{**catch-all}", cluster);
-    });
+            var cluster = yarp.AddCluster(catpetterzBackend);
+            yarp.AddRoute("/api/{**catch-all}", cluster);
+            yarp.AddRoute("/updategateway/{**catch-all}", cluster);
+        });
+}
 
 // The backend for the entire website.
 // This manages all 
