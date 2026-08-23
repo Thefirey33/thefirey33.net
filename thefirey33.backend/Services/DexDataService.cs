@@ -122,6 +122,11 @@ public class DexDataService(
             try
             {
                 nikoDexRecoveryContext.NikoDexRecovery.Update(lastElement);
+                await nikoDexRecoveryContext.SaveChangesAsync();
+                logger.LogInformation(
+                    "Successfully backed up {Date} instance of NikoDex.",
+                    DateTime.UtcNow
+                );
             }
             catch
             {
@@ -134,12 +139,6 @@ public class DexDataService(
                 new NikoDexRecoveryDbType { Date = DateTime.UtcNow, Nikos = dexData }
             );
         }
-
-        await nikoDexRecoveryContext.SaveChangesAsync();
-        logger.LogInformation(
-            "Successfully backed up {Date} instance of NikoDex.",
-            DateTime.UtcNow
-        );
     }
 
     private async Task DownloadNikoImage(NikoTypeRecoveryDb db)
