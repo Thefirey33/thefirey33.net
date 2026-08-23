@@ -25,7 +25,8 @@ public class DexDataService(
     IWebHostEnvironment webHostEnvironment,
     IHttpClientFactory httpClientFactory,
     ILogger<DexDataService> logger,
-    NikoDexRecoveryContext nikoDexRecoveryContext) : IDexDataService
+    NikoDexRecoveryContext nikoDexRecoveryContext
+) : IDexDataService
 {
     /// <summary>
     ///     The timespan between each backup.
@@ -42,8 +43,10 @@ public class DexDataService(
     {
         get
         {
-            var path = Path.Combine(webHostEnvironment.IsDevelopment() ? webHostEnvironment.ContentRootPath : "data",
-                "DexStorage");
+            var path = Path.Combine(
+                webHostEnvironment.IsDevelopment() ? webHostEnvironment.ContentRootPath : "data",
+                "DexStorage"
+            );
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -60,7 +63,8 @@ public class DexDataService(
     public async Task<byte[]?> GetNikoImage(int id)
     {
         var filePath = Path.Combine(StoragePath, CreateNikoFileString(id));
-        if (!File.Exists(filePath)) return null;
+        if (!File.Exists(filePath))
+            return null;
 
         var file = await File.ReadAllBytesAsync(filePath);
 
@@ -72,8 +76,8 @@ public class DexDataService(
     /// </summary>
     public async Task CreateBackup()
     {
-        var lastElement = nikoDexRecoveryContext.NikoDexRecovery
-            .OrderBy(type => type.Id)
+        var lastElement = nikoDexRecoveryContext
+            .NikoDexRecovery.OrderBy(type => type.Id)
             .LastOrDefault();
 
         if (lastElement != null)
@@ -115,21 +119,28 @@ public class DexDataService(
         {
             lastElement.Nikos = dexData;
             lastElement.Date = DateTime.UtcNow;
-            nikoDexRecoveryContext.NikoDexRecovery.Update(lastElement);
+            try
+            {
+                nikoDexRecoveryContext.NikoDexRecovery.Update(lastElement);
+            }
+            catch
+            {
+                logger.LogWarning("Failed to update, skipping!");
+            }
         }
         else
         {
-            nikoDexRecoveryContext.NikoDexRecovery.Add(new NikoDexRecoveryDbType
-            {
-                Date = DateTime.UtcNow,
-                Nikos = dexData
-            });
+            nikoDexRecoveryContext.NikoDexRecovery.Add(
+                new NikoDexRecoveryDbType { Date = DateTime.UtcNow, Nikos = dexData }
+            );
         }
 
         await nikoDexRecoveryContext.SaveChangesAsync();
-        logger.LogInformation("Successfully backed up {Date} instance of NikoDex.", DateTime.UtcNow);
+        logger.LogInformation(
+            "Successfully backed up {Date} instance of NikoDex.",
+            DateTime.UtcNow
+        );
     }
-
 
     private async Task DownloadNikoImage(NikoTypeRecoveryDb db)
     {
@@ -145,8 +156,10 @@ public class DexDataService(
         catch (BrokenCircuitException e)
         {
             // Retry after the circuit is open again.
-            if (e.RetryAfter == null) logger.LogError("Retry failure! Couldn't execute.");
-            else await Task.Delay(e.RetryAfter.Value.Milliseconds);
+            if (e.RetryAfter == null)
+                logger.LogError("Retry failure! Couldn't execute.");
+            else
+                await Task.Delay(e.RetryAfter.Value.Milliseconds);
             await DownloadNikoImage(db);
         }
     }
