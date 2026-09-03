@@ -82,25 +82,13 @@ var filteringService = builder
 // If it's the development environment, do not attempt to create a Cloudflare WARP Service.
 if (!builder.Environment.IsDevelopment())
 {
-    var cloudflareWarpService = builder.AddContainer("fireywarp", "caomingjun/warp")
-        .WithBindMount("/var/lib/cloudflare-warp", "/data")
+    var cloudflareWarpService = builder.AddContainer("fireyproxy", "ghcr.io/unmedius/spoof-dpi", "latest")
         .PublishAsDockerComposeService((_, service) =>
         {
-            service.User =
-                "0:0"; // The Cloudflare WARP Service needs to run as ROOT in order to be able to edit the interfaces.
-            service.CapAdd = ["NET_ADMIN"];
             service.Restart = "unless-stopped";
             service.Ports = ["1080:1080"];
-            service.Sysctls = new Dictionary<string, string>
-            {
-                { "net.ipv6.conf.all.disable_ipv6", "0" },
-                { "net.ipv4.conf.all.src_valid_mark", "1" },
-                { "net.ipv4.ip_forward", "1" },
-                { "net.ipv6.conf.all.forwarding", "1" },
-                { "net.ipv6.conf.all.accept_ra", "2" }
-            };
         })
-        .WithHttpEndpoint(targetPort: 1080, name: "proxy");
+        .WithHttpEndpoint(1080, targetPort: 1080, name: "proxy");
 
     filteringService.WithEnvironment("PROXY", cloudflareWarpService.GetEndpoint("proxy"));
 }
