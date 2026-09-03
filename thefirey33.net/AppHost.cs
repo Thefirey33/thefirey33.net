@@ -86,9 +86,8 @@ if (!builder.Environment.IsDevelopment())
         .PublishAsDockerComposeService((_, service) =>
         {
             service.Restart = "unless-stopped";
-            service.Ports = ["1080:1080"];
         })
-        .WithHttpEndpoint(1080, targetPort: 1080, name: "proxy");
+        .WithHttpEndpoint(1080, targetPort: 8080, name: "proxy");
 
     filteringService.WithEnvironment("PROXY", cloudflareWarpService.GetEndpoint("proxy"));
 }
