@@ -76,6 +76,7 @@ public class DexDataService(
     /// </summary>
     public async Task CreateBackup()
     {
+        nikoDexRecoveryContext.ChangeTracker.Clear();
         var lastElement = nikoDexRecoveryContext
             .NikoDexRecovery.OrderBy(type => type.Id)
             .LastOrDefault();
@@ -119,19 +120,8 @@ public class DexDataService(
         {
             lastElement.Nikos = dexData;
             lastElement.Date = DateTime.UtcNow;
-            try
-            {
-                nikoDexRecoveryContext.NikoDexRecovery.Update(lastElement);
-                await nikoDexRecoveryContext.SaveChangesAsync();
-                logger.LogInformation(
-                    "Successfully backed up {Date} instance of NikoDex.",
-                    DateTime.UtcNow
-                );
-            }
-            catch
-            {
-                logger.LogWarning("Failed to update, skipping!");
-            }
+            nikoDexRecoveryContext.NikoDexRecovery.Update(lastElement);
+            await nikoDexRecoveryContext.SaveChangesAsync();
         }
         else
         {
