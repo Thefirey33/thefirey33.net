@@ -1,4 +1,5 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
-    "js/ts.experimental.useTsgo": false
+    "js/ts.experimental.useTsgo": false,
+    "cmake.sourceDirectory": "/home/thefirey33/Masaüstü/Projects/thefirey33.net/thefirey33.frontendold"
 }

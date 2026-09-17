@@ -116,19 +116,12 @@ public class DexDataService(
         await Task.WhenAll(tasks);
 
         // Update all the Nikos in the list.
-        if (lastElement != null)
-        {
-            lastElement.Nikos = dexData;
-            lastElement.Date = DateTime.UtcNow;
-            nikoDexRecoveryContext.NikoDexRecovery.Update(lastElement);
-            await nikoDexRecoveryContext.SaveChangesAsync();
-        }
-        else
-        {
-            nikoDexRecoveryContext.NikoDexRecovery.Add(
-                new NikoDexRecoveryDbType { Date = DateTime.UtcNow, Nikos = dexData }
-            );
-        }
+        if (lastElement != null) nikoDexRecoveryContext.NikoDexRecovery.Remove(lastElement);
+
+        nikoDexRecoveryContext.NikoDexRecovery.Add(
+            new NikoDexRecoveryDbType { Date = DateTime.UtcNow, Nikos = dexData }
+        );
+        await nikoDexRecoveryContext.SaveChangesAsync();
     }
 
     private async Task DownloadNikoImage(NikoTypeRecoveryDb db)
