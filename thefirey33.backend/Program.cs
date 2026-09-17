@@ -25,7 +25,7 @@ builder.Services.AddSingleton<IAuthorizationCodeService, AuthorizationCodeServic
 builder.AddNpgsqlDbContext<ArtsContext>("artdb");
 
 // NikoDex Recovery Service Database
-builder.AddNpgsqlDbContext<NikoDexRecoveryContext>("nikodexdb");
+builder.AddNpgsqlDbContext<NikoDexRecoveryContext>("recoverydexdb");
 
 // Question Database
 builder.AddNpgsqlDbContext<QuestionContext>("questiondb");
