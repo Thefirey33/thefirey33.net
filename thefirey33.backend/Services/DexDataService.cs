@@ -1,4 +1,5 @@
 using System.Net;
+using Microsoft.EntityFrameworkCore;
 using Polly.CircuitBreaker;
 using thefirey33_backend.Types.Database;
 using thefirey33_backend.Types.Database.Context;
@@ -116,11 +117,15 @@ public class DexDataService(
         await Task.WhenAll(tasks);
 
         // Update all the Nikos in the list.
-        if (lastElement != null) nikoDexRecoveryContext.NikoDexRecovery.Remove(lastElement);
+        if (lastElement != null)
+            await nikoDexRecoveryContext.NikoDexRecovery.ExecuteUpdateAsync(setters =>
+                setters.SetProperty(predicate => predicate.Nikos, dexData)
+                    .SetProperty(predicate => predicate.Date, DateTime.UtcNow));
+        else
+            nikoDexRecoveryContext.NikoDexRecovery.Add(
+                new NikoDexRecoveryDbType { Date = DateTime.UtcNow, Nikos = dexData }
+            );
 
-        nikoDexRecoveryContext.NikoDexRecovery.Add(
-            new NikoDexRecoveryDbType { Date = DateTime.UtcNow, Nikos = dexData }
-        );
         await nikoDexRecoveryContext.SaveChangesAsync();
     }
 
