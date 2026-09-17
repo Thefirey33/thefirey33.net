@@ -38,8 +38,8 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Clear();
 });
 
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder
+    .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.SaveToken = true;
@@ -49,40 +49,57 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"] ??
-                          throw new NullReferenceException("JWT Issuer not found!"),
-            ValidAudience = builder.Configuration["Jwt:Audience"] ??
-                            throw new NullReferenceException("JWT Audience not found!"),
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ??
-                                                                               throw new NullReferenceException(
-                                                                                   "JWT Key must be provided!")))
+            ValidIssuer =
+                builder.Configuration["Jwt:Issuer"]
+                ?? throw new NullReferenceException("JWT Issuer not found!"),
+            ValidAudience =
+                builder.Configuration["Jwt:Audience"]
+                ?? throw new NullReferenceException("JWT Audience not found!"),
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(
+                    builder.Configuration["Jwt:Key"]
+                        ?? throw new NullReferenceException("JWT Key must be provided!")
+                )
+            ),
         };
     });
-
 
 builder.Services.AddHttpLogging();
 builder.Services.AddLogging();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
-// Add the HTTP Client for the communication with other APIs out there. 
-builder.Services
-    .AddHttpClient("GitHubAPI", client => { client.BaseAddress = new Uri("https://api.github.com"); });
-
-
-builder.Services
-    .AddHttpClient("NikoDexAPI", client =>
+// Add the HTTP Client for the communication with other APIs out there.
+builder.Services.AddHttpClient(
+    "GitHubAPI",
+    client =>
     {
-        client.BaseAddress = new Uri("https://nikodex.net/api/");
+        client.BaseAddress = new Uri("https://api.github.com");
+    }
+);
+
+builder.Services.AddHttpClient(
+    "NikoDexAPI",
+    client =>
+    {
+        client.BaseAddress = new Uri("https://water.nikodex.net/api/");
 
         // Explicitly define the user agent so it's easy to spot.
-        client.DefaultRequestHeaders.UserAgent.Add(ProductInfoHeaderValue.Parse("Thefirey33NikoDexBackupService"));
-    });
+        client.DefaultRequestHeaders.UserAgent.Add(
+            ProductInfoHeaderValue.Parse("Thefirey33NikoDexBackupService")
+        );
+    }
+);
 
 // This is for the Python Backend portion that checks for innapropriate content.
 // It's also the backend HTTP Connection for the Mad Mew Mew Bot.
-builder.Services.AddHttpClient("FilteringServiceAPI",
-    client => { client.BaseAddress = new Uri("https+http://fireyfilteringservice"); });
+builder.Services.AddHttpClient(
+    "FilteringServiceAPI",
+    client =>
+    {
+        client.BaseAddress = new Uri("https+http://fireyfilteringservice");
+    }
+);
 
 // Add the Redis Client for caching.
 builder.AddRedisClient("fireycache");
@@ -115,18 +132,15 @@ app.UseHsts();
 app.UseAntiforgery();
 app.UseOutputCache();
 
-
 using (var scope = app.Services.CreateScope())
 {
     var artDb = scope.ServiceProvider.GetRequiredService<ArtsContext>(); // Arts Migration
     await artDb.Database.MigrateAsync();
 
-    var nikoDexDb =
-        scope.ServiceProvider.GetRequiredService<NikoDexRecoveryContext>(); // NikoDex Recovery Service Migration
+    var nikoDexDb = scope.ServiceProvider.GetRequiredService<NikoDexRecoveryContext>(); // NikoDex Recovery Service Migration
     await nikoDexDb.Database.MigrateAsync();
 
-    var questionDb =
-        scope.ServiceProvider.GetRequiredService<QuestionContext>(); // The Migration for the Question system.
+    var questionDb = scope.ServiceProvider.GetRequiredService<QuestionContext>(); // The Migration for the Question system.
     await questionDb.Database.MigrateAsync();
 }
 
