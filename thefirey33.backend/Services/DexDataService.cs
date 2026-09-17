@@ -77,9 +77,9 @@ public class DexDataService(
     /// </summary>
     public async Task CreateBackup()
     {
-        nikoDexRecoveryContext.ChangeTracker.Clear();
         var lastElement = nikoDexRecoveryContext
-            .NikoDexRecovery.OrderBy(type => type.Id)
+            .NikoDexRecovery.AsNoTracking()
+            .OrderBy(type => type.Id)
             .LastOrDefault();
 
         if (lastElement != null)
@@ -118,13 +118,17 @@ public class DexDataService(
 
         // Update all the Nikos in the list.
         if (lastElement != null)
-            await nikoDexRecoveryContext.NikoDexRecovery.ExecuteUpdateAsync(setters =>
-                setters.SetProperty(predicate => predicate.Nikos, dexData)
-                    .SetProperty(predicate => predicate.Date, DateTime.UtcNow));
+        {
+            lastElement.Nikos = dexData;
+            lastElement.Date = DateTime.UtcNow;
+            nikoDexRecoveryContext.Update(lastElement);
+        }
         else
+        {
             nikoDexRecoveryContext.NikoDexRecovery.Add(
                 new NikoDexRecoveryDbType { Date = DateTime.UtcNow, Nikos = dexData }
             );
+        }
 
         await nikoDexRecoveryContext.SaveChangesAsync();
     }

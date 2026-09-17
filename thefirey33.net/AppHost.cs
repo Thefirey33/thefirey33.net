@@ -47,7 +47,7 @@ var mongoDb
 // This is where the backups of the NikoDex are stored.
 // Every month, the backend will request to the NikoDex and will store a backup of the Dex.
 // With this, the Dex, if in case of emergency, will have a backup to go to.
-var nikoDexBackupDb = postgresSql.AddDatabase("nikodexdb");
+var nikoDexBackupDb = postgresSql.AddDatabase("recoverydexdb");
 
 // This is where all the arts that were made for Thefirey33, or by me will be uploaded.
 var artPostingDb = postgresSql.AddDatabase("artdb");
@@ -83,11 +83,8 @@ var filteringService = builder
 if (!builder.Environment.IsDevelopment())
 {
     var cloudflareWarpService = builder.AddContainer("fireyproxy", "ghcr.io/unmedius/spoof-dpi", "latest")
-        .PublishAsDockerComposeService((_, service) =>
-        {
-            service.Restart = "unless-stopped";
-        })
-        .WithHttpEndpoint(1080, targetPort: 8080, name: "proxy");
+        .PublishAsDockerComposeService((_, service) => { service.Restart = "unless-stopped"; })
+        .WithHttpEndpoint(1080, 8080, "proxy");
 
     filteringService.WithEnvironment("PROXY", cloudflareWarpService.GetEndpoint("proxy"));
 }
