@@ -15,6 +15,16 @@ var builder = DistributedApplication.CreateBuilder(args);
 var compose =
     builder.AddDockerComposeEnvironment("compose");
 
+var fireyBackendVolume = new Volume
+{
+    Type = "volume",
+    Name = "fireybackend-volume",
+    Source = "fireybackend-volume",
+    Target = "/app/data"
+};
+
+compose.ConfigureComposeFile(options => { options.AddVolume(fireyBackendVolume); });
+
 // The admin username of the admin interface.
 var adminUsername = builder.AddParameter("admin-username", true);
 
@@ -158,13 +168,7 @@ var backend =
             service.Name = "fireybackend";
             service.User = "0:0"; // Unfortunately, some things just don't turn out how they're supposed to be.
 
-            service.AddVolume(new Volume
-            {
-                Type = "volume",
-                Name = "fireybackend-volume",
-                Source = "fireybackend-volume",
-                Target = "/app/data"
-            });
+            service.AddVolume(fireyBackendVolume);
         })
         .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
         .WaitFor(redis)
