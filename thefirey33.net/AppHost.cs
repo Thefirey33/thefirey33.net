@@ -1,7 +1,10 @@
 using Aspire.Hosting.Docker.Resources.ServiceNodes;
+using Aspire.Hosting.Publishing;
 using Microsoft.Extensions.Hosting;
 using Projects;
 using Scalar.Aspire;
+
+#pragma warning disable ASPIREPIPELINES003
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -27,6 +30,7 @@ var redis
     = builder.AddRedis("fireycache")
         .WithDataVolume(isReadOnly: false)
         .WithPersistence()
+        .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
         .WithRedisInsight();
 
 
@@ -36,12 +40,14 @@ var postgresSql
     = builder.AddPostgres("fireydatabase")
         .WithPassword(builder.AddParameter("postgres-password", true))
         .WithDataVolume()
+        .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
         .WithPgAdmin();
 
 var mongoDb
     = builder.AddMongoDB("catpetterzdatabase")
         .WithImageTag("7.0.21")
         .WithDataVolume()
+        .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
         .WithMongoExpress();
 
 // This is where the backups of the NikoDex are stored.
@@ -76,20 +82,11 @@ var filteringService = builder
     .WithEnvironment("CLIENT_SECRET", builder.AddParameter("bot-client-secret", true))
     .WithEnvironment("REDIRECT_URI", builder.AddParameter("bot-redirect-uri"))
     .WithEnvironment("BOT_TOKEN", builder.AddParameter("bot-token", true))
+    .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
     .WithHttpHealthCheck("/health")
     .WithHttpEndpoint(env: "PORT");
 
-// If it's the development environment, do not attempt to create a Cloudflare WARP Service.
-if (!builder.Environment.IsDevelopment())
-{
-    var cloudflareWarpService = builder.AddContainer("fireyproxy", "ghcr.io/unmedius/spoof-dpi", "latest")
-        .PublishAsDockerComposeService((_, service) => { service.Restart = "unless-stopped"; })
-        .WithHttpEndpoint(1080, 8080, "proxy");
-
-    filteringService.WithEnvironment("PROXY", cloudflareWarpService.GetEndpoint("proxy"));
-}
-else
-{
+/*
 // The backend for the CatPetterz Game.
 // Which manages the databases and authentication.
     var catpetterzBackend
@@ -106,6 +103,7 @@ else
                     Target = "/data"
                 });
             })
+            .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
             .WaitFor(catpetterzDb)
             .WithReference(catpetterzDb)
             .WithEnvironment("REDIRECT_URI", builder.AddParameter("catpatterz-redirect-uri"))
@@ -150,8 +148,7 @@ else
             yarp.AddRoute("/api/{**catch-all}", cluster);
             yarp.AddRoute("/updategateway/{**catch-all}", cluster);
         });
-}
-
+    */
 // The backend for the entire website.
 // This manages all 
 var backend =
@@ -168,6 +165,7 @@ var backend =
                 Target = "/app/data"
             });
         })
+        .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
         .WaitFor(redis)
         .WaitFor(filteringService)
         .WaitFor(postgresSql)
@@ -201,6 +199,7 @@ var oldFrontend = builder.AddDockerfile("fireyoldfrontend", "../thefirey33.front
         runner.Entrypoint(["./build/old_web"]);
     })
     .PublishAsDockerComposeService((_, service) => { service.Ports = ["8080:8080"]; })
+    .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
     .WaitFor(backend)
     .WithReference(backend.GetEndpoint("api"))
     .WithHttpEndpoint(8080, 8080, env: "PORT");
@@ -210,6 +209,7 @@ var oldFrontend = builder.AddDockerfile("fireyoldfrontend", "../thefirey33.front
 var frontend = builder
     .AddViteApp("fireyfrontend", "../thefirey33.frontend")
     .WithNpm()
+    .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
     .PublishAsNodeServer("build/index.js", "./build")
     .WithHttpEndpoint(5000)
     .WithExternalHttpEndpoints()
