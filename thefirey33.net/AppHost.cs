@@ -162,6 +162,7 @@ var backend =
             {
                 Type = "volume",
                 Name = "fireybackend-volume",
+                Source = "fireybackend-volume",
                 Target = "/app/data"
             });
         })
