@@ -121,7 +121,13 @@ public class DexDataService(
         {
             lastElement.Nikos = dexData;
             lastElement.Date = DateTime.UtcNow;
-            nikoDexRecoveryContext.Update(lastElement);
+
+            try {
+                nikoDexRecoveryContext.Update(lastElement);
+            }
+            catch {
+                logger.LogWarning("Failed to update!");
+            }
         }
         else
         {
