@@ -16,11 +16,5 @@ public class NikoDexRecoveryService(
             logger.LogCritical("Couldn't create scope for NikoDex recovery service, halting service!");
             return;
         }
-
-        // Check if a backup can be created immediately.
-        await nikoDexRecoveryContext.CreateBackup();
-
-        while (!stoppingToken.IsCancellationRequested && await periodicTimer.WaitForNextTickAsync(stoppingToken))
-            await nikoDexRecoveryContext.CreateBackup();
     }
 }
