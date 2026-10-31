@@ -58,9 +58,9 @@ builder
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(
                     builder.Configuration["Jwt:Key"]
-                        ?? throw new NullReferenceException("JWT Key must be provided!")
+                    ?? throw new NullReferenceException("JWT Key must be provided!")
                 )
-            ),
+            )
         };
     });
 
@@ -72,17 +72,14 @@ builder.Services.AddControllers();
 // Add the HTTP Client for the communication with other APIs out there.
 builder.Services.AddHttpClient(
     "GitHubAPI",
-    client =>
-    {
-        client.BaseAddress = new Uri("https://api.github.com");
-    }
+    client => { client.BaseAddress = new Uri("https://api.github.com"); }
 );
 
 builder.Services.AddHttpClient(
     "NikoDexAPI",
     client =>
     {
-        client.BaseAddress = new Uri("https://water.nikodex.net/api/");
+        client.BaseAddress = new Uri("https://nikodex.net/api/");
 
         // Explicitly define the user agent so it's easy to spot.
         client.DefaultRequestHeaders.UserAgent.Add(
@@ -95,10 +92,7 @@ builder.Services.AddHttpClient(
 // It's also the backend HTTP Connection for the Mad Mew Mew Bot.
 builder.Services.AddHttpClient(
     "FilteringServiceAPI",
-    client =>
-    {
-        client.BaseAddress = new Uri("https+http://fireyfilteringservice");
-    }
+    client => { client.BaseAddress = new Uri("https+http://fireyfilteringservice"); }
 );
 
 // Add the Redis Client for caching.
@@ -137,10 +131,12 @@ using (var scope = app.Services.CreateScope())
     var artDb = scope.ServiceProvider.GetRequiredService<ArtsContext>(); // Arts Migration
     await artDb.Database.MigrateAsync();
 
-    var nikoDexDb = scope.ServiceProvider.GetRequiredService<NikoDexRecoveryContext>(); // NikoDex Recovery Service Migration
+    var nikoDexDb =
+        scope.ServiceProvider.GetRequiredService<NikoDexRecoveryContext>(); // NikoDex Recovery Service Migration
     await nikoDexDb.Database.MigrateAsync();
 
-    var questionDb = scope.ServiceProvider.GetRequiredService<QuestionContext>(); // The Migration for the Question system.
+    var questionDb =
+        scope.ServiceProvider.GetRequiredService<QuestionContext>(); // The Migration for the Question system.
     await questionDb.Database.MigrateAsync();
 }
 
