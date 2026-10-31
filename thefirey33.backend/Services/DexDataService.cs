@@ -1,5 +1,5 @@
 using System.Net;
-using Microsoft.EntityFrameworkCore;
+using EFCore.BulkExtensions;
 using Polly.CircuitBreaker;
 using thefirey33_backend.Types.Database;
 using thefirey33_backend.Types.Database.Context;
@@ -78,7 +78,7 @@ public class DexDataService(
     public async Task CreateBackup()
     {
         var lastElement = nikoDexRecoveryContext
-            .NikoDexRecovery.AsNoTracking()
+            .NikoDexRecovery
             .OrderBy(type => type.Id)
             .LastOrDefault();
 
@@ -119,15 +119,15 @@ public class DexDataService(
         // Update all the Nikos in the list.
         if (lastElement != null)
         {
-            lastElement.Nikos = dexData;
             lastElement.Date = DateTime.UtcNow;
 
-            try {
-                nikoDexRecoveryContext.Update(lastElement);
-            }
-            catch {
-                logger.LogWarning("Failed to update!");
-            }
+            await nikoDexRecoveryContext.SaveChangesAsync();
+
+            await nikoDexRecoveryContext.BulkUpdateAsync(dexData, new BulkConfig
+            {
+                UpdateByProperties = [nameof(NikoDexRecoveryDbType.Nikos)],
+                TrackingEntities = true
+            });
         }
         else
         {
