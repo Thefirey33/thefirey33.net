@@ -117,12 +117,11 @@ public class DexDataService(
         {
             lastElement.Date = DateTime.UtcNow;
 
-            await nikoDexRecoveryContext.SaveChangesAsync();
-
             await nikoDexRecoveryContext.BulkUpdateAsync(dexData, new BulkConfig
             {
                 TrackingEntities = true
             });
+            await nikoDexRecoveryContext.SaveChangesAsync();
         }
         else
         {
