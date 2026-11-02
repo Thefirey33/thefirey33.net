@@ -38,5 +38,9 @@
   {
     "href": "https://bsky.app/profile/thefirey33.bsky.social",
     "name": "BlueSky"
+  },
+  {
+    "href": "mailto:root@thefirey33.net",
+    "name": "Send an e-Mail!"
   }
 ]
