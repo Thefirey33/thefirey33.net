@@ -80,8 +80,10 @@ var catpetterzDb = mongoDb.AddDatabase("catpetterzdb");
 // The Question System is managed by two services,
 // The Discord Authentication Service and Website's Backend Itself.
 
-// The Scalar API reference.
-var scalar = builder.AddScalarApiReference();
+IResourceBuilder<ScalarResource>? scalar = null;
+if (builder.Environment.IsDevelopment())
+    // The Scalar API reference.
+    scalar = builder.AddScalarApiReference();
 
 // This is the filtering service.
 // For filtering content sent by the user.
@@ -175,7 +177,6 @@ var backend =
         .WaitFor(filteringService)
         .WaitFor(postgresSql)
         .WithReference(redis)
-        .WithReference(scalar)
         .WithReference(filteringService)
         .WithReference(questionDb) // This is the Database for all the Questions that the users can ask.
         .WithReference(nikoDexBackupDb) // The NikoDex Backup Recovery Service's Database.
@@ -184,8 +185,12 @@ var backend =
         .WithEnvironment("ADMIN_PASSWORD", adminPassword)
         .WithHttpEndpoint(name: "api");
 
-// The API reference provided by Scalar.
-scalar.WithApiReference(backend);
+if (builder.Environment.IsDevelopment() && scalar != null)
+{
+    // The API reference provided by Scalar.
+    scalar.WithApiReference(backend);
+    backend.WithReference(scalar);
+}
 
 // This is for the old frontend.
 // Something made for the fun of it, the C++ frontend of the website.
