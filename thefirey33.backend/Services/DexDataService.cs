@@ -109,12 +109,8 @@ public class DexDataService(
 
         Directory.Delete(StoragePath, true);
 
-        // Create the NikoDex Image Downloading Tasks.
-        var tasks = dexData.Select(DownloadNikoImage).ToList();
-
-        // Send all the specified requests at once.
-        // On failure, tell Polly to WAIT until the breaker re-opens so the Request can be re-sent.
-        await Task.WhenAll(tasks);
+        // Don't kill the NikoDex with a million requests.
+        foreach (var nikoTypeRecoveryDb in dexData) await DownloadNikoImage(nikoTypeRecoveryDb);
 
         // Update all the Nikos in the list.
         if (lastElement != null)
@@ -125,7 +121,6 @@ public class DexDataService(
 
             await nikoDexRecoveryContext.BulkUpdateAsync(dexData, new BulkConfig
             {
-                UpdateByProperties = [nameof(NikoDexRecoveryDbType.Nikos)],
                 TrackingEntities = true
             });
         }
