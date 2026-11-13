@@ -6,20 +6,23 @@ from typing import Annotated
 from PIL import Image, UnidentifiedImageError
 from better_fastapi_discord import RateLimited, Unauthorized
 from better_fastapi_discord.exceptions import ClientSessionNotInitialized
-from transformers import pipeline
 from fastapi import FastAPI, Response, status, Depends, UploadFile, Form, HTTPException, File
 from discord.ext.commands import Bot
-from contextlib import  asynccontextmanager
+from contextlib import asynccontextmanager
 from logging import getLogger, basicConfig
 import os
 import discord
 import authorization
 
+
+class OAuth2SessionInvalid(Exception):
+    pass
+
+class ChannelSpecificationError(Exception):
+    pass
+
 basicConfig(level=logging.INFO)
 logger = getLogger(__name__)
-
-# This is for detecting images, that are potentially NSFW.
-nsfw_image_detection = pipeline("image-classification", model="Falconsai/nsfw_image_detection")
 
 bot = Bot(command_prefix="!", intents=discord.Intents.all(), proxy=os.getenv("PROXY"))
 
@@ -35,7 +38,7 @@ async def lifespan(_: FastAPI):
     await authorization.authenticationCommunicationService.init()
 
     if authorization.authenticationCommunicationService.client_session is None:
-        raise Exception("No OAuth2 Client Session Available!")
+        raise OAuth2SessionInvalid("No OAuth2 Client Session Available!")
 
     logger.info("OAuth2 Service Online! Session: %s", authorization.authenticationCommunicationService.client_session)
     yield
@@ -66,26 +69,20 @@ def health():
     """
     return Response(status_code=status.HTTP_200_OK)
 
-@app.post("/content_check", tags=["classifiers"])
-async def content_check(description: str = Form(), file: UploadFile | None = File(None)):
+@app.post("/blogpost")
+async def send_blog_announcement(id: int):
+    """This sends an announcement about blog posts.
+
+    Args:
+        id (int): The ID of the blog post.
+
+    Raises:
+        ChannelSpecificationError: Thrown if the Channel isn't specified correctly.
     """
-    This section checks for NSFW content using content classification.
-    If it is NSFW, it will return True. Otherwise, it will return False.
-    """
-    logger.info("Scanning uploaded content for NSFW content...")
-    unsafe = False
-
-    if file:
-        file_bytes = await file.read()
-        try:
-            image_data = Image.open(io.BytesIO(file_bytes))
-        except UnidentifiedImageError:
-            raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Bad Image Type!")
-
-        image_detection_result = nsfw_image_detection(image_data)
-
-        # Check if the specified image is NSFW, if it is, label it as UNSAFE.
-        if image_detection_result[0]['label'] == 'nsfw':
-            unsafe = True
-
-    return unsafe
+    channel = await bot.fetch_channel(int(os.getenv("CHANNEL_ID")))
+    
+    if not channel:
+        raise ChannelSpecificationError("Channel wasn't found!")
+    
+    await channel.send(f"<@&{os.getenv("ROLE_ID")}> {os.getenv("BLOG_ORIGIN")}{id}")
+    return Response(status_code=status.HTTP_200_OK)

@@ -12,18 +12,20 @@ var builder = DistributedApplication.CreateBuilder(args);
 #pragma warning disable ASPIREDOCKERFILEBUILDER001
 #pragma warning disable ASPIREPERSISTENCE001
 
-var compose =
-    builder.AddDockerComposeEnvironment("compose");
+var compose = builder.AddDockerComposeEnvironment("compose");
 
 var fireyBackendVolume = new Volume
 {
     Type = "volume",
     Name = "fireybackend-volume",
     Source = "fireybackend-volume",
-    Target = "/app/data"
+    Target = "/app/data",
 };
 
-compose.ConfigureComposeFile(options => { options.AddVolume(fireyBackendVolume); });
+compose.ConfigureComposeFile(options =>
+{
+    options.AddVolume(fireyBackendVolume);
+});
 
 // The admin username of the admin interface.
 var adminUsername = builder.AddParameter("admin-username", true);
@@ -36,29 +38,37 @@ var adminPassword = builder.AddParameter("admin-password", true);
 var trustedOperatorUuid = builder.AddParameter("trusted-operator-uuid");
 
 // The caching/redis service for the backend.
-var redis
-    = builder.AddRedis("fireycache")
-        .WithDataVolume(isReadOnly: false)
-        .WithPersistence()
-        .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
-        .WithRedisInsight();
-
+var redis = builder
+    .AddRedis("fireycache")
+    .WithDataVolume(isReadOnly: false)
+    .WithPersistence()
+    .WithContainerBuildOptions(options =>
+    {
+        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
+    })
+    .WithRedisInsight();
 
 // The PostgresSQL database.
 // Will be used for the forums and NikoDex backups.
-var postgresSql
-    = builder.AddPostgres("fireydatabase")
-        .WithPassword(builder.AddParameter("postgres-password", true))
-        .WithDataVolume()
-        .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
-        .WithPgAdmin();
+var postgresSql = builder
+    .AddPostgres("fireydatabase")
+    .WithPassword(builder.AddParameter("postgres-password", true))
+    .WithDataVolume()
+    .WithContainerBuildOptions(options =>
+    {
+        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
+    })
+    .WithPgAdmin();
 
-var mongoDb
-    = builder.AddMongoDB("catpetterzdatabase")
-        .WithImageTag("7.0.21")
-        .WithDataVolume()
-        .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
-        .WithMongoExpress();
+var mongoDb = builder
+    .AddMongoDB("catpetterzdatabase")
+    .WithImageTag("7.0.21")
+    .WithDataVolume()
+    .WithContainerBuildOptions(options =>
+    {
+        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
+    })
+    .WithMongoExpress();
 
 // This is where the backups of the NikoDex are stored.
 // Every month, the backend will request to the NikoDex and will store a backup of the Dex.
@@ -71,11 +81,6 @@ var artPostingDb = postgresSql.AddDatabase("artdb");
 // This is for the Questions that can be asked on the website.
 // It will require Discord Authentication.
 var questionDb = postgresSql.AddDatabase("questiondb");
-
-// The CatPetterz NoSQL database.
-// This is a NoSQL database because we have to keep thousands of cats in storage,
-// So all of them can be updated quickly instead of relying on busying PostgreSQL.
-var catpetterzDb = mongoDb.AddDatabase("catpetterzdb");
 
 // The Question System is managed by two services,
 // The Discord Authentication Service and Website's Backend Itself.
@@ -93,10 +98,22 @@ var filteringService = builder
     .WithEnvironment("CLIENT_ID", builder.AddParameter("bot-client-id", true))
     .WithEnvironment("CLIENT_SECRET", builder.AddParameter("bot-client-secret", true))
     .WithEnvironment("REDIRECT_URI", builder.AddParameter("bot-redirect-uri"))
+    .WithEnvironment("CHANNEL_ID", builder.AddParameter("blog-channel-id"))
+    .WithEnvironment("ROLE_ID", builder.AddParameter("blog-role-id"))
+    .WithEnvironment("BLOG_ORIGIN", builder.AddParameter("blog-origin-url"))
     .WithEnvironment("BOT_TOKEN", builder.AddParameter("bot-token", true))
-    .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
+    .WithContainerBuildOptions(options =>
+    {
+        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
+    })
     .WithHttpHealthCheck("/health")
     .WithHttpEndpoint(env: "PORT");
+
+#region BeginCatPetterzSection
+// The CatPetterz NoSQL database.
+// This is a NoSQL database because we have to keep thousands of cats in storage,
+// So all of them can be updated quickly instead of relying on busying PostgreSQL.
+// var catpetterzDb = mongoDb.AddDatabase("catpetterzdb");
 
 /*
 // The backend for the CatPetterz Game.
@@ -161,29 +178,36 @@ var filteringService = builder
             yarp.AddRoute("/updategateway/{**catch-all}", cluster);
         });
     */
+#endregion
+
 // The backend for the entire website.
-// This manages all 
-var backend =
-    builder.AddProject<thefirey33_backend>("fireybackend")
-        .PublishAsDockerComposeService((_, service) =>
+// This manages all
+var backend = builder
+    .AddProject<thefirey33_backend>("fireybackend")
+    .PublishAsDockerComposeService(
+        (_, service) =>
         {
             service.Name = "fireybackend";
             service.User = "0:0"; // Unfortunately, some things just don't turn out how they're supposed to be.
 
             service.AddVolume(fireyBackendVolume);
-        })
-        .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
-        .WaitFor(redis)
-        .WaitFor(filteringService)
-        .WaitFor(postgresSql)
-        .WithReference(redis)
-        .WithReference(filteringService)
-        .WithReference(questionDb) // This is the Database for all the Questions that the users can ask.
-        .WithReference(nikoDexBackupDb) // The NikoDex Backup Recovery Service's Database.
-        .WithReference(artPostingDb) // The Arts database.
-        .WithEnvironment("ADMIN_USERNAME", adminUsername)
-        .WithEnvironment("ADMIN_PASSWORD", adminPassword)
-        .WithHttpEndpoint(name: "api");
+        }
+    )
+    .WithContainerBuildOptions(options =>
+    {
+        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
+    })
+    .WaitFor(redis)
+    .WaitFor(filteringService)
+    .WaitFor(postgresSql)
+    .WithReference(redis)
+    .WithReference(filteringService)
+    .WithReference(questionDb) // This is the Database for all the Questions that the users can ask.
+    .WithReference(nikoDexBackupDb) // The NikoDex Backup Recovery Service's Database.
+    .WithReference(artPostingDb) // The Arts database.
+    .WithEnvironment("ADMIN_USERNAME", adminUsername)
+    .WithEnvironment("ADMIN_PASSWORD", adminPassword)
+    .WithHttpEndpoint(name: "api");
 
 if (builder.Environment.IsDevelopment() && scalar != null)
 {
@@ -194,22 +218,34 @@ if (builder.Environment.IsDevelopment() && scalar != null)
 
 // This is for the old frontend.
 // Something made for the fun of it, the C++ frontend of the website.
-var oldFrontend = builder.AddDockerfile("fireyoldfrontend", "../thefirey33.frontendold")
-    .WithDockerfileBuilder("../thefirey33.frontendold", context =>
-    {
-        var runner = context.Builder.From("alpine:3.14");
-        runner.WorkDir("/server");
-        runner.Run("apk add --no-cache cmake build-base git");
-        runner.Copy(".", ".");
-        runner.Run("cmake -S . -B build");
-        runner.Run("cmake --build build");
-        runner.Expose(8080);
+builder
+    .AddDockerfile("fireyoldfrontend", "../thefirey33.frontendold")
+    .WithDockerfileBuilder(
+        "../thefirey33.frontendold",
+        context =>
+        {
+            var runner = context.Builder.From("alpine:3.14");
+            runner.WorkDir("/server");
+            runner.Run("apk add --no-cache cmake build-base git");
+            runner.Copy(".", ".");
+            runner.Run("cmake -S . -B build");
+            runner.Run("cmake --build build");
+            runner.Expose(8080);
 
-        // Run the old frontend's executable for running.
-        runner.Entrypoint(["./build/old_web"]);
+            // Run the old frontend's executable for running.
+            runner.Entrypoint(["./build/old_web"]);
+        }
+    )
+    .PublishAsDockerComposeService(
+        (_, service) =>
+        {
+            service.Ports = ["8080:8080"];
+        }
+    )
+    .WithContainerBuildOptions(options =>
+    {
+        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
     })
-    .PublishAsDockerComposeService((_, service) => { service.Ports = ["8080:8080"]; })
-    .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
     .WaitFor(backend)
     .WithReference(backend.GetEndpoint("api"))
     .WithHttpEndpoint(8080, 8080, env: "PORT");
@@ -219,7 +255,10 @@ var oldFrontend = builder.AddDockerfile("fireyoldfrontend", "../thefirey33.front
 var frontend = builder
     .AddViteApp("fireyfrontend", "../thefirey33.frontend")
     .WithNpm()
-    .WithContainerBuildOptions(options => { options.TargetPlatform = ContainerTargetPlatform.LinuxArm64; })
+    .WithContainerBuildOptions(options =>
+    {
+        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
+    })
     .PublishAsNodeServer("build/index.js", "./build")
     .WithHttpEndpoint(5000)
     .WithExternalHttpEndpoints()
@@ -233,4 +272,4 @@ if (builder.Environment.IsProduction())
 
 backend.WithReference(frontend.GetEndpoint("http"));
 
-builder.Build().Run();
+await builder.Build().RunAsync();

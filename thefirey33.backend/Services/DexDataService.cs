@@ -1,5 +1,6 @@
 using System.Net;
 using EFCore.BulkExtensions;
+using Microsoft.EntityFrameworkCore;
 using Polly.CircuitBreaker;
 using thefirey33_backend.Types.Database;
 using thefirey33_backend.Types.Database.Context;
@@ -77,26 +78,29 @@ public class DexDataService(
     /// </summary>
     public async Task CreateBackup()
     {
-        var lastElement = nikoDexRecoveryContext
-            .NikoDexRecovery
-            .OrderBy(type => type.Id)
-            .LastOrDefault();
+        // API stability checks before the processing.
+        var apiCheck = await _httpClient.GetAsync("ping");
+        if (apiCheck.StatusCode != HttpStatusCode.OK)
+        {
+            logger.LogWarning("API is unhealthy! Skipping backup...");
+            return;
+        }
 
-        if (lastElement != null)
+        var countCheck = await _httpClient.GetFromJsonAsync<int>("data/count");
+        var lastElement = await nikoDexRecoveryContext
+            .NikoDexRecovery.OrderBy(type => type.Id)
+            .LastOrDefaultAsync();
+
+        if (
+            lastElement != null
+            && countCheck == await nikoDexRecoveryContext.NikoTypeRecoveryDb.CountAsync()
+        )
         {
             var timeSpan = DateTime.UtcNow - lastElement.Date;
 
             // If the backup timespan is smaller than the specified days, do not take a backup!
             if (timeSpan.Days < HoursTimeSpan)
                 return;
-        }
-
-        // Last API stability checks before the processing.
-        var apiCheck = await _httpClient.GetAsync("ping");
-        if (apiCheck.StatusCode != HttpStatusCode.OK)
-        {
-            logger.LogWarning("API is unhealthy! Skipping backup...");
-            return;
         }
 
         // Finally, take all the data of the dex and start processing it.
@@ -110,17 +114,18 @@ public class DexDataService(
         Directory.Delete(StoragePath, true);
 
         // Don't kill the NikoDex with a million requests.
-        foreach (var nikoTypeRecoveryDb in dexData) await DownloadNikoImage(nikoTypeRecoveryDb);
+        foreach (var nikoTypeRecoveryDb in dexData)
+            await DownloadNikoImage(nikoTypeRecoveryDb);
 
         // Update all the Nikos in the list.
         if (lastElement != null)
         {
             lastElement.Date = DateTime.UtcNow;
 
-            await nikoDexRecoveryContext.BulkUpdateAsync(dexData, new BulkConfig
-            {
-                TrackingEntities = true
-            });
+            await nikoDexRecoveryContext.BulkInsertOrUpdateAsync(
+                dexData,
+                new BulkConfig { TrackingEntities = true }
+            );
             await nikoDexRecoveryContext.SaveChangesAsync();
         }
         else
