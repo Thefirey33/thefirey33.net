@@ -102,10 +102,6 @@ var filteringService = builder
     .WithEnvironment("ROLE_ID", builder.AddParameter("blog-role-id"))
     .WithEnvironment("BLOG_ORIGIN", builder.AddParameter("blog-origin-url"))
     .WithEnvironment("BOT_TOKEN", builder.AddParameter("bot-token", true))
-    .WithContainerBuildOptions(options =>
-    {
-        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
-    })
     .WithHttpHealthCheck("/health")
     .WithHttpEndpoint(env: "PORT");
 
@@ -193,10 +189,6 @@ var backend = builder
             service.AddVolume(fireyBackendVolume);
         }
     )
-    .WithContainerBuildOptions(options =>
-    {
-        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
-    })
     .WaitFor(redis)
     .WaitFor(filteringService)
     .WaitFor(postgresSql)
@@ -242,10 +234,6 @@ builder
             service.Ports = ["8080:8080"];
         }
     )
-    .WithContainerBuildOptions(options =>
-    {
-        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
-    })
     .WaitFor(backend)
     .WithReference(backend.GetEndpoint("api"))
     .WithHttpEndpoint(8080, 8080, env: "PORT");
@@ -255,10 +243,6 @@ builder
 var frontend = builder
     .AddViteApp("fireyfrontend", "../thefirey33.frontend")
     .WithNpm()
-    .WithContainerBuildOptions(options =>
-    {
-        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
-    })
     .PublishAsNodeServer("build/index.js", "./build")
     .WithHttpEndpoint(5000)
     .WithExternalHttpEndpoints()
