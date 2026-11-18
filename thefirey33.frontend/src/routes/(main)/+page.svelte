@@ -2,6 +2,7 @@
 	import BackgroundElement from '$lib/components/BackgroundElement.svelte';
 	import BackgroundImage from '$lib/assets/img/wallpapers/aboutScreenWallpaper.png';
 
+	import EmailIcon from '$lib/assets/img/other/email.png';
 	import BigIconImage from '$lib/assets/img/other/frontpageIcon.png';
 	import { resolve } from '$app/paths';
 
@@ -129,12 +130,12 @@
 				rel="external"
 				class="flex flex-wrap items-center gap-2 border-b p-2 text-white transition hover:bg-white hover:text-black"
 			>
-				{#if !socialData.href.startsWith('mailto')}
-					<img
-						src={`https://www.google.com/s2/favicons?domain=${socialData.href}&sz=${32}`}
-						alt="Favicon of {socialData.name}"
-					/>
-				{/if}
+				<img
+					src={socialData.href.startsWith('mailto')
+						? EmailIcon
+						: `https://www.google.com/s2/favicons?domain=${socialData.href}&sz=${32}`}
+					alt="Favicon of {socialData.name}"
+				/>
 				{socialData.name}
 			</a>
 		{/each}
