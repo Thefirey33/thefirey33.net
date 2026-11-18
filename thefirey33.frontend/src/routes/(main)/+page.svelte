@@ -131,6 +131,8 @@
 				class="flex flex-wrap items-center gap-2 border-b p-2 text-white transition hover:bg-white hover:text-black"
 			>
 				<img
+					width="32"
+					height="32"
 					src={socialData.href.startsWith('mailto')
 						? EmailIcon
 						: `https://www.google.com/s2/favicons?domain=${socialData.href}&sz=${32}`}
