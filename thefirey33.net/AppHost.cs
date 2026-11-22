@@ -10,7 +10,6 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 #pragma warning disable ASPIREJAVASCRIPT001
 #pragma warning disable ASPIREDOCKERFILEBUILDER001
-#pragma warning disable ASPIREPERSISTENCE001
 
 var compose = builder.AddDockerComposeEnvironment("compose");
 
@@ -32,10 +31,6 @@ var adminUsername = builder.AddParameter("admin-username", true);
 
 // The admin password of the admin interface.
 var adminPassword = builder.AddParameter("admin-password", true);
-
-// The operator parameter.
-// Basically defines the operator of the Minecraft server.
-var trustedOperatorUuid = builder.AddParameter("trusted-operator-uuid");
 
 // The caching/redis service for the backend.
 var redis = builder
@@ -97,7 +92,10 @@ var filteringService = builder
     .WithDockerfileBaseImage("python:3.11.15-trixie", "python:3.11.15-trixie")
     .WithEnvironment("CLIENT_ID", builder.AddParameter("bot-client-id", true))
     .WithEnvironment("CLIENT_SECRET", builder.AddParameter("bot-client-secret", true))
-    .WithEnvironment("REDIRECT_URI", builder.AddParameter("bot-redirect-uri"))
+    .WithContainerBuildOptions(options =>
+    {
+        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
+    })
     .WithEnvironment("CHANNEL_ID", builder.AddParameter("blog-channel-id"))
     .WithEnvironment("ROLE_ID", builder.AddParameter("blog-role-id"))
     .WithEnvironment("BLOG_ORIGIN", builder.AddParameter("blog-origin-url"))
@@ -189,6 +187,10 @@ var backend = builder
             service.AddVolume(fireyBackendVolume);
         }
     )
+    .WithContainerBuildOptions(options =>
+    {
+        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
+    })
     .WaitFor(redis)
     .WaitFor(filteringService)
     .WaitFor(postgresSql)
@@ -234,6 +236,10 @@ builder
             service.Ports = ["8080:8080"];
         }
     )
+    .WithContainerBuildOptions(options =>
+    {
+        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
+    })
     .WaitFor(backend)
     .WithReference(backend.GetEndpoint("api"))
     .WithHttpEndpoint(8080, 8080, env: "PORT");
@@ -245,6 +251,10 @@ var frontend = builder
     .WithNpm()
     .PublishAsNodeServer("build/index.js", "./build")
     .WithHttpEndpoint(5000)
+    .WithContainerBuildOptions(options =>
+    {
+        options.TargetPlatform = ContainerTargetPlatform.LinuxArm64;
+    })
     .WithExternalHttpEndpoints()
     .WithReference(backend.GetEndpoint("api"))
     .WithReference(filteringService.GetEndpoint("http"))
